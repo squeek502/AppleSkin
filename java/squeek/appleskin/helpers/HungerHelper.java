@@ -9,7 +9,7 @@ import java.lang.reflect.Field;
 
 public class HungerHelper
 {
-	static final Field foodExhaustion = ReflectionHelper.findField(FoodStats.class, "foodExhaustionLevel", "field_75126_c", "c");
+	protected static final Field foodExhaustion = ReflectionHelper.findField(FoodStats.class, "foodExhaustionLevel", "field_75126_c", "c");
 
 	public static float getMaxExhaustion(EntityPlayer player)
 	{

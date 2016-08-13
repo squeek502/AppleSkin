@@ -29,7 +29,6 @@ public class SyncHandler
 	/*
 	 * Sync saturation (vanilla MC only syncs when it hits 0)
 	 * Sync exhaustion (vanilla MC does not sync it at all)
-	 * Sync difficulty (vanilla MC does not sync it on servers)
 	 */
 	private float lastSaturationLevel = 0;
 	private float lastExhaustionLevel = 0;

@@ -27,8 +27,8 @@ import squeek.appleskin.helpers.HungerHelper;
 @SideOnly(Side.CLIENT)
 public class HUDOverlayHandler
 {
-	float flashAlpha = 0f;
-	byte alphaDir = 1;
+	private float flashAlpha = 0f;
+	private byte alphaDir = 1;
 
 	private static final ResourceLocation modIcons = new ResourceLocation(ModInfo.MODID_LOWER, "textures/icons.png");
 
