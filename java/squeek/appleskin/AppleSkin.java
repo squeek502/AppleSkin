@@ -13,7 +13,7 @@ import squeek.appleskin.client.HUDOverlayHandler;
 import squeek.appleskin.client.TooltipOverlayHandler;
 import squeek.appleskin.network.SyncHandler;
 
-@Mod(modid = ModInfo.MODID, version = ModInfo.VERSION, acceptableRemoteVersions = "*", guiFactory = ModInfo.GUI_FACTORY_CLASS, dependencies = "after:JEI@[3.7.0,); required-after:Forge@[12.18.1.2056,)")
+@Mod(modid = ModInfo.MODID, version = ModInfo.VERSION, acceptableRemoteVersions = "*", guiFactory = ModInfo.GUI_FACTORY_CLASS, dependencies = "after:JEI@[3.8.1,); required-after:Forge@[12.18.1.2053,)")
 public class AppleSkin
 {
 	public static Logger Log = LogManager.getLogger(ModInfo.MODID);

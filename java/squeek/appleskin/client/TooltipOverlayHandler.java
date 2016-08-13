@@ -36,7 +36,7 @@ public class TooltipOverlayHandler
 	@SubscribeEvent
 	public void onRenderTooltip(RenderTooltipEvent.PostText event)
 	{
-		ItemStack hoveredStack = event.getStack() != null ? event.getStack() : TooltipJEIHelper.getHoveredStack();
+		ItemStack hoveredStack = event.getStack();
 		if (hoveredStack == null)
 			return;
 
