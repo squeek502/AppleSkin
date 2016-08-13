@@ -1,0 +1,64 @@
+buildscript {
+	repositories {
+		jcenter()
+		maven {
+			name = "forge"
+			url = "http://files.minecraftforge.net/maven"
+		}
+	}
+	dependencies {
+		classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+	}
+}
+
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+minecraft {
+	version = minecraft_version + "-" + forge_version
+	mappings = mappings_version
+	runDir = "run"
+
+	replace "\${version}", project.version
+	replaceIn "ModInfo.java"
+}
+
+group = project.projectDir.name.toLowerCase()
+def modId = project.projectDir.name
+archivesBaseName = modId + "-mc" + project.minecraft.version
+
+if (version == "unspecified")
+	version = ""
+if (System.getenv("BUILD_NUMBER") != null)
+	version += (version ? "+" : "") + "${System.getenv("BUILD_NUMBER")}"
+if (System.getenv("GIT_COMMIT") != null)
+	version += (version ? "." : "") + "${System.getenv("GIT_COMMIT").take(5)}"
+
+sourceSets.main{
+	java {
+		srcDirs 'java', 'apis'
+	}
+	resources {
+		srcDirs 'resources'
+	}
+}
+
+repositories {
+	maven {
+		url "http://www.ryanliptak.com/maven/"
+	}
+}
+
+dependencies {
+	deobfCompile "applecore:AppleCore:1.10.2-1.3.5:api"
+}
+
+processResources {
+	inputs.property "vars", project.version + project.minecraft.version + api_version
+	from(sourceSets.main.resources.srcDirs) {
+		include '**/*.info'
+		expand 'version':project.version, 'mcversion':project.minecraft.version, 'apiversion':api_version
+	}
+	from(sourceSets.main.resources.srcDirs) {
+		exclude '**/*.info'
+	}
+}
