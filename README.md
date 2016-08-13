@@ -22,3 +22,5 @@ Adds various food-related HUD conveniences formerly provided by [AppleCore](http
 ### Building AppleSkin
 1. Clone the repository
 2. Open a command line and execute ```gradlew build```
+
+Note: To give the build a version number, use ```gradlew build -Pversion=<version>``` instead (example: ```gradlew build -Pversion=1.0.0```)
