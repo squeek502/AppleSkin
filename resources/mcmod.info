@@ -2,7 +2,7 @@
 {
   "modid": "appleskin",
   "name": "AppleSkin",
-  "description": "Adds various food-related HUD conveniences.",
+  "description": "Adds various food-related HUD improvements",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",

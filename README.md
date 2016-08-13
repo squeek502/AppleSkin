@@ -1,7 +1,7 @@
 <img src="http://www.ryanliptak.com/images/appleskin.png" width="32" /> [AppleSkin](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/2222837-applecore)
 ===========
 
-Adds various food-related HUD conveniences formerly provided by [AppleCore](https://github.com/squeek502/AppleCore) (basically, AppleCore without the core).
+Minecraft mod that adds various food-related HUD improvements formerly provided by [AppleCore](https://github.com/squeek502/AppleCore) (basically, AppleCore without the core).
 
 ### Features
 
