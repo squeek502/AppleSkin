@@ -82,9 +82,9 @@ public class TooltipOverlayHandler
 		boolean shouldDrawBelow = toolTipBottomY + 20 < scale.getScaledHeight() - 3;
 
 		int rightX = toolTipRightX - 3;
-		int leftX = rightX - (Math.max(barsNeeded * 9, saturationBarsNeeded * 6 + (int) (mc.fontRendererObj.getStringWidth(saturationText) * 0.75f))) - 4;
+		int leftX = rightX - (Math.max(barsNeeded * 9, saturationBarsNeeded * 6 + (int) (mc.fontRendererObj.getStringWidth(saturationText) * 0.75f))) - 3;
 		int topY = (shouldDrawBelow ? toolTipBottomY : toolTipY - 20 + TOOLTIP_REAL_HEIGHT_OFFSET_TOP);
-		int bottomY = topY + 20;
+		int bottomY = topY + 19;
 
 		GlStateManager.disableLighting();
 		GlStateManager.disableDepth();
@@ -101,7 +101,7 @@ public class TooltipOverlayHandler
 
 		int x = rightX - 2;
 		int startX = x;
-		int y = bottomY - 19;
+		int y = bottomY - 18;
 
 		mc.getTextureManager().bindTexture(Gui.ICONS);
 
@@ -128,14 +128,13 @@ public class TooltipOverlayHandler
 				gui.drawTexturedModalRect(x, y, modifiedFoodValues.hunger - 1 == i ? 61 : 52, 27, 9, 9);
 		}
 
-		y += 11;
+		y += 10;
 		x = startX;
 		float modifiedSaturationIncrement = modifiedFoodValues.getSaturationIncrement();
 		float absModifiedSaturationIncrement = Math.abs(modifiedSaturationIncrement);
 
-		GlStateManager.pushMatrix();
-		GlStateManager.scale(0.75F, 0.75F, 0.75F);
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		mc.getTextureManager().bindTexture(modIcons);
 		for (int i = 0; i < saturationBarsNeeded * 2; i += 2)
 		{
 			float effectiveSaturationOfBar = (absModifiedSaturationIncrement - i) / 2f;
@@ -146,20 +145,18 @@ public class TooltipOverlayHandler
 			if (shouldBeFaded)
 				GlStateManager.color(1.0F, 1.0F, 1.0F, .5F);
 
-			mc.getTextureManager().bindTexture(Gui.ICONS);
-			gui.drawTexturedModalRect(x * 4 / 3, y * 4 / 3, 16, 27, 9, 9);
-
-			mc.getTextureManager().bindTexture(modIcons);
-			gui.drawTexturedModalRect(x * 4 / 3, y * 4 / 3, effectiveSaturationOfBar >= 1 ? 27 : effectiveSaturationOfBar > 0.5 ? 18 : effectiveSaturationOfBar > 0.25 ? 9 : effectiveSaturationOfBar > 0 ? 0 : 36, modifiedSaturationIncrement >= 0 ? 0 : 9, 9, 9);
+			gui.drawTexturedModalRect(x, y, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7);
 
 			if (shouldBeFaded)
 				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		}
 		if (saturationText != null)
 		{
+			GlStateManager.pushMatrix();
+			GlStateManager.scale(0.75F, 0.75F, 0.75F);
 			mc.fontRendererObj.drawStringWithShadow(saturationText, x * 4 / 3 - mc.fontRendererObj.getStringWidth(saturationText) + 2, y * 4 / 3 + 1, 0xFFFF0000);
+			GlStateManager.popMatrix();
 		}
-		GlStateManager.popMatrix();
 
 		GlStateManager.disableBlend();
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
