@@ -29,6 +29,7 @@ public class HUDOverlayHandler
 {
 	private float flashAlpha = 0f;
 	private byte alphaDir = 1;
+	protected int foodIconsOffset;
 
 	private static final ResourceLocation modIcons = new ResourceLocation(ModInfo.MODID_LOWER, "textures/icons.png");
 
@@ -40,10 +41,12 @@ public class HUDOverlayHandler
 	@SubscribeEvent(priority=EventPriority.LOW)
 	public void onPreRender(RenderGameOverlayEvent.Pre event)
 	{
-		if (event.isCanceled())
+		if (event.getType() != RenderGameOverlayEvent.ElementType.FOOD)
 			return;
 
-		if (event.getType() != RenderGameOverlayEvent.ElementType.FOOD)
+		foodIconsOffset = GuiIngameForge.right_height;
+
+		if (event.isCanceled())
 			return;
 
 		if (!ModConfig.SHOW_FOOD_EXHAUSTION_UNDERLAY)
@@ -55,7 +58,7 @@ public class HUDOverlayHandler
 		ScaledResolution scale = event.getResolution();
 
 		int left = scale.getScaledWidth() / 2 + 91;
-		int top = scale.getScaledHeight() - GuiIngameForge.right_height;
+		int top = scale.getScaledHeight() - foodIconsOffset;
 
 		drawExhaustionOverlay(HungerHelper.getExhaustion(player), mc, left, top, 1f);
 	}
@@ -63,10 +66,10 @@ public class HUDOverlayHandler
 	@SubscribeEvent(priority=EventPriority.LOW)
 	public void onRender(RenderGameOverlayEvent.Post event)
 	{
-		if (event.isCanceled())
+		if (event.getType() != RenderGameOverlayEvent.ElementType.FOOD)
 			return;
 
-		if (event.getType() != RenderGameOverlayEvent.ElementType.FOOD)
+		if (event.isCanceled())
 			return;
 
 		if (!ModConfig.SHOW_FOOD_VALUES_OVERLAY && !ModConfig.SHOW_SATURATION_OVERLAY)
@@ -80,7 +83,7 @@ public class HUDOverlayHandler
 		ScaledResolution scale = event.getResolution();
 
 		int left = scale.getScaledWidth() / 2 + 91;
-		int top = scale.getScaledHeight() - GuiIngameForge.right_height + 10;
+		int top = scale.getScaledHeight() - foodIconsOffset;
 
 		// saturation overlay
 		if (ModConfig.SHOW_SATURATION_OVERLAY)
