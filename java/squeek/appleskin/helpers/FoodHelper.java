@@ -22,6 +22,25 @@ public class FoodHelper
 		{
 			return Math.min(20, hunger * saturationModifier * 2f);
 		}
+
+		@Override
+		public boolean equals(Object o)
+		{
+			if (this == o) return true;
+			if (!(o instanceof BasicFoodValues)) return false;
+
+			BasicFoodValues that = (BasicFoodValues) o;
+
+			return hunger == that.hunger && Float.compare(that.saturationModifier, saturationModifier) == 0;
+		}
+
+		@Override
+		public int hashCode()
+		{
+			int result = hunger;
+			result = 31 * result + (saturationModifier != +0.0f ? Float.floatToIntBits(saturationModifier) : 0);
+			return result;
+		}
 	}
 
 	public static boolean isFood(ItemStack itemStack)
