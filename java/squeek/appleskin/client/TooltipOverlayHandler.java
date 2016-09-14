@@ -63,7 +63,7 @@ public class TooltipOverlayHandler
 		FoodHelper.BasicFoodValues defaultFoodValues = FoodHelper.getDefaultFoodValues(hoveredStack);
 		FoodHelper.BasicFoodValues modifiedFoodValues = FoodHelper.getModifiedFoodValues(hoveredStack, player);
 
-		if (defaultFoodValues.equals(modifiedFoodValues) && defaultFoodValues.hunger == 0 && defaultFoodValues.saturationModifier == 0)
+		if (defaultFoodValues.equals(modifiedFoodValues) && defaultFoodValues.hunger == 0)
 			return;
 
 		int biggestHunger = Math.max(defaultFoodValues.hunger, modifiedFoodValues.hunger);
