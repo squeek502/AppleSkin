@@ -53,7 +53,7 @@ public class TooltipOverlayHandler
 		if (!FoodHelper.isFood(hoveredStack))
 			return;
 
-		EntityPlayer player = mc.thePlayer;
+		EntityPlayer player = mc.player;
 		ScaledResolution scale = new ScaledResolution(mc);
 		int toolTipY = event.getY();
 		int toolTipX = event.getX();

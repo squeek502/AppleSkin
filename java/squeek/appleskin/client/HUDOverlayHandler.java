@@ -53,7 +53,7 @@ public class HUDOverlayHandler
 			return;
 
 		Minecraft mc = Minecraft.getMinecraft();
-		EntityPlayer player = mc.thePlayer;
+		EntityPlayer player = mc.player;
 
 		ScaledResolution scale = event.getResolution();
 
@@ -76,7 +76,7 @@ public class HUDOverlayHandler
 			return;
 
 		Minecraft mc = Minecraft.getMinecraft();
-		EntityPlayer player = mc.thePlayer;
+		EntityPlayer player = mc.player;
 		ItemStack heldItem = player.getHeldItemMainhand();
 		FoodStats stats = player.getFoodStats();
 
@@ -89,7 +89,7 @@ public class HUDOverlayHandler
 		if (ModConfig.SHOW_SATURATION_OVERLAY)
 			drawSaturationOverlay(0, stats.getSaturationLevel(), mc, left, top, 1f);
 
-		if (!ModConfig.SHOW_FOOD_VALUES_OVERLAY || heldItem == null || !FoodHelper.isFood(heldItem))
+		if (!ModConfig.SHOW_FOOD_VALUES_OVERLAY || heldItem.isEmpty() || !FoodHelper.isFood(heldItem))
 		{
 			flashAlpha = 0;
 			alphaDir = 1;
@@ -155,7 +155,7 @@ public class HUDOverlayHandler
 			int icon = 16;
 			int background = 13;
 
-			if (mc.thePlayer.isPotionActive(MobEffects.HUNGER))
+			if (mc.player.isPotionActive(MobEffects.HUNGER))
 			{
 				icon += 36;
 				background = 13;
@@ -175,7 +175,7 @@ public class HUDOverlayHandler
 	{
 		mc.getTextureManager().bindTexture(modIcons);
 
-		float maxExhaustion = HungerHelper.getMaxExhaustion(mc.thePlayer);
+		float maxExhaustion = HungerHelper.getMaxExhaustion(mc.player);
 		float ratio = exhaustion / maxExhaustion;
 		int width = (int) (ratio * 81);
 		int height = 9;

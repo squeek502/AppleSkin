@@ -36,9 +36,9 @@ public class DebugInfoHandler
 		Minecraft mc = Minecraft.getMinecraft();
 		if (mc.gameSettings.showDebugInfo)
 		{
-			FoodStats stats = mc.thePlayer.getFoodStats();
-			float curExhaustion = HungerHelper.getExhaustion(mc.thePlayer);
-			float maxExhaustion = HungerHelper.getMaxExhaustion(mc.thePlayer);
+			FoodStats stats = mc.player.getFoodStats();
+			float curExhaustion = HungerHelper.getExhaustion(mc.player);
+			float maxExhaustion = HungerHelper.getMaxExhaustion(mc.player);
 			textEvent.getLeft().add("hunger: " + stats.getFoodLevel() + ", sat: " + saturationDF.format(stats.getSaturationLevel()) + ", exh: " + exhaustionValDF.format(curExhaustion) + "/" + exhaustionMaxDF.format(maxExhaustion));
 		}
 	}
