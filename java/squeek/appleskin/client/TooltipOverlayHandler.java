@@ -37,7 +37,7 @@ public class TooltipOverlayHandler
 	public void onRenderTooltip(RenderTooltipEvent.PostText event)
 	{
 		ItemStack hoveredStack = event.getStack();
-		if (hoveredStack == null)
+		if (hoveredStack == null || hoveredStack.isEmpty())
 			return;
 
 		boolean shouldShowTooltip = (ModConfig.SHOW_FOOD_VALUES_IN_TOOLTIP && KeyHelper.isShiftKeyDown()) || ModConfig.ALWAYS_SHOW_FOOD_VALUES_TOOLTIP;
