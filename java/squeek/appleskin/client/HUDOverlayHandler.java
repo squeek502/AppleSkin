@@ -99,9 +99,13 @@ public class HUDOverlayHandler
 		// restored hunger/saturation overlay while holding food
 		FoodHelper.BasicFoodValues foodValues = FoodHelper.getModifiedFoodValues(heldItem, player);
 		drawHungerOverlay(foodValues.hunger, stats.getFoodLevel(), mc, left, top, flashAlpha);
-		int newFoodValue = stats.getFoodLevel() + foodValues.hunger;
-		float newSaturationValue = stats.getSaturationLevel() + foodValues.getSaturationIncrement();
-		drawSaturationOverlay(newSaturationValue > newFoodValue ? newFoodValue - stats.getSaturationLevel() : foodValues.getSaturationIncrement(), stats.getSaturationLevel(), mc, left, top, flashAlpha);
+
+		if (ModConfig.SHOW_SATURATION_OVERLAY)
+		{
+			int newFoodValue = stats.getFoodLevel() + foodValues.hunger;
+			float newSaturationValue = stats.getSaturationLevel() + foodValues.getSaturationIncrement();
+			drawSaturationOverlay(newSaturationValue > newFoodValue ? newFoodValue - stats.getSaturationLevel() : foodValues.getSaturationIncrement(), stats.getSaturationLevel(), mc, left, top, flashAlpha);
+		}
 	}
 
 	public static void drawSaturationOverlay(float saturationGained, float saturationLevel, Minecraft mc, int left, int top, float alpha)
