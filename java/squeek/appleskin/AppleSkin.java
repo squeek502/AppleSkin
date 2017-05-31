@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import squeek.appleskin.client.DebugInfoHandler;
 import squeek.appleskin.client.HUDOverlayHandler;
 import squeek.appleskin.client.TooltipOverlayHandler;
+import squeek.appleskin.helpers.BetterWithModsHelper;
 import squeek.appleskin.network.SyncHandler;
 
 @Mod(modid = ModInfo.MODID, version = ModInfo.VERSION, acceptableRemoteVersions = "*", guiFactory = ModInfo.GUI_FACTORY_CLASS, dependencies = "after:jei@[3.8.1,); required-after:forge@[13.19.0,); after:applecore@[2.0.0,)")
@@ -24,6 +25,7 @@ public class AppleSkin
 	{
 		hasAppleCore = Loader.isModLoaded("AppleCore") || Loader.isModLoaded("applecore");
 		ModConfig.init(event.getSuggestedConfigurationFile());
+		BetterWithModsHelper.init();
 	}
 
 	@EventHandler

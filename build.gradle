@@ -27,6 +27,7 @@ def modId = project.projectDir.name
 archivesBaseName = modId + "-mc" + project.minecraft.version
 
 sourceSets.main.java.srcDirs += 'java'
+sourceSets.main.java.srcDirs += 'apis'
 sourceSets.main.resources.srcDirs += 'resources'
 
 repositories {

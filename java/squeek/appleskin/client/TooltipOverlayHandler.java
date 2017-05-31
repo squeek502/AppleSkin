@@ -17,6 +17,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.ModInfo;
+import squeek.appleskin.helpers.BetterWithModsHelper;
 import squeek.appleskin.helpers.FoodHelper;
 import squeek.appleskin.helpers.KeyHelper;
 
@@ -62,6 +63,10 @@ public class TooltipOverlayHandler
 
 		FoodHelper.BasicFoodValues defaultFoodValues = FoodHelper.getDefaultFoodValues(hoveredStack);
 		FoodHelper.BasicFoodValues modifiedFoodValues = FoodHelper.getModifiedFoodValues(hoveredStack, player);
+
+		// Apply BWM tweaks if necessary
+		defaultFoodValues = BetterWithModsHelper.getFoodValuesForDisplay(defaultFoodValues);
+		modifiedFoodValues = BetterWithModsHelper.getFoodValuesForDisplay(modifiedFoodValues);
 
 		if (defaultFoodValues.equals(modifiedFoodValues) && defaultFoodValues.hunger == 0)
 			return;
