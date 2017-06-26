@@ -5,6 +5,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MessageSaturationSync implements IMessage, IMessageHandler<MessageSaturationSync, IMessage>
 {
@@ -32,11 +34,13 @@ public class MessageSaturationSync implements IMessage, IMessageHandler<MessageS
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public IMessage onMessage(final MessageSaturationSync message, final MessageContext ctx)
 	{
 		// defer to the next game loop; we can't guarantee that Minecraft.thePlayer is initialized yet
 		Minecraft.getMinecraft().addScheduledTask(new Runnable() {
 			@Override
+			@SideOnly(Side.CLIENT)
 			public void run() {
 				NetworkHelper.getSidedPlayer(ctx).getFoodStats().setFoodSaturationLevel(message.saturationLevel);
 			}
