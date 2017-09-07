@@ -20,7 +20,7 @@ public class FoodHelper
 
 		public float getSaturationIncrement()
 		{
-			return Math.min(20, hunger * saturationModifier * 2f);
+			return hunger * saturationModifier * 2f;
 		}
 
 		@Override
