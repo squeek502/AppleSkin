@@ -7,7 +7,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class BetterWithModsHelper
 {
-	private static int FOOD_VALUE_DIVISOR = 6;
 	private static String HC_HUNGER_FEATURE_KEY = "hchunger";
 	public static boolean HC_HUNGER_ENABLED = false;
 
@@ -26,7 +25,7 @@ public class BetterWithModsHelper
 	public static FoodHelper.BasicFoodValues getFoodValuesForDisplay(FoodHelper.BasicFoodValues values)
 	{
 		if (HC_HUNGER_ENABLED)
-			return new BWMFoodValues(MathHelper.ceil((double) values.hunger / FOOD_VALUE_DIVISOR), values.saturationModifier);
+			return new BWMFoodValues(values.hunger, values.saturationModifier);
 		else
 			return values;
 	}

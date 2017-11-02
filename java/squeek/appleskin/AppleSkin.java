@@ -14,7 +14,7 @@ import squeek.appleskin.client.TooltipOverlayHandler;
 import squeek.appleskin.helpers.BetterWithModsHelper;
 import squeek.appleskin.network.SyncHandler;
 
-@Mod(modid = ModInfo.MODID, version = ModInfo.VERSION, acceptableRemoteVersions = "*", guiFactory = ModInfo.GUI_FACTORY_CLASS, dependencies = "after:jei@[4.6.0,); required-after:forge@[14.21.0,); after:applecore@[2.0.0,)")
+@Mod(modid = ModInfo.MODID, version = ModInfo.VERSION, acceptableRemoteVersions = "*", guiFactory = ModInfo.GUI_FACTORY_CLASS, dependencies = "after:jei@[4.6.0,); required-after:forge@[14.21.0,); after:applecore@[2.2.0,)")
 public class AppleSkin
 {
 	public static Logger Log = LogManager.getLogger(ModInfo.MODID);

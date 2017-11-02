@@ -19,8 +19,10 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
+import squeek.appleskin.AppleSkin;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.ModInfo;
+import squeek.appleskin.helpers.AppleCoreHelper;
 import squeek.appleskin.helpers.FoodHelper;
 import squeek.appleskin.helpers.HungerHelper;
 
@@ -98,6 +100,9 @@ public class HUDOverlayHandler
 
 		// restored hunger/saturation overlay while holding food
 		FoodHelper.BasicFoodValues foodValues = FoodHelper.getModifiedFoodValues(heldItem, player);
+		// Apply scale for altered max hunger if necessary
+		if (AppleSkin.hasAppleCore)
+			foodValues = AppleCoreHelper.getFoodValuesForDisplay(foodValues, player);
 		drawHungerOverlay(foodValues.hunger, stats.getFoodLevel(), mc, left, top, flashAlpha);
 
 		if (ModConfig.SHOW_SATURATION_OVERLAY)
