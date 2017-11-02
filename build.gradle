@@ -37,7 +37,7 @@ repositories {
 }
 
 dependencies {
-	deobfCompile "applecore:AppleCore:1.10.2-2.2.2:api"
+	deobfCompile "applecore:AppleCore:1.11.2-2.2.2:api"
 }
 
 processResources {
