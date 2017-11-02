@@ -15,8 +15,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
+import squeek.appleskin.AppleSkin;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.ModInfo;
+import squeek.appleskin.helpers.AppleCoreHelper;
 import squeek.appleskin.helpers.FoodHelper;
 import squeek.appleskin.helpers.KeyHelper;
 
@@ -62,6 +64,13 @@ public class TooltipOverlayHandler
 
 		FoodHelper.BasicFoodValues defaultFoodValues = FoodHelper.getDefaultFoodValues(hoveredStack);
 		FoodHelper.BasicFoodValues modifiedFoodValues = FoodHelper.getModifiedFoodValues(hoveredStack, player);
+
+		// Apply scale for altered max hunger if necessary
+		if (AppleSkin.hasAppleCore)
+		{
+			defaultFoodValues = AppleCoreHelper.getFoodValuesForDisplay(defaultFoodValues, player);
+			modifiedFoodValues = AppleCoreHelper.getFoodValuesForDisplay(modifiedFoodValues, player);
+		}
 
 		if (defaultFoodValues.equals(modifiedFoodValues) && defaultFoodValues.hunger == 0)
 			return;
