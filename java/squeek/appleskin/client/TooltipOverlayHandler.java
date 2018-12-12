@@ -1,54 +1,29 @@
 package squeek.appleskin.client;
 
-import net.minecraft.client.Minecraft;
+import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.class_308;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.Identifier;
 import org.lwjgl.opengl.GL11;
-import squeek.appleskin.AppleSkin;
-import squeek.appleskin.ModConfig;
-import squeek.appleskin.ModInfo;
-import squeek.appleskin.helpers.AppleCoreHelper;
-import squeek.appleskin.helpers.BetterWithModsHelper;
 import squeek.appleskin.helpers.FoodHelper;
-import squeek.appleskin.helpers.KeyHelper;
 
-@SideOnly(Side.CLIENT)
 public class TooltipOverlayHandler
 {
-	private static ResourceLocation modIcons = new ResourceLocation(ModInfo.MODID_LOWER, "textures/icons.png");
+	private static Identifier modIcons = new Identifier("appleskin", "textures/icons.png");
 	public static final int TOOLTIP_REAL_HEIGHT_OFFSET_BOTTOM = 3;
 	public static final int TOOLTIP_REAL_HEIGHT_OFFSET_TOP = -3;
 	public static final int TOOLTIP_REAL_WIDTH_OFFSET_RIGHT = 3;
 
-	public static void init()
+	public static void onRenderTooltip(ItemStack hoveredStack, int toolTipX, int toolTipY, int toolTipW, int toolTipH)
 	{
-		MinecraftForge.EVENT_BUS.register(new TooltipOverlayHandler());
-	}
-
-	@SubscribeEvent
-	public void onRenderTooltip(RenderTooltipEvent.PostText event)
-	{
-		ItemStack hoveredStack = event.getStack();
 		if (hoveredStack == null || hoveredStack.isEmpty())
 			return;
 
-		boolean shouldShowTooltip = (ModConfig.SHOW_FOOD_VALUES_IN_TOOLTIP && KeyHelper.isShiftKeyDown()) || ModConfig.ALWAYS_SHOW_FOOD_VALUES_TOOLTIP;
-		if (!shouldShowTooltip)
-			return;
-
-		Minecraft mc = Minecraft.getMinecraft();
-		GuiScreen gui = mc.currentScreen;
+		MinecraftClient mc = MinecraftClient.getInstance();
+		Gui gui = mc.currentGui;
 
 		if (gui == null)
 			return;
@@ -56,26 +31,10 @@ public class TooltipOverlayHandler
 		if (!FoodHelper.isFood(hoveredStack))
 			return;
 
-		EntityPlayer player = mc.player;
-		ScaledResolution scale = new ScaledResolution(mc);
-		int toolTipY = event.getY();
-		int toolTipX = event.getX();
-		int toolTipW = event.getWidth();
-		int toolTipH = event.getHeight();
+		PlayerEntity player = mc.player;
 
 		FoodHelper.BasicFoodValues defaultFoodValues = FoodHelper.getDefaultFoodValues(hoveredStack);
 		FoodHelper.BasicFoodValues modifiedFoodValues = FoodHelper.getModifiedFoodValues(hoveredStack, player);
-
-		// Apply scale for altered max hunger if necessary
-		if (AppleSkin.hasAppleCore)
-		{
-			defaultFoodValues = AppleCoreHelper.getFoodValuesForDisplay(defaultFoodValues, player);
-			modifiedFoodValues = AppleCoreHelper.getFoodValuesForDisplay(modifiedFoodValues, player);
-		}
-
-		// Apply BWM tweaks if necessary
-		defaultFoodValues = BetterWithModsHelper.getFoodValuesForDisplay(defaultFoodValues);
-		modifiedFoodValues = BetterWithModsHelper.getFoodValuesForDisplay(modifiedFoodValues);
 
 		if (defaultFoodValues.equals(modifiedFoodValues) && defaultFoodValues.hunger == 0)
 			return;
@@ -98,7 +57,7 @@ public class TooltipOverlayHandler
 		int toolTipBottomY = toolTipY + toolTipH + 1 + TOOLTIP_REAL_HEIGHT_OFFSET_BOTTOM;
 		int toolTipRightX = toolTipX + toolTipW + 1 + TOOLTIP_REAL_WIDTH_OFFSET_RIGHT;
 
-		boolean shouldDrawBelow = toolTipBottomY + 20 < scale.getScaledHeight() - 3;
+		boolean shouldDrawBelow = toolTipBottomY + 20 < mc.window.getScaledHeight() - 3;
 
 		int rightX = toolTipRightX - 3;
 		int leftX = rightX - (Math.max(barsNeeded * 9 + (int) (mc.fontRenderer.getStringWidth(hungerText) * 0.75f), saturationBarsNeeded * 6 + (int) (mc.fontRenderer.getStringWidth(saturationText) * 0.75f))) - 3;
@@ -106,7 +65,7 @@ public class TooltipOverlayHandler
 		int bottomY = topY + 19;
 
 		GlStateManager.disableLighting();
-		GlStateManager.disableDepth();
+		GlStateManager.disableDepthTest();
 
 		// bg
 		Gui.drawRect(leftX - 1, topY, rightX + 1, bottomY, 0xF0100010);
@@ -114,7 +73,7 @@ public class TooltipOverlayHandler
 		Gui.drawRect(leftX, topY, rightX, bottomY, 0x66FFFFFF);
 
 		// drawRect disables blending and modifies color, so reset them
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -129,28 +88,28 @@ public class TooltipOverlayHandler
 			x -= 9;
 
 			if (modifiedFoodValues.hunger < 0)
-				gui.drawTexturedModalRect(x, y, 34, 27, 9, 9);
+				gui.drawTexturedRect(x, y, 34, 27, 9, 9);
 			else if (modifiedFoodValues.hunger > defaultFoodValues.hunger && defaultFoodValues.hunger <= i)
-				gui.drawTexturedModalRect(x, y, 133, 27, 9, 9);
+				gui.drawTexturedRect(x, y, 133, 27, 9, 9);
 			else if (modifiedFoodValues.hunger > i + 1 || defaultFoodValues.hunger == modifiedFoodValues.hunger)
-				gui.drawTexturedModalRect(x, y, 16, 27, 9, 9);
+				gui.drawTexturedRect(x, y, 16, 27, 9, 9);
 			else if (modifiedFoodValues.hunger == i + 1)
-				gui.drawTexturedModalRect(x, y, 124, 27, 9, 9);
+				gui.drawTexturedRect(x, y, 124, 27, 9, 9);
 			else
-				gui.drawTexturedModalRect(x, y, 34, 27, 9, 9);
+				gui.drawTexturedRect(x, y, 34, 27, 9, 9);
 
-			GlStateManager.color(1.0F, 1.0F, 1.0F, .25F);
-			gui.drawTexturedModalRect(x, y, defaultFoodValues.hunger - 1 == i ? 115 : 106, 27, 9, 9);
-			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+			GlStateManager.color4f(1.0F, 1.0F, 1.0F, .25F);
+			gui.drawTexturedRect(x, y, defaultFoodValues.hunger - 1 == i ? 115 : 106, 27, 9, 9);
+			GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 			if (modifiedFoodValues.hunger > i)
-				gui.drawTexturedModalRect(x, y, modifiedFoodValues.hunger - 1 == i ? 61 : 52, 27, 9, 9);
+				gui.drawTexturedRect(x, y, modifiedFoodValues.hunger - 1 == i ? 61 : 52, 27, 9, 9);
 		}
 		if (hungerText != null)
 		{
 			GlStateManager.pushMatrix();
-			GlStateManager.scale(0.75F, 0.75F, 0.75F);
-			mc.fontRenderer.drawStringWithShadow(hungerText, x * 4 / 3 - mc.fontRenderer.getStringWidth(hungerText) + 2, y * 4 / 3 + 2, 0xFFDDDDDD);
+			GlStateManager.scalef(0.75F, 0.75F, 0.75F);
+			mc.fontRenderer.drawWithShadow(hungerText, x * 4 / 3 - mc.fontRenderer.getStringWidth(hungerText) + 2, y * 4 / 3 + 2, 0xFFDDDDDD);
 			GlStateManager.popMatrix();
 		}
 
@@ -159,7 +118,7 @@ public class TooltipOverlayHandler
 		float modifiedSaturationIncrement = modifiedFoodValues.getSaturationIncrement();
 		float absModifiedSaturationIncrement = Math.abs(modifiedSaturationIncrement);
 
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.getTextureManager().bindTexture(modIcons);
 		for (int i = 0; i < saturationBarsNeeded * 2; i += 2)
 		{
@@ -169,28 +128,28 @@ public class TooltipOverlayHandler
 
 			boolean shouldBeFaded = absModifiedSaturationIncrement <= i;
 			if (shouldBeFaded)
-				GlStateManager.color(1.0F, 1.0F, 1.0F, .5F);
+				GlStateManager.color4f(1.0F, 1.0F, 1.0F, .5F);
 
-			gui.drawTexturedModalRect(x, y, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7);
+			gui.drawTexturedRect(x, y, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7);
 
 			if (shouldBeFaded)
-				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+				GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 		}
 		if (saturationText != null)
 		{
 			GlStateManager.pushMatrix();
-			GlStateManager.scale(0.75F, 0.75F, 0.75F);
-			mc.fontRenderer.drawStringWithShadow(saturationText, x * 4 / 3 - mc.fontRenderer.getStringWidth(saturationText) + 2, y * 4 / 3 + 1, 0xFFDDDDDD);
+			GlStateManager.scalef(0.75F, 0.75F, 0.75F);
+			mc.fontRenderer.drawWithShadow(saturationText, x * 4 / 3 - mc.fontRenderer.getStringWidth(saturationText) + 2, y * 4 / 3 + 1, 0xFFDDDDDD);
 			GlStateManager.popMatrix();
 		}
 
 		GlStateManager.disableBlend();
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 		// reset to drawHoveringText state
 		GlStateManager.disableRescaleNormal();
-		RenderHelper.disableStandardItemLighting();
+		class_308.method_1450();
 		GlStateManager.disableLighting();
-		GlStateManager.disableDepth();
+		GlStateManager.disableDepthTest();
 	}
 }

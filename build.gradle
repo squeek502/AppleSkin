@@ -1,52 +1,34 @@
-buildscript {
-	repositories {
-		jcenter()
-		maven {
-			name = "forge"
-			url = "http://files.minecraftforge.net/maven"
-		}
-	}
-	dependencies {
-		classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-	}
+plugins {
+	id 'fabric-loom' version '0.1.0-SNAPSHOT'
 }
 
-apply plugin: 'net.minecraftforge.gradle.forge'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+archivesBaseName = "appleskin"
 
 minecraft {
-	version = minecraft_version + "-" + forge_version
-	mappings = mappings_version
-	runDir = "run"
-
-	replace "\${version}", project.version
-	replaceIn "ModInfo.java"
 }
-
-group = project.projectDir.name.toLowerCase()
-def modId = project.projectDir.name
-archivesBaseName = modId + "-mc" + project.minecraft.version
 
 sourceSets.main.java.srcDirs += 'java'
-sourceSets.main.java.srcDirs += 'apis'
 sourceSets.main.resources.srcDirs += 'resources'
 
-repositories {
-	maven {
-		url "http://www.ryanliptak.com/maven/"
-	}
-}
-
 dependencies {
-	deobfCompile "applecore:AppleCore:1.12-2.2.2:api"
+	minecraft "com.mojang:minecraft:18w49a"
+	mappings "net.fabricmc:yarn:18w49a.1"
+	modCompile "net.fabricmc:fabric-loader:0.2.0.58"
+
+	// Fabric API. This is technically optional, but you probably want it anyway.
+	modCompile "net.fabricmc:fabric:0.1.0.36"
 }
 
 processResources {
-	inputs.property "vars", project.version + project.minecraft.version
+	inputs.property "vars", project.version
 	from(sourceSets.main.resources.srcDirs) {
-		include '**/*.info'
-		expand 'version':project.version, 'mcversion':project.minecraft.version
+		include '**/fabric.mod.json'
+		expand 'version':project.version
 	}
 	from(sourceSets.main.resources.srcDirs) {
-		exclude '**/*.info'
+		exclude '**/fabric.mod.json'
 	}
 }

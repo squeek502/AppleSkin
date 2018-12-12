@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "package": "squeek.appleskin.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "GuiMixin",
+    "InGameHudMixin",
+    "MinecraftClientMixin",
+    "HungerManagerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1,
+    "maxShiftBy": 2,
+    "injectionPoints": [
+      "squeek.appleskin.mixin.util.BeforeInc"
+    ]
+  }
+}

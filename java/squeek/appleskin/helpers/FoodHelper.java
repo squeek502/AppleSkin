@@ -1,9 +1,8 @@
 package squeek.appleskin.helpers;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemFood;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.FoodItem;
 import net.minecraft.item.ItemStack;
-import squeek.appleskin.AppleSkin;
 
 public class FoodHelper
 {
@@ -45,29 +44,20 @@ public class FoodHelper
 
 	public static boolean isFood(ItemStack itemStack)
 	{
-		if (AppleSkin.hasAppleCore)
-			return AppleCoreHelper.isFood(itemStack);
-
-		return itemStack.getItem() instanceof ItemFood;
+		return itemStack.getItem() instanceof FoodItem;
 	}
 
 	public static BasicFoodValues getDefaultFoodValues(ItemStack itemStack)
 	{
-		if (AppleSkin.hasAppleCore)
-			return AppleCoreHelper.getDefaultFoodValues(itemStack);
-
-		ItemFood itemFood = (ItemFood) itemStack.getItem();
-		int hunger = itemFood.getHealAmount(itemStack);
-		float saturationModifier = itemFood.getSaturationModifier(itemStack);
+		FoodItem itemFood = (FoodItem) itemStack.getItem();
+		int hunger = itemFood.getHungerRestored(itemStack);
+		float saturationModifier = itemFood.getSaturatationRestored(itemStack);
 
 		return new BasicFoodValues(hunger, saturationModifier);
 	}
 
-	public static BasicFoodValues getModifiedFoodValues(ItemStack itemStack, EntityPlayer player)
+	public static BasicFoodValues getModifiedFoodValues(ItemStack itemStack, PlayerEntity player)
 	{
-		if (AppleSkin.hasAppleCore)
-			return AppleCoreHelper.getModifiedFoodValues(itemStack, player);
-
 		return getDefaultFoodValues(itemStack);
 	}
 }
