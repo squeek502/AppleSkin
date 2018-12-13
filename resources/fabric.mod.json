@@ -2,6 +2,7 @@
   "id": "appleskin",
   "name": "AppleSkin",
   "version": "${version}",
+  "description": "Adds various food-related HUD improvements",
   "side": "universal",
   "initializer": "squeek.appleskin.AppleSkin",
   "requires": {
