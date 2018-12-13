@@ -4,6 +4,9 @@
   "version": "${version}",
   "side": "universal",
   "initializer": "squeek.appleskin.AppleSkin",
+  "requires": {
+    "fabric": "*"
+  },
   "mixins": {
     "client": "appleskin.client.json",
     "common": "appleskin.common.json"
