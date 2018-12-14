@@ -17,7 +17,7 @@ public class InGameHudMixin
 		HudOverlayHandler.onPreRender();
 	}
 
-	@Inject(slice = @Slice(from = @At(value = "CONSTANT", args = "stringValue=food")), at = @At(value = "IINC", args = "intValue=-10", ordinal = 0), method = "method_1760()V")
+	@Inject(slice = @Slice(from = @At(value = "CONSTANT", args = "stringValue=food")), at = @At(value = "APPLESKIN_IINC", args = "intValue=-10", ordinal = 0), method = "method_1760()V")
 	private void renderFoodPost(CallbackInfo info)
 	{
 		HudOverlayHandler.onRender();
