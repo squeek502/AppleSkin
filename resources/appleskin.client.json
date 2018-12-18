@@ -5,8 +5,7 @@
   "mixins": [
     "GuiMixin",
     "InGameHudMixin",
-    "MinecraftClientMixin",
-    "HungerManagerMixin"
+    "MinecraftClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1,
