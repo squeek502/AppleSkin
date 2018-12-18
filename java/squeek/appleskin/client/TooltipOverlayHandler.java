@@ -1,9 +1,9 @@
 package squeek.appleskin.client;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.class_308;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.render.GuiLighting;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -148,7 +148,7 @@ public class TooltipOverlayHandler
 
 		// reset to drawHoveringText state
 		GlStateManager.disableRescaleNormal();
-		class_308.method_1450();
+		GuiLighting.disable();
 		GlStateManager.disableLighting();
 		GlStateManager.disableDepthTest();
 	}
