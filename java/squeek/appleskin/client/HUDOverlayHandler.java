@@ -48,7 +48,7 @@ public class HUDOverlayHandler
 		if (event.isCanceled())
 			return;
 
-		if (!ModConfig.SHOW_FOOD_EXHAUSTION_UNDERLAY)
+		if (!ModConfig.SHOW_FOOD_EXHAUSTION_UNDERLAY.get())
 			return;
 
 		Minecraft mc = Minecraft.getInstance();
@@ -69,7 +69,7 @@ public class HUDOverlayHandler
 		if (event.isCanceled())
 			return;
 
-		if (!ModConfig.SHOW_FOOD_VALUES_OVERLAY && !ModConfig.SHOW_SATURATION_OVERLAY)
+		if (!ModConfig.SHOW_FOOD_VALUES_OVERLAY.get() && !ModConfig.SHOW_SATURATION_OVERLAY.get())
 			return;
 
 		Minecraft mc = Minecraft.getInstance();
@@ -81,10 +81,10 @@ public class HUDOverlayHandler
 		int top = mc.mainWindow.getScaledHeight() - foodIconsOffset;
 
 		// saturation overlay
-		if (ModConfig.SHOW_SATURATION_OVERLAY)
+		if (ModConfig.SHOW_SATURATION_OVERLAY.get())
 			drawSaturationOverlay(0, stats.getSaturationLevel(), mc, left, top, 1f);
 
-		if (!ModConfig.SHOW_FOOD_VALUES_OVERLAY || heldItem.isEmpty() || !FoodHelper.isFood(heldItem))
+		if (!ModConfig.SHOW_FOOD_VALUES_OVERLAY.get() || heldItem.isEmpty() || !FoodHelper.isFood(heldItem))
 		{
 			flashAlpha = 0;
 			alphaDir = 1;
@@ -95,7 +95,7 @@ public class HUDOverlayHandler
 		FoodHelper.BasicFoodValues foodValues = FoodHelper.getModifiedFoodValues(heldItem, player);
 		drawHungerOverlay(foodValues.hunger, stats.getFoodLevel(), mc, left, top, flashAlpha);
 
-		if (ModConfig.SHOW_SATURATION_OVERLAY)
+		if (ModConfig.SHOW_SATURATION_OVERLAY.get())
 		{
 			int newFoodValue = stats.getFoodLevel() + foodValues.hunger;
 			float newSaturationValue = stats.getSaturationLevel() + foodValues.getSaturationIncrement();

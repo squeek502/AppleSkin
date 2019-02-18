@@ -7,6 +7,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import squeek.appleskin.ModConfig;
 import squeek.appleskin.helpers.HungerHelper;
 
 import java.text.DecimalFormat;
@@ -29,7 +30,7 @@ public class DebugInfoHandler
 		if (textEvent.getType() != RenderGameOverlayEvent.ElementType.TEXT)
 			return;
 
-		if (!ModConfig.SHOW_FOOD_DEBUG_INFO)
+		if (!ModConfig.SHOW_FOOD_DEBUG_INFO.get())
 			return;
 
 		Minecraft mc = Minecraft.getInstance();

@@ -4,7 +4,7 @@ issueTrackerURL="https://github.com/squeek502/AppleSkin"
 
 [[mods]]
 modId="appleskin"
-version="${file.jarVersion}"
+version="${version}"
 displayName="AppleSkin"
 #updateJSONURL=""
 displayURL="https://github.com/squeek502/AppleSkin"

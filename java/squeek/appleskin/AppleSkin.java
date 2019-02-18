@@ -12,6 +12,8 @@ import squeek.appleskin.client.HUDOverlayHandler;
 import squeek.appleskin.client.TooltipOverlayHandler;
 import squeek.appleskin.network.SyncHandler;
 
+import java.nio.file.Paths;
+
 @Mod(ModInfo.MODID)
 public class AppleSkin
 {
@@ -28,7 +30,7 @@ public class AppleSkin
 
 	private void preInit(final FMLCommonSetupEvent event)
 	{
-		//ModConfig.init();
+		ModConfig.init(Paths.get("config", ModInfo.MODID + ".toml"));
 
 		SyncHandler.init();
 	}
