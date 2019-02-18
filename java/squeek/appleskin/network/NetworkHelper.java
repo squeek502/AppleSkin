@@ -1,14 +1,14 @@
 package squeek.appleskin.network;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 public class NetworkHelper
 {
-	public static EntityPlayer getSidedPlayer(MessageContext ctx)
+	public static EntityPlayer getSidedPlayer(NetworkEvent.Context ctx)
 	{
-		return ctx.side == Side.SERVER ? ctx.getServerHandler().player : FMLClientHandler.instance().getClientPlayerEntity();
+		return ctx.getDirection() == NetworkDirection.PLAY_TO_SERVER ? ctx.getSender() : Minecraft.getInstance().player;
 	}
 }

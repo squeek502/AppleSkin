@@ -45,17 +45,11 @@ public class FoodHelper
 
 	public static boolean isFood(ItemStack itemStack)
 	{
-		if (AppleSkin.hasAppleCore)
-			return AppleCoreHelper.isFood(itemStack);
-
 		return itemStack.getItem() instanceof ItemFood;
 	}
 
 	public static BasicFoodValues getDefaultFoodValues(ItemStack itemStack)
 	{
-		if (AppleSkin.hasAppleCore)
-			return AppleCoreHelper.getDefaultFoodValues(itemStack);
-
 		ItemFood itemFood = (ItemFood) itemStack.getItem();
 		int hunger = itemFood.getHealAmount(itemStack);
 		float saturationModifier = itemFood.getSaturationModifier(itemStack);
@@ -65,9 +59,6 @@ public class FoodHelper
 
 	public static BasicFoodValues getModifiedFoodValues(ItemStack itemStack, EntityPlayer player)
 	{
-		if (AppleSkin.hasAppleCore)
-			return AppleCoreHelper.getModifiedFoodValues(itemStack, player);
-
 		return getDefaultFoodValues(itemStack);
 	}
 }

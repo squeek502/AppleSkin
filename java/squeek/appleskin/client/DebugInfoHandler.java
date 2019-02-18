@@ -2,17 +2,16 @@ package squeek.appleskin.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.FoodStats;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import squeek.appleskin.ModConfig;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import squeek.appleskin.helpers.HungerHelper;
 
 import java.text.DecimalFormat;
 
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class DebugInfoHandler
 {
 	private static final DecimalFormat saturationDF = new DecimalFormat("#.##");
@@ -33,7 +32,7 @@ public class DebugInfoHandler
 		if (!ModConfig.SHOW_FOOD_DEBUG_INFO)
 			return;
 
-		Minecraft mc = Minecraft.getMinecraft();
+		Minecraft mc = Minecraft.getInstance();
 		if (mc.gameSettings.showDebugInfo)
 		{
 			FoodStats stats = mc.player.getFoodStats();

@@ -2,31 +2,28 @@ package squeek.appleskin.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.FoodStats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
-import squeek.appleskin.AppleSkin;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.ModInfo;
-import squeek.appleskin.helpers.AppleCoreHelper;
 import squeek.appleskin.helpers.FoodHelper;
 import squeek.appleskin.helpers.HungerHelper;
 
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class HUDOverlayHandler
 {
 	private float flashAlpha = 0f;
@@ -40,7 +37,7 @@ public class HUDOverlayHandler
 		MinecraftForge.EVENT_BUS.register(new HUDOverlayHandler());
 	}
 
-	@SubscribeEvent(priority=EventPriority.LOW)
+	@SubscribeEvent(priority = EventPriority.LOW)
 	public void onPreRender(RenderGameOverlayEvent.Pre event)
 	{
 		if (event.getType() != RenderGameOverlayEvent.ElementType.FOOD)
@@ -54,18 +51,16 @@ public class HUDOverlayHandler
 		if (!ModConfig.SHOW_FOOD_EXHAUSTION_UNDERLAY)
 			return;
 
-		Minecraft mc = Minecraft.getMinecraft();
+		Minecraft mc = Minecraft.getInstance();
 		EntityPlayer player = mc.player;
 
-		ScaledResolution scale = event.getResolution();
-
-		int left = scale.getScaledWidth() / 2 + 91;
-		int top = scale.getScaledHeight() - foodIconsOffset;
+		int left = mc.mainWindow.getScaledWidth() / 2 + 91;
+		int top = mc.mainWindow.getScaledHeight() - foodIconsOffset;
 
 		drawExhaustionOverlay(HungerHelper.getExhaustion(player), mc, left, top, 1f);
 	}
 
-	@SubscribeEvent(priority=EventPriority.LOW)
+	@SubscribeEvent(priority = EventPriority.LOW)
 	public void onRender(RenderGameOverlayEvent.Post event)
 	{
 		if (event.getType() != RenderGameOverlayEvent.ElementType.FOOD)
@@ -77,15 +72,13 @@ public class HUDOverlayHandler
 		if (!ModConfig.SHOW_FOOD_VALUES_OVERLAY && !ModConfig.SHOW_SATURATION_OVERLAY)
 			return;
 
-		Minecraft mc = Minecraft.getMinecraft();
+		Minecraft mc = Minecraft.getInstance();
 		EntityPlayer player = mc.player;
 		ItemStack heldItem = player.getHeldItemMainhand();
 		FoodStats stats = player.getFoodStats();
 
-		ScaledResolution scale = event.getResolution();
-
-		int left = scale.getScaledWidth() / 2 + 91;
-		int top = scale.getScaledHeight() - foodIconsOffset;
+		int left = mc.mainWindow.getScaledWidth() / 2 + 91;
+		int top = mc.mainWindow.getScaledHeight() - foodIconsOffset;
 
 		// saturation overlay
 		if (ModConfig.SHOW_SATURATION_OVERLAY)
@@ -100,9 +93,6 @@ public class HUDOverlayHandler
 
 		// restored hunger/saturation overlay while holding food
 		FoodHelper.BasicFoodValues foodValues = FoodHelper.getModifiedFoodValues(heldItem, player);
-		// Apply scale for altered max hunger if necessary
-		if (AppleSkin.hasAppleCore)
-			foodValues = AppleCoreHelper.getFoodValuesForDisplay(foodValues, player);
 		drawHungerOverlay(foodValues.hunger, stats.getFoodLevel(), mc, left, top, flashAlpha);
 
 		if (ModConfig.SHOW_SATURATION_OVERLAY)
@@ -204,7 +194,7 @@ public class HUDOverlayHandler
 		if (alpha == 1f)
 			return;
 
-		GlStateManager.color(1.0F, 1.0F, 1.0F, alpha);
+		GlStateManager.color4f(1.0F, 1.0F, 1.0F, alpha);
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
@@ -215,7 +205,7 @@ public class HUDOverlayHandler
 		if (alpha == 1f)
 			return;
 
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 	}
 
 	@SubscribeEvent

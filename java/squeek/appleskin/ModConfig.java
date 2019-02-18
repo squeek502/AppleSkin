@@ -1,15 +1,14 @@
 package squeek.appleskin;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.File;
 
 public class ModConfig
 {
-	public static Configuration config;
+	public static net.minecraftforge.fml.config.ModConfig config;
 
 	/*
 	 * CLIENT
@@ -48,48 +47,48 @@ public class ModConfig
 	private static final String SHOW_FOOD_DEBUG_INFO_COMMENT =
 			"If true, adds a line that shows your hunger, saturation, and exhaustion level in the F3 debug overlay";
 
-	public static void init(File file)
-	{
-		config = new Configuration(file);
+//	public static void init(File file)
+//	{
+//		config = new net.minecraftforge.fml.config.ModConfig(file);
+//
+//		load();
+//		sync();
+//
+//		MinecraftForge.EVENT_BUS.register(new ModConfig());
+//	}
+//
+//	@SubscribeEvent
+//	public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event)
+//	{
+//		if (event.getModID().equals(ModInfo.MODID))
+//			ModConfig.sync();
+//	}
 
-		load();
-		sync();
+//	public static void sync()
+//	{
+//		/*
+//		 * CLIENT
+//		 */
+//		config.getCategory(CATEGORY_CLIENT).setComment(CATEGORY_CLIENT_COMMENT);
+//
+//		SHOW_FOOD_VALUES_IN_TOOLTIP = config.get(CATEGORY_CLIENT, SHOW_FOOD_VALUES_IN_TOOLTIP_NAME, true, SHOW_FOOD_VALUES_IN_TOOLTIP_COMMENT).getBoolean(true);
+//		ALWAYS_SHOW_FOOD_VALUES_TOOLTIP = config.get(CATEGORY_CLIENT, ALWAYS_SHOW_FOOD_VALUES_TOOLTIP_NAME, true, ALWAYS_SHOW_FOOD_VALUES_TOOLTIP_COMMENT).getBoolean(true);
+//		SHOW_SATURATION_OVERLAY = config.get(CATEGORY_CLIENT, SHOW_SATURATION_OVERLAY_NAME, true, SHOW_SATURATION_OVERLAY_COMMENT).getBoolean(true);
+//		SHOW_FOOD_VALUES_OVERLAY = config.get(CATEGORY_CLIENT, SHOW_FOOD_VALUES_OVERLAY_NAME, true, SHOW_FOOD_VALUES_OVERLAY_COMMENT).getBoolean(true);
+//		SHOW_FOOD_EXHAUSTION_UNDERLAY = config.get(CATEGORY_CLIENT, SHOW_FOOD_EXHAUSTION_UNDERLAY_NAME, true, SHOW_FOOD_EXHAUSTION_UNDERLAY_COMMENT).getBoolean(true);
+//		SHOW_FOOD_DEBUG_INFO = config.get(CATEGORY_CLIENT, SHOW_FOOD_DEBUG_INFO_NAME, true, SHOW_FOOD_DEBUG_INFO_COMMENT).getBoolean(true);
+//
+//		if (config.hasChanged())
+//			save();
+//	}
 
-		MinecraftForge.EVENT_BUS.register(new ModConfig());
-	}
+//	public static void save()
+//	{
+//		config.save();
+//	}
 
-	@SubscribeEvent
-	public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event)
-	{
-		if (event.getModID().equals(ModInfo.MODID))
-			ModConfig.sync();
-	}
-
-	public static void sync()
-	{
-		/*
-		 * CLIENT
-		 */
-		config.getCategory(CATEGORY_CLIENT).setComment(CATEGORY_CLIENT_COMMENT);
-
-		SHOW_FOOD_VALUES_IN_TOOLTIP = config.get(CATEGORY_CLIENT, SHOW_FOOD_VALUES_IN_TOOLTIP_NAME, true, SHOW_FOOD_VALUES_IN_TOOLTIP_COMMENT).getBoolean(true);
-		ALWAYS_SHOW_FOOD_VALUES_TOOLTIP = config.get(CATEGORY_CLIENT, ALWAYS_SHOW_FOOD_VALUES_TOOLTIP_NAME, true, ALWAYS_SHOW_FOOD_VALUES_TOOLTIP_COMMENT).getBoolean(true);
-		SHOW_SATURATION_OVERLAY = config.get(CATEGORY_CLIENT, SHOW_SATURATION_OVERLAY_NAME, true, SHOW_SATURATION_OVERLAY_COMMENT).getBoolean(true);
-		SHOW_FOOD_VALUES_OVERLAY = config.get(CATEGORY_CLIENT, SHOW_FOOD_VALUES_OVERLAY_NAME, true, SHOW_FOOD_VALUES_OVERLAY_COMMENT).getBoolean(true);
-		SHOW_FOOD_EXHAUSTION_UNDERLAY = config.get(CATEGORY_CLIENT, SHOW_FOOD_EXHAUSTION_UNDERLAY_NAME, true, SHOW_FOOD_EXHAUSTION_UNDERLAY_COMMENT).getBoolean(true);
-		SHOW_FOOD_DEBUG_INFO = config.get(CATEGORY_CLIENT, SHOW_FOOD_DEBUG_INFO_NAME, true, SHOW_FOOD_DEBUG_INFO_COMMENT).getBoolean(true);
-
-		if (config.hasChanged())
-			save();
-	}
-
-	public static void save()
-	{
-		config.save();
-	}
-
-	public static void load()
-	{
-		config.load();
-	}
+//	public static void load()
+//	{
+//		config.load();
+//	}
 }

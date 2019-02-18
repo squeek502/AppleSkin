@@ -2,28 +2,34 @@ package squeek.appleskin.helpers;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.FoodStats;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
-import squeek.appleskin.AppleSkin;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import java.lang.reflect.Field;
 
 public class HungerHelper
 {
-	protected static final Field foodExhaustion = ReflectionHelper.findField(FoodStats.class, "foodExhaustionLevel", "field_75126_c", "c");
+	protected static final Field foodExhaustion;
+
+	static
+	{
+		try
+		{
+			foodExhaustion = FoodStats.class.getDeclaredField(ObfuscationReflectionHelper.remapName("field_75126_c"));
+			foodExhaustion.setAccessible(true);
+		}
+		catch (NoSuchFieldException e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
 
 	public static float getMaxExhaustion(EntityPlayer player)
 	{
-		if (AppleSkin.hasAppleCore)
-			return AppleCoreHelper.getMaxExhaustion(player);
-
 		return 4.0f;
 	}
 
 	public static float getExhaustion(EntityPlayer player)
 	{
-		if (AppleSkin.hasAppleCore)
-			return AppleCoreHelper.getExhaustion(player);
-
 		try
 		{
 			return foodExhaustion.getFloat(player.getFoodStats());
@@ -36,12 +42,6 @@ public class HungerHelper
 
 	public static void setExhaustion(EntityPlayer player, float exhaustion)
 	{
-		if (AppleSkin.hasAppleCore)
-		{
-			AppleCoreHelper.setExhaustion(player, exhaustion);
-			return;
-		}
-
 		try
 		{
 			foodExhaustion.setFloat(player.getFoodStats(), exhaustion);

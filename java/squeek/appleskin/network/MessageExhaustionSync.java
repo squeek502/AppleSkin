@@ -1,50 +1,38 @@
 package squeek.appleskin.network;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.network.NetworkEvent;
 import squeek.appleskin.helpers.HungerHelper;
 
-public class MessageExhaustionSync implements IMessage, IMessageHandler<MessageExhaustionSync, IMessage>
+import java.util.function.Supplier;
+
+public class MessageExhaustionSync
 {
 	float exhaustionLevel;
-
-	public MessageExhaustionSync()
-	{
-	}
 
 	public MessageExhaustionSync(float exhaustionLevel)
 	{
 		this.exhaustionLevel = exhaustionLevel;
 	}
 
-	@Override
-	public void toBytes(ByteBuf buf)
+	public static void encode(MessageExhaustionSync pkt, PacketBuffer buf)
 	{
-		buf.writeFloat(exhaustionLevel);
+		buf.writeFloat(pkt.exhaustionLevel);
 	}
 
-	@Override
-	public void fromBytes(ByteBuf buf)
+	public static MessageExhaustionSync decode(PacketBuffer buf)
 	{
-		exhaustionLevel = buf.readFloat();
+		return new MessageExhaustionSync(buf.readFloat());
 	}
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IMessage onMessage(final MessageExhaustionSync message, final MessageContext ctx)
+	@OnlyIn(Dist.CLIENT)
+	public static void handle(final MessageExhaustionSync message, Supplier<NetworkEvent.Context> ctx)
 	{
-		// defer to the next game loop; we can't guarantee that Minecraft.thePlayer is initialized yet
-		Minecraft.getMinecraft().addScheduledTask(new Runnable() {
-			@Override
-			public void run() {
-				HungerHelper.setExhaustion(NetworkHelper.getSidedPlayer(ctx), message.exhaustionLevel);
-			}
+		ctx.get().enqueueWork(() -> {
+			HungerHelper.setExhaustion(NetworkHelper.getSidedPlayer(ctx.get()), message.exhaustionLevel);
 		});
-		return null;
+		ctx.get().setPacketHandled(true);
 	}
 }

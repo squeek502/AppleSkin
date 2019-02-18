@@ -1,0 +1,13 @@
+modLoader="javafml"
+loaderVersion="[25,)"
+issueTrackerURL="https://github.com/squeek502/AppleSkin"
+
+[[mods]]
+modId="appleskin"
+version="${file.jarVersion}"
+displayName="AppleSkin"
+#updateJSONURL=""
+displayURL="https://github.com/squeek502/AppleSkin"
+#logoFile="appleskin.png"
+authors="squeek"
+description="Adds various food-related HUD improvements"

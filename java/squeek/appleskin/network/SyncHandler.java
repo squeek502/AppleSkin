@@ -1,13 +1,14 @@
 package squeek.appleskin.network;
 
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 import squeek.appleskin.ModInfo;
 import squeek.appleskin.helpers.HungerHelper;
 
@@ -17,12 +18,18 @@ import java.util.UUID;
 
 public class SyncHandler
 {
-	public static final SimpleNetworkWrapper CHANNEL = NetworkRegistry.INSTANCE.newSimpleChannel(ModInfo.MODID);
+	private static final String PROTOCOL_VERSION = Integer.toString(1);
+	public static final SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
+		.named(new ResourceLocation(ModInfo.MODID, "sync"))
+		.clientAcceptedVersions(PROTOCOL_VERSION::equals)
+		.serverAcceptedVersions(PROTOCOL_VERSION::equals)
+		.networkProtocolVersion(() -> PROTOCOL_VERSION)
+		.simpleChannel();
 
 	public static void init()
 	{
-		CHANNEL.registerMessage(MessageExhaustionSync.class, MessageExhaustionSync.class, 1, Side.CLIENT);
-		CHANNEL.registerMessage(MessageSaturationSync.class, MessageSaturationSync.class, 2, Side.CLIENT);
+		CHANNEL.registerMessage(1, MessageExhaustionSync.class, MessageExhaustionSync::encode, MessageExhaustionSync::decode, MessageExhaustionSync::handle);
+		CHANNEL.registerMessage(2, MessageSaturationSync.class, MessageSaturationSync::encode, MessageSaturationSync::decode, MessageSaturationSync::handle);
 
 		MinecraftForge.EVENT_BUS.register(new SyncHandler());
 	}
@@ -31,8 +38,8 @@ public class SyncHandler
 	 * Sync saturation (vanilla MC only syncs when it hits 0)
 	 * Sync exhaustion (vanilla MC does not sync it at all)
 	 */
-	private static final Map<UUID, Float> lastSaturationLevels = new HashMap<UUID, Float>();
-	private static final Map<UUID, Float> lastExhaustionLevels = new HashMap<UUID, Float>();
+	private static final Map<UUID, Float> lastSaturationLevels = new HashMap<>();
+	private static final Map<UUID, Float> lastExhaustionLevels = new HashMap<>();
 
 	@SubscribeEvent
 	public void onLivingUpdateEvent(LivingUpdateEvent event)
@@ -46,14 +53,16 @@ public class SyncHandler
 
 		if (lastSaturationLevel == null || lastSaturationLevel != player.getFoodStats().getSaturationLevel())
 		{
-			CHANNEL.sendTo(new MessageSaturationSync(player.getFoodStats().getSaturationLevel()), player);
+			Object msg = new MessageSaturationSync(player.getFoodStats().getSaturationLevel());
+			CHANNEL.sendTo(msg, player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
 			lastSaturationLevels.put(player.getUniqueID(), player.getFoodStats().getSaturationLevel());
 		}
 
 		float exhaustionLevel = HungerHelper.getExhaustion(player);
 		if (lastExhaustionLevel == null || Math.abs(lastExhaustionLevel - exhaustionLevel) >= 0.01f)
 		{
-			CHANNEL.sendTo(new MessageExhaustionSync(exhaustionLevel), player);
+			Object msg = new MessageExhaustionSync(exhaustionLevel);
+			CHANNEL.sendTo(msg, player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
 			lastExhaustionLevels.put(player.getUniqueID(), exhaustionLevel);
 		}
 	}
@@ -61,10 +70,10 @@ public class SyncHandler
 	@SubscribeEvent
 	public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
 	{
-		if (!(event.player instanceof EntityPlayerMP))
+		if (!(event.getPlayer() instanceof EntityPlayerMP))
 			return;
 
-		lastSaturationLevels.remove(event.player.getUniqueID());
-		lastExhaustionLevels.remove(event.player.getUniqueID());
+		lastSaturationLevels.remove(event.getPlayer().getUniqueID());
+		lastExhaustionLevels.remove(event.getPlayer().getUniqueID());
 	}
 }

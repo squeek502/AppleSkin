@@ -1,50 +1,37 @@
 package squeek.appleskin.network;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-public class MessageSaturationSync implements IMessage, IMessageHandler<MessageSaturationSync, IMessage>
+import java.util.function.Supplier;
+
+public class MessageSaturationSync
 {
 	float saturationLevel;
-
-	public MessageSaturationSync()
-	{
-	}
 
 	public MessageSaturationSync(float saturationLevel)
 	{
 		this.saturationLevel = saturationLevel;
 	}
 
-	@Override
-	public void toBytes(ByteBuf buf)
+	public static void encode(MessageSaturationSync pkt, PacketBuffer buf)
 	{
-		buf.writeFloat(saturationLevel);
+		buf.writeFloat(pkt.saturationLevel);
 	}
 
-	@Override
-	public void fromBytes(ByteBuf buf)
+	public static MessageSaturationSync decode(PacketBuffer buf)
 	{
-		saturationLevel = buf.readFloat();
+		return new MessageSaturationSync(buf.readFloat());
 	}
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IMessage onMessage(final MessageSaturationSync message, final MessageContext ctx)
+	@OnlyIn(Dist.CLIENT)
+	public static void handle(final MessageSaturationSync message, Supplier<NetworkEvent.Context> ctx)
 	{
-		// defer to the next game loop; we can't guarantee that Minecraft.thePlayer is initialized yet
-		Minecraft.getMinecraft().addScheduledTask(new Runnable() {
-			@Override
-			@SideOnly(Side.CLIENT)
-			public void run() {
-				NetworkHelper.getSidedPlayer(ctx).getFoodStats().setFoodSaturationLevel(message.saturationLevel);
-			}
+		ctx.get().enqueueWork(() -> {
+			NetworkHelper.getSidedPlayer(ctx.get()).getFoodStats().setFoodSaturationLevel(message.saturationLevel);
 		});
-		return null;
+		ctx.get().setPacketHandled(true);
 	}
 }
