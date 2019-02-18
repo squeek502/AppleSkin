@@ -2,7 +2,7 @@ package squeek.appleskin.client;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.Screen;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
@@ -81,18 +81,18 @@ public class HudOverlayHandler
 			float effectiveSaturationOfBar = (saturationLevel + saturationGained) / 2 - i;
 
 			if (effectiveSaturationOfBar >= 1)
-				mc.hudInGame.drawTexturedRect(x, y, 27, 0, 9, 9);
+				mc.inGameHud.drawTexturedRect(x, y, 27, 0, 9, 9);
 			else if (effectiveSaturationOfBar > .5)
-				mc.hudInGame.drawTexturedRect(x, y, 18, 0, 9, 9);
+				mc.inGameHud.drawTexturedRect(x, y, 18, 0, 9, 9);
 			else if (effectiveSaturationOfBar > .25)
-				mc.hudInGame.drawTexturedRect(x, y, 9, 0, 9, 9);
+				mc.inGameHud.drawTexturedRect(x, y, 9, 0, 9, 9);
 			else if (effectiveSaturationOfBar > 0)
-				mc.hudInGame.drawTexturedRect(x, y, 0, 0, 9, 9);
+				mc.inGameHud.drawTexturedRect(x, y, 0, 0, 9, 9);
 		}
 		disableAlpha(alpha);
 
 		// rebind default icons
-		mc.getTextureManager().bindTexture(Gui.ICONS);
+		mc.getTextureManager().bindTexture(Screen.ICONS);
 	}
 
 	public static void drawHungerOverlay(int hungerRestored, int foodLevel, MinecraftClient mc, int left, int top, float alpha)
@@ -103,7 +103,7 @@ public class HudOverlayHandler
 		int startBar = foodLevel / 2;
 		int endBar = (int) Math.ceil(Math.min(20, foodLevel + hungerRestored) / 2f);
 		int barsNeeded = endBar - startBar;
-		mc.getTextureManager().bindTexture(Gui.ICONS);
+		mc.getTextureManager().bindTexture(Screen.ICONS);
 
 		enableAlpha(alpha);
 		for (int i = startBar; i < startBar + barsNeeded; ++i)
@@ -120,12 +120,12 @@ public class HudOverlayHandler
 				background = 13;
 			}
 
-			mc.hudInGame.drawTexturedRect(x, y, 16 + background * 9, 27, 9, 9);
+			mc.inGameHud.drawTexturedRect(x, y, 16 + background * 9, 27, 9, 9);
 
 			if (idx < foodLevel + hungerRestored)
-				mc.hudInGame.drawTexturedRect(x, y, icon + 36, 27, 9, 9);
+				mc.inGameHud.drawTexturedRect(x, y, icon + 36, 27, 9, 9);
 			else if (idx == foodLevel + hungerRestored)
-				mc.hudInGame.drawTexturedRect(x, y, icon + 45, 27, 9, 9);
+				mc.inGameHud.drawTexturedRect(x, y, icon + 45, 27, 9, 9);
 		}
 		disableAlpha(alpha);
 	}
@@ -140,11 +140,11 @@ public class HudOverlayHandler
 		int height = 9;
 
 		enableAlpha(.75f);
-		mc.hudInGame.drawTexturedRect(left - width, top, 81 - width, 18, width, height);
+		mc.inGameHud.drawTexturedRect(left - width, top, 81 - width, 18, width, height);
 		disableAlpha(.75f);
 
 		// rebind default icons
-		mc.getTextureManager().bindTexture(Gui.ICONS);
+		mc.getTextureManager().bindTexture(Screen.ICONS);
 	}
 
 	private static void enableAlpha(float alpha)

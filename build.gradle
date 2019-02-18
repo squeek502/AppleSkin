@@ -1,11 +1,12 @@
 plugins {
-	id 'fabric-loom' version '0.1.0-SNAPSHOT'
+	id 'fabric-loom' version '0.2.0-SNAPSHOT'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
-archivesBaseName = "appleskin"
+archivesBaseName = project.archives_base_name
+group = project.maven_group
 
 minecraft {
 }
@@ -14,11 +15,12 @@ sourceSets.main.java.srcDirs += 'java'
 sourceSets.main.resources.srcDirs += 'resources'
 
 dependencies {
-	minecraft "com.mojang:minecraft:18w50a"
-	mappings "net.fabricmc:yarn:18w50a.39"
-	modCompile "net.fabricmc:fabric-loader:0.2.0.64"
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}"
+	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
+
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	modCompile "net.fabricmc:fabric:0.1.1.47"
+	modCompile "net.fabricmc:fabric:${project.fabric_version}"
 }
 
 processResources {
@@ -30,4 +32,17 @@ processResources {
 	from(sourceSets.main.resources.srcDirs) {
 		exclude '**/fabric.mod.json'
 	}
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = "UTF-8"
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+	classifier = "sources"
+	from sourceSets.main.allSource
+}
+
+jar {
+	from "LICENSE"
 }

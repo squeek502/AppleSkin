@@ -2,7 +2,7 @@ package squeek.appleskin.client;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.Screen;
 import net.minecraft.client.render.GuiLighting;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -23,7 +23,7 @@ public class TooltipOverlayHandler
 			return;
 
 		MinecraftClient mc = MinecraftClient.getInstance();
-		Gui gui = mc.currentGui;
+		Screen gui = mc.currentScreen;
 
 		if (gui == null)
 			return;
@@ -68,9 +68,9 @@ public class TooltipOverlayHandler
 		GlStateManager.disableDepthTest();
 
 		// bg
-		Gui.drawRect(leftX - 1, topY, rightX + 1, bottomY, 0xF0100010);
-		Gui.drawRect(leftX, (shouldDrawBelow ? bottomY : topY - 1), rightX, (shouldDrawBelow ? bottomY + 1 : topY), 0xF0100010);
-		Gui.drawRect(leftX, topY, rightX, bottomY, 0x66FFFFFF);
+		Screen.drawRect(leftX - 1, topY, rightX + 1, bottomY, 0xF0100010);
+		Screen.drawRect(leftX, (shouldDrawBelow ? bottomY : topY - 1), rightX, (shouldDrawBelow ? bottomY + 1 : topY), 0xF0100010);
+		Screen.drawRect(leftX, topY, rightX, bottomY, 0x66FFFFFF);
 
 		// drawRect disables blending and modifies color, so reset them
 		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -81,7 +81,7 @@ public class TooltipOverlayHandler
 		int startX = x;
 		int y = bottomY - 18;
 
-		mc.getTextureManager().bindTexture(Gui.ICONS);
+		mc.getTextureManager().bindTexture(Screen.ICONS);
 
 		for (int i = 0; i < barsNeeded * 2; i += 2)
 		{

@@ -1,6 +1,6 @@
 package squeek.appleskin.mixin;
 
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.Screen;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,7 +11,7 @@ import squeek.appleskin.client.TooltipOverlayHandler;
 
 import java.util.List;
 
-@Mixin(Gui.class)
+@Mixin(Screen.class)
 public class GuiMixin
 {
 	private static ItemStack cachedItemStack;
@@ -28,7 +28,7 @@ public class GuiMixin
 		cachedItemStack = null;
 	}
 
-	@Inject(at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/Gui;zOffset:F", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD, method = "drawTooltip(Ljava/util/List;II)V")
+	@Inject(at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/Screen;zOffset:F", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD, method = "drawTooltip(Ljava/util/List;II)V")
 	private void drawTooltipCB(List tooltip, int mouseX, int mouseY, CallbackInfo info, int w, int x, int y, int w2, int h)
 	{
 		TooltipOverlayHandler.onRenderTooltip(cachedItemStack, x, y, w, h);

@@ -1,9 +1,9 @@
 package squeek.appleskin.network;
 
 import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.networking.CustomPayloadPacketRegistry;
+import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.packet.CustomPayloadClientPacket;
+import net.minecraft.client.network.packet.CustomPayloadS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
@@ -20,13 +20,13 @@ public class SyncHandler
 
 	public static void init()
 	{
-		CustomPayloadPacketRegistry.CLIENT.register(EXHAUSTION_SYNC, (packetContext, packetByteBuf) ->
+		ClientSidePacketRegistry.INSTANCE.register(EXHAUSTION_SYNC, (packetContext, packetByteBuf) ->
 		{
 			MinecraftClient.getInstance().execute(() -> {
 			  	HungerHelper.setExhaustion(packetContext.getPlayer(), packetByteBuf.readFloat());
 			});
 		});
-		CustomPayloadPacketRegistry.CLIENT.register(SATURATION_SYNC, (packetContext, packetByteBuf) ->
+		ClientSidePacketRegistry.INSTANCE.register(SATURATION_SYNC, (packetContext, packetByteBuf) ->
 		{
 			MinecraftClient.getInstance().execute(() -> {
 			  	packetContext.getPlayer().getHungerManager().setSaturationLevelClient(packetByteBuf.readFloat());
@@ -34,11 +34,11 @@ public class SyncHandler
 		});
 	}
 
-	private static CustomPayloadClientPacket makeSyncPacket(Identifier identifier, float val)
+	private static CustomPayloadS2CPacket makeSyncPacket(Identifier identifier, float val)
 	{
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 		buf.writeFloat(val);
-		return new CustomPayloadClientPacket(identifier, buf);
+		return new CustomPayloadS2CPacket(identifier, buf);
 	}
 
 	/*
