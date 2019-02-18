@@ -1,8 +1,6 @@
 package squeek.appleskin.network;
 
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkEvent;
 import squeek.appleskin.helpers.HungerHelper;
 
@@ -27,7 +25,6 @@ public class MessageExhaustionSync
 		return new MessageExhaustionSync(buf.readFloat());
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public static void handle(final MessageExhaustionSync message, Supplier<NetworkEvent.Context> ctx)
 	{
 		ctx.get().enqueueWork(() -> {
