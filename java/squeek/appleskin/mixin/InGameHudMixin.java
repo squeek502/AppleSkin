@@ -11,13 +11,13 @@ import squeek.appleskin.client.HudOverlayHandler;
 @Mixin(InGameHud.class)
 public class InGameHudMixin
 {
-	@Inject(at = @At(value = "CONSTANT", args = "stringValue=food", shift = At.Shift.BY, by = 2), method = "method_1760()V")
+	@Inject(at = @At(value = "CONSTANT", args = "stringValue=food", shift = At.Shift.BY, by = 2), method = "renderStatusBars()V")
 	private void renderFoodPre(CallbackInfo info)
 	{
 		HudOverlayHandler.onPreRender();
 	}
 
-	@Inject(slice = @Slice(from = @At(value = "CONSTANT", args = "stringValue=food")), at = @At(value = "APPLESKIN_IINC", args = "intValue=-10", ordinal = 0), method = "method_1760()V")
+	@Inject(slice = @Slice(from = @At(value = "CONSTANT", args = "stringValue=food")), at = @At(value = "APPLESKIN_IINC", args = "intValue=-10", ordinal = 0), method = "renderStatusBars()V")
 	private void renderFoodPost(CallbackInfo info)
 	{
 		HudOverlayHandler.onRender();

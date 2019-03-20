@@ -60,7 +60,7 @@ public class TooltipOverlayHandler
 		boolean shouldDrawBelow = toolTipBottomY + 20 < mc.window.getScaledHeight() - 3;
 
 		int rightX = toolTipRightX - 3;
-		int leftX = rightX - (Math.max(barsNeeded * 9 + (int) (mc.fontRenderer.getStringWidth(hungerText) * 0.75f), saturationBarsNeeded * 6 + (int) (mc.fontRenderer.getStringWidth(saturationText) * 0.75f))) - 3;
+		int leftX = rightX - (Math.max(barsNeeded * 9 + (int) (mc.textRenderer.getStringWidth(hungerText) * 0.75f), saturationBarsNeeded * 6 + (int) (mc.textRenderer.getStringWidth(saturationText) * 0.75f))) - 3;
 		int topY = (shouldDrawBelow ? toolTipBottomY : toolTipY - 20 + TOOLTIP_REAL_HEIGHT_OFFSET_TOP);
 		int bottomY = topY + 19;
 
@@ -109,7 +109,7 @@ public class TooltipOverlayHandler
 		{
 			GlStateManager.pushMatrix();
 			GlStateManager.scalef(0.75F, 0.75F, 0.75F);
-			mc.fontRenderer.drawWithShadow(hungerText, x * 4 / 3 - mc.fontRenderer.getStringWidth(hungerText) + 2, y * 4 / 3 + 2, 0xFFDDDDDD);
+			mc.textRenderer.drawWithShadow(hungerText, x * 4 / 3 - mc.textRenderer.getStringWidth(hungerText) + 2, y * 4 / 3 + 2, 0xFFDDDDDD);
 			GlStateManager.popMatrix();
 		}
 
@@ -139,7 +139,7 @@ public class TooltipOverlayHandler
 		{
 			GlStateManager.pushMatrix();
 			GlStateManager.scalef(0.75F, 0.75F, 0.75F);
-			mc.fontRenderer.drawWithShadow(saturationText, x * 4 / 3 - mc.fontRenderer.getStringWidth(saturationText) + 2, y * 4 / 3 + 1, 0xFFDDDDDD);
+			mc.textRenderer.drawWithShadow(saturationText, x * 4 / 3 - mc.textRenderer.getStringWidth(saturationText) + 2, y * 4 / 3 + 1, 0xFFDDDDDD);
 			GlStateManager.popMatrix();
 		}
 
