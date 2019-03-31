@@ -18,7 +18,7 @@ public abstract class ServerPlayerEntityMixin extends Entity
 		super(entityType, world);
 	}
 
-	@Inject(at = @At("HEAD"), method = "update")
+	@Inject(at = @At("HEAD"), method = "tick")
 	void onUpdate(CallbackInfo info)
 	{
 		ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;

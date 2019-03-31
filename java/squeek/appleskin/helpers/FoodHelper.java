@@ -51,7 +51,7 @@ public class FoodHelper
 	{
 		FoodItemSetting itemFood = itemStack.getItem().getFoodSetting();
 		int hunger = itemFood.getHunger();
-		float saturationModifier = itemFood.getSaturation();
+		float saturationModifier = itemFood.getSaturationModifier();
 
 		return new BasicFoodValues(hunger, saturationModifier);
 	}
