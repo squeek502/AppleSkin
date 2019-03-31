@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import squeek.appleskin.client.HudOverlayHandler;
+import squeek.appleskin.client.HUDOverlayHandler;
 
 @Mixin(MinecraftClient.class)
 public class MinecraftClientMixin
@@ -13,6 +13,6 @@ public class MinecraftClientMixin
 	@Inject(at = @At("HEAD"), method = "tick")
 	void onTick(CallbackInfo info)
 	{
-		HudOverlayHandler.onClientTick();
+		HUDOverlayHandler.onClientTick();
 	}
 }
