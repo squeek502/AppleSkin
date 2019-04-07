@@ -21,8 +21,8 @@ public class SyncHandler
 	private static final String PROTOCOL_VERSION = Integer.toString(1);
 	public static final SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
 		.named(new ResourceLocation(ModInfo.MODID, "sync"))
-		.clientAcceptedVersions(PROTOCOL_VERSION::equals)
-		.serverAcceptedVersions(PROTOCOL_VERSION::equals)
+		.clientAcceptedVersions(s -> true)
+		.serverAcceptedVersions(s -> true)
 		.networkProtocolVersion(() -> PROTOCOL_VERSION)
 		.simpleChannel();
 
