@@ -11,3 +11,11 @@ displayURL="https://github.com/squeek502/AppleSkin"
 #logoFile="appleskin.png"
 authors="squeek"
 description="Adds various food-related HUD improvements"
+
+# Required for ObfuscationReflectionHelper change in 25.0.110
+[[dependencies.appleskin]]
+    modId="forge"
+    mandatory=true
+    versionRange="[25.0.110,)"
+    ordering="NONE"
+    side="BOTH"

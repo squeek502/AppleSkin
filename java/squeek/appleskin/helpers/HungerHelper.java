@@ -1,5 +1,6 @@
 package squeek.appleskin.helpers;
 
+import cpw.mods.modlauncher.api.INameMappingService;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.FoodStats;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -14,7 +15,7 @@ public class HungerHelper
 	{
 		try
 		{
-			foodExhaustion = FoodStats.class.getDeclaredField(ObfuscationReflectionHelper.remapName("field_75126_c"));
+			foodExhaustion = FoodStats.class.getDeclaredField(ObfuscationReflectionHelper.remapName(INameMappingService.Domain.FIELD, "field_75126_c"));
 			foodExhaustion.setAccessible(true);
 		}
 		catch (NoSuchFieldException e)
