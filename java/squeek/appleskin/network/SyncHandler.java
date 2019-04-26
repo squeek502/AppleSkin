@@ -1,6 +1,8 @@
 package squeek.appleskin.network;
 
 import io.netty.buffer.Unpooled;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.packet.CustomPayloadS2CPacket;
@@ -18,19 +20,20 @@ public class SyncHandler
 	private static final Identifier EXHAUSTION_SYNC = new Identifier("appleskin", "exhaustion_sync");
 	private static final Identifier SATURATION_SYNC = new Identifier("appleskin", "saturation_sync");
 
+	@Environment(EnvType.CLIENT)
 	public static void init()
 	{
 		ClientSidePacketRegistry.INSTANCE.register(EXHAUSTION_SYNC, (packetContext, packetByteBuf) ->
 		{
 			MinecraftClient.getInstance().execute(() -> {
-			  	HungerHelper.setExhaustion(packetContext.getPlayer(), packetByteBuf.readFloat());
+				HungerHelper.setExhaustion(packetContext.getPlayer(), packetByteBuf.readFloat());
 			});
 		});
 		ClientSidePacketRegistry.INSTANCE.register(SATURATION_SYNC, (packetContext, packetByteBuf) ->
 		{
 			MinecraftClient.getInstance().execute(() -> {
-			  	packetContext.getPlayer().getHungerManager().setSaturationLevelClient(packetByteBuf.readFloat());
-		  	});
+				packetContext.getPlayer().getHungerManager().setSaturationLevelClient(packetByteBuf.readFloat());
+			});
 		});
 	}
 

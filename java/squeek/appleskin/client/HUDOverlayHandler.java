@@ -114,7 +114,7 @@ public class HUDOverlayHandler
 			int icon = 16;
 			int background = 13;
 
-			if (mc.player.hasPotionEffect(StatusEffects.HUNGER))
+			if (mc.player.hasStatusEffect(StatusEffects.HUNGER))
 			{
 				icon += 36;
 				background = 13;
