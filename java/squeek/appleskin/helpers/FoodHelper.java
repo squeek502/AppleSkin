@@ -52,7 +52,11 @@ public class FoodHelper
 		FoodItemSetting itemFood = itemStack.getItem().getFoodSetting();
 		int hunger = itemFood.getHunger();
 		float saturationModifier = itemFood.getSaturationModifier();
-
+		if (itemStack.getItem() instanceof DynamicFood) {
+			DynamicFood food = (DynamicFood)itemStack.getItem();
+			hunger += food.getAdditionalHunger(itemStack);
+			saturationModifier += food.getAdditionalSaturation(itemStack);
+		}
 		return new BasicFoodValues(hunger, saturationModifier);
 	}
 
