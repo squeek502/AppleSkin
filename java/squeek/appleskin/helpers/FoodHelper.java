@@ -52,16 +52,17 @@ public class FoodHelper
 		FoodItemSetting itemFood = itemStack.getItem().getFoodSetting();
 		int hunger = itemFood.getHunger();
 		float saturationModifier = itemFood.getSaturationModifier();
-		if (itemStack.getItem() instanceof DynamicFood) {
-			DynamicFood food = (DynamicFood)itemStack.getItem();
-			hunger = food.getDynamicHunger(itemStack);
-			saturationModifier = food.getDynamicSaturation(itemStack);
-		}
 		return new BasicFoodValues(hunger, saturationModifier);
 	}
 
 	public static BasicFoodValues getModifiedFoodValues(ItemStack itemStack, PlayerEntity player)
 	{
+		if (itemStack.getItem() instanceof DynamicFood) {
+			DynamicFood food = (DynamicFood)itemStack.getItem();
+			int hunger = food.getDynamicHunger(itemStack, player);
+			float saturationModifier = food.getDynamicSaturation(itemStack, player);
+			return new BasicFoodValues(hunger, saturationModifier);
+		}
 		return getDefaultFoodValues(itemStack);
 	}
 }
