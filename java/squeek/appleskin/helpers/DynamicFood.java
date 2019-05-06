@@ -9,13 +9,13 @@ public interface DynamicFood
 {
 	/**
 	 * @param stack the stack to check
-	 * @return how much hunger a food will restore *on top of* its base hunger amount
+	 * @return how much hunger an instance of this food will restore in total, including base restoration.
 	 */
-	int getAdditionalHunger(ItemStack stack);
+	int getDynamicHunger(ItemStack stack);
 
 	/**
 	 * @param stack the stack to check
-	 * @return how much saturation a food will restore *on top of* its base saturation amount
+	 * @return how much saturation an instance of this food will restore in total, including base restoration..
 	 */
-	float getAdditionalSaturation(ItemStack stack);
+	float getDynamicSaturation(ItemStack stack);
 }
