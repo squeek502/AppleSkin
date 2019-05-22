@@ -25,14 +25,16 @@ public class SyncHandler
 	{
 		ClientSidePacketRegistry.INSTANCE.register(EXHAUSTION_SYNC, (packetContext, packetByteBuf) ->
 		{
+			float exhaustion = packetByteBuf.readFloat();
 			MinecraftClient.getInstance().execute(() -> {
-				HungerHelper.setExhaustion(packetContext.getPlayer(), packetByteBuf.readFloat());
+				HungerHelper.setExhaustion(packetContext.getPlayer(), exhaustion);
 			});
 		});
 		ClientSidePacketRegistry.INSTANCE.register(SATURATION_SYNC, (packetContext, packetByteBuf) ->
 		{
+			float saturation = packetByteBuf.readFloat();
 			MinecraftClient.getInstance().execute(() -> {
-				packetContext.getPlayer().getHungerManager().setSaturationLevelClient(packetByteBuf.readFloat());
+				packetContext.getPlayer().getHungerManager().setSaturationLevelClient(saturation);
 			});
 		});
 	}
