@@ -1,5 +1,6 @@
 plugins {
 	id 'fabric-loom' version '0.2.4-SNAPSHOT'
+	id 'maven-publish'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -50,4 +51,25 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 jar {
 	from "LICENSE"
+}
+
+// configure the maven publication
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			// add all the jars that should be included when publishing to maven
+			artifact(jar.archivePath) {
+				builtBy remapJar
+			}
+			artifact(sourcesJar) {
+				builtBy remapSourcesJar
+			}
+		}
+	}
+
+	// select the repositories you want to publish to
+	repositories {
+		// uncomment to publish to the local maven
+		// mavenLocal()
+	}
 }
