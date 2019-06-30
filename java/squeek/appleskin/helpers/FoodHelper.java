@@ -1,7 +1,7 @@
 package squeek.appleskin.helpers;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.FoodItemSetting;
+import net.minecraft.item.FoodComponent;
 import net.minecraft.item.ItemStack;
 
 public class FoodHelper
@@ -49,7 +49,7 @@ public class FoodHelper
 
 	public static BasicFoodValues getDefaultFoodValues(ItemStack itemStack)
 	{
-		FoodItemSetting itemFood = itemStack.getItem().getFoodSetting();
+		FoodComponent itemFood = itemStack.getItem().getFoodComponent();
 		int hunger = itemFood.getHunger();
 		float saturationModifier = itemFood.getSaturationModifier();
 		return new BasicFoodValues(hunger, saturationModifier);
