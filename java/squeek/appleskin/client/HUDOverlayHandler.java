@@ -2,7 +2,7 @@ package squeek.appleskin.client;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Screen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;

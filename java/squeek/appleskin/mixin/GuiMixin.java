@@ -1,6 +1,6 @@
 package squeek.appleskin.mixin;
 
-import net.minecraft.client.gui.Screen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
