@@ -1,9 +1,8 @@
 package squeek.appleskin.helpers;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemFood;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Food;
 import net.minecraft.item.ItemStack;
-import squeek.appleskin.AppleSkin;
 
 public class FoodHelper
 {
@@ -45,19 +44,19 @@ public class FoodHelper
 
 	public static boolean isFood(ItemStack itemStack)
 	{
-		return itemStack.getItem() instanceof ItemFood;
+		return itemStack.getItem().getFood() != null;
 	}
 
 	public static BasicFoodValues getDefaultFoodValues(ItemStack itemStack)
 	{
-		ItemFood itemFood = (ItemFood) itemStack.getItem();
-		int hunger = itemFood.getHealAmount(itemStack);
-		float saturationModifier = itemFood.getSaturationModifier(itemStack);
+		Food itemFood = itemStack.getItem().getFood();
+		int hunger = itemFood != null ? itemFood.getHealing() : 0;
+		float saturationModifier = itemFood != null ? itemFood.getSaturation() : 0;
 
 		return new BasicFoodValues(hunger, saturationModifier);
 	}
 
-	public static BasicFoodValues getModifiedFoodValues(ItemStack itemStack, EntityPlayer player)
+	public static BasicFoodValues getModifiedFoodValues(ItemStack itemStack, PlayerEntity player)
 	{
 		return getDefaultFoodValues(itemStack);
 	}

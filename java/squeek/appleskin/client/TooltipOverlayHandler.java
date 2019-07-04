@@ -1,11 +1,11 @@
 package squeek.appleskin.client;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -44,7 +44,7 @@ public class TooltipOverlayHandler
 			return;
 
 		Minecraft mc = Minecraft.getInstance();
-		GuiScreen gui = mc.currentScreen;
+		Screen gui = mc.currentScreen;
 
 		if (gui == null)
 			return;
@@ -52,7 +52,7 @@ public class TooltipOverlayHandler
 		if (!FoodHelper.isFood(hoveredStack))
 			return;
 
-		EntityPlayer player = mc.player;
+		PlayerEntity player = mc.player;
 		int toolTipY = event.getY();
 		int toolTipX = event.getX();
 		int toolTipW = event.getWidth();
@@ -93,9 +93,9 @@ public class TooltipOverlayHandler
 		GlStateManager.disableDepthTest();
 
 		// bg
-		Gui.drawRect(leftX - 1, topY, rightX + 1, bottomY, 0xF0100010);
-		Gui.drawRect(leftX, (shouldDrawBelow ? bottomY : topY - 1), rightX, (shouldDrawBelow ? bottomY + 1 : topY), 0xF0100010);
-		Gui.drawRect(leftX, topY, rightX, bottomY, 0x66FFFFFF);
+		AbstractGui.fill(leftX - 1, topY, rightX + 1, bottomY, 0xF0100010);
+		AbstractGui.fill(leftX, (shouldDrawBelow ? bottomY : topY - 1), rightX, (shouldDrawBelow ? bottomY + 1 : topY), 0xF0100010);
+		AbstractGui.fill(leftX, topY, rightX, bottomY, 0x66FFFFFF);
 
 		// drawRect disables blending and modifies color, so reset them
 		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -106,29 +106,29 @@ public class TooltipOverlayHandler
 		int startX = x;
 		int y = bottomY - 18;
 
-		mc.getTextureManager().bindTexture(Gui.ICONS);
+		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
 
 		for (int i = 0; i < barsNeeded * 2; i += 2)
 		{
 			x -= 9;
 
 			if (modifiedFoodValues.hunger < 0)
-				gui.drawTexturedModalRect(x, y, 34, 27, 9, 9);
+				gui.blit(x, y, 34, 27, 9, 9);
 			else if (modifiedFoodValues.hunger > defaultFoodValues.hunger && defaultFoodValues.hunger <= i)
-				gui.drawTexturedModalRect(x, y, 133, 27, 9, 9);
+				gui.blit(x, y, 133, 27, 9, 9);
 			else if (modifiedFoodValues.hunger > i + 1 || defaultFoodValues.hunger == modifiedFoodValues.hunger)
-				gui.drawTexturedModalRect(x, y, 16, 27, 9, 9);
+				gui.blit(x, y, 16, 27, 9, 9);
 			else if (modifiedFoodValues.hunger == i + 1)
-				gui.drawTexturedModalRect(x, y, 124, 27, 9, 9);
+				gui.blit(x, y, 124, 27, 9, 9);
 			else
-				gui.drawTexturedModalRect(x, y, 34, 27, 9, 9);
+				gui.blit(x, y, 34, 27, 9, 9);
 
 			GlStateManager.color4f(1.0F, 1.0F, 1.0F, .25F);
-			gui.drawTexturedModalRect(x, y, defaultFoodValues.hunger - 1 == i ? 115 : 106, 27, 9, 9);
+			gui.blit(x, y, defaultFoodValues.hunger - 1 == i ? 115 : 106, 27, 9, 9);
 			GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 			if (modifiedFoodValues.hunger > i)
-				gui.drawTexturedModalRect(x, y, modifiedFoodValues.hunger - 1 == i ? 61 : 52, 27, 9, 9);
+				gui.blit(x, y, modifiedFoodValues.hunger - 1 == i ? 61 : 52, 27, 9, 9);
 		}
 		if (hungerText != null)
 		{
@@ -155,7 +155,7 @@ public class TooltipOverlayHandler
 			if (shouldBeFaded)
 				GlStateManager.color4f(1.0F, 1.0F, 1.0F, .5F);
 
-			gui.drawTexturedModalRect(x, y, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7);
+			gui.blit(x, y, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7);
 
 			if (shouldBeFaded)
 				GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);

@@ -1,16 +1,16 @@
 package squeek.appleskin.client;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.MobEffects;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.potion.Effects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.FoodStats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.GuiIngameForge;
+import net.minecraftforge.client.ForgeIngameGui;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -43,7 +43,7 @@ public class HUDOverlayHandler
 		if (event.getType() != RenderGameOverlayEvent.ElementType.FOOD)
 			return;
 
-		foodIconsOffset = GuiIngameForge.right_height;
+		foodIconsOffset = ForgeIngameGui.right_height;
 
 		if (event.isCanceled())
 			return;
@@ -52,7 +52,7 @@ public class HUDOverlayHandler
 			return;
 
 		Minecraft mc = Minecraft.getInstance();
-		EntityPlayer player = mc.player;
+		PlayerEntity player = mc.player;
 
 		int left = mc.mainWindow.getScaledWidth() / 2 + 91;
 		int top = mc.mainWindow.getScaledHeight() - foodIconsOffset;
@@ -73,7 +73,7 @@ public class HUDOverlayHandler
 			return;
 
 		Minecraft mc = Minecraft.getInstance();
-		EntityPlayer player = mc.player;
+		PlayerEntity player = mc.player;
 		ItemStack heldItem = player.getHeldItemMainhand();
 		FoodStats stats = player.getFoodStats();
 
@@ -121,18 +121,18 @@ public class HUDOverlayHandler
 			float effectiveSaturationOfBar = (saturationLevel + saturationGained) / 2 - i;
 
 			if (effectiveSaturationOfBar >= 1)
-				mc.ingameGUI.drawTexturedModalRect(x, y, 27, 0, 9, 9);
+				mc.ingameGUI.blit(x, y, 27, 0, 9, 9);
 			else if (effectiveSaturationOfBar > .5)
-				mc.ingameGUI.drawTexturedModalRect(x, y, 18, 0, 9, 9);
+				mc.ingameGUI.blit(x, y, 18, 0, 9, 9);
 			else if (effectiveSaturationOfBar > .25)
-				mc.ingameGUI.drawTexturedModalRect(x, y, 9, 0, 9, 9);
+				mc.ingameGUI.blit(x, y, 9, 0, 9, 9);
 			else if (effectiveSaturationOfBar > 0)
-				mc.ingameGUI.drawTexturedModalRect(x, y, 0, 0, 9, 9);
+				mc.ingameGUI.blit(x, y, 0, 0, 9, 9);
 		}
 		disableAlpha(alpha);
 
 		// rebind default icons
-		mc.getTextureManager().bindTexture(Gui.ICONS);
+		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
 	}
 
 	public static void drawHungerOverlay(int hungerRestored, int foodLevel, Minecraft mc, int left, int top, float alpha)
@@ -143,7 +143,7 @@ public class HUDOverlayHandler
 		int startBar = foodLevel / 2;
 		int endBar = (int) Math.ceil(Math.min(20, foodLevel + hungerRestored) / 2f);
 		int barsNeeded = endBar - startBar;
-		mc.getTextureManager().bindTexture(Gui.ICONS);
+		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
 
 		enableAlpha(alpha);
 		for (int i = startBar; i < startBar + barsNeeded; ++i)
@@ -154,18 +154,18 @@ public class HUDOverlayHandler
 			int icon = 16;
 			int background = 13;
 
-			if (mc.player.isPotionActive(MobEffects.HUNGER))
+			if (mc.player.isPotionActive(Effects.HUNGER))
 			{
 				icon += 36;
 				background = 13;
 			}
 
-			mc.ingameGUI.drawTexturedModalRect(x, y, 16 + background * 9, 27, 9, 9);
+			mc.ingameGUI.blit(x, y, 16 + background * 9, 27, 9, 9);
 
 			if (idx < foodLevel + hungerRestored)
-				mc.ingameGUI.drawTexturedModalRect(x, y, icon + 36, 27, 9, 9);
+				mc.ingameGUI.blit(x, y, icon + 36, 27, 9, 9);
 			else if (idx == foodLevel + hungerRestored)
-				mc.ingameGUI.drawTexturedModalRect(x, y, icon + 45, 27, 9, 9);
+				mc.ingameGUI.blit(x, y, icon + 45, 27, 9, 9);
 		}
 		disableAlpha(alpha);
 	}
@@ -180,11 +180,11 @@ public class HUDOverlayHandler
 		int height = 9;
 
 		enableAlpha(.75f);
-		mc.ingameGUI.drawTexturedModalRect(left - width, top, 81 - width, 18, width, height);
+		mc.ingameGUI.blit(left - width, top, 81 - width, 18, width, height);
 		disableAlpha(.75f);
 
 		// rebind default icons
-		mc.getTextureManager().bindTexture(Gui.ICONS);
+		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
 	}
 
 	public static void enableAlpha(float alpha)

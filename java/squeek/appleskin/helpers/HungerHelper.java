@@ -1,7 +1,7 @@
 package squeek.appleskin.helpers;
 
 import cpw.mods.modlauncher.api.INameMappingService;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.FoodStats;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
@@ -24,12 +24,12 @@ public class HungerHelper
 		}
 	}
 
-	public static float getMaxExhaustion(EntityPlayer player)
+	public static float getMaxExhaustion(PlayerEntity player)
 	{
 		return 4.0f;
 	}
 
-	public static float getExhaustion(EntityPlayer player)
+	public static float getExhaustion(PlayerEntity player)
 	{
 		try
 		{
@@ -41,7 +41,7 @@ public class HungerHelper
 		}
 	}
 
-	public static void setExhaustion(EntityPlayer player, float exhaustion)
+	public static void setExhaustion(PlayerEntity player, float exhaustion)
 	{
 		try
 		{

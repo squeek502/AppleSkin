@@ -20,21 +20,26 @@ minecraft {
 	// default run configurations.
 	// these can be tweaked, removed, or duplicated as needed.
 	runs {
-		client = {
-			// recommended logging data for a userdev environment
-			properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
-			// recommended logging level for the console
-			properties 'forge.logging.console.level': 'debug'
-			workingDirectory project.file('run').canonicalPath
-			source sourceSets.main
+		client {
+			workingDirectory project.file('run')
+			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+			property 'forge.logging.console.level', 'debug'
+			mods {
+				appleskin {
+					source sourceSets.main
+				}
+			}
 		}
-		server = {
-			// recommended logging data for a userdev environment
-			properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
-			// recommended logging level for the console
-			properties 'forge.logging.console.level': 'debug'
-			workingDirectory project.file('run').canonicalPath
-			source sourceSets.main
+
+		server {
+			workingDirectory project.file('run')
+			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+			property 'forge.logging.console.level', 'debug'
+			mods {
+				appleskin {
+					source sourceSets.main
+				}
+			}
 		}
 	}
 }

@@ -1,6 +1,6 @@
 package squeek.appleskin.network;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
@@ -44,10 +44,10 @@ public class SyncHandler
 	@SubscribeEvent
 	public void onLivingUpdateEvent(LivingUpdateEvent event)
 	{
-		if (!(event.getEntity() instanceof EntityPlayerMP))
+		if (!(event.getEntity() instanceof ServerPlayerEntity))
 			return;
 
-		EntityPlayerMP player = (EntityPlayerMP) event.getEntity();
+		ServerPlayerEntity player = (ServerPlayerEntity) event.getEntity();
 		Float lastSaturationLevel = lastSaturationLevels.get(player.getUniqueID());
 		Float lastExhaustionLevel = lastExhaustionLevels.get(player.getUniqueID());
 
@@ -70,7 +70,7 @@ public class SyncHandler
 	@SubscribeEvent
 	public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
 	{
-		if (!(event.getPlayer() instanceof EntityPlayerMP))
+		if (!(event.getPlayer() instanceof ServerPlayerEntity))
 			return;
 
 		lastSaturationLevels.remove(event.getPlayer().getUniqueID());
