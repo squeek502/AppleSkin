@@ -6,6 +6,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import squeek.appleskin.client.DebugInfoHandler;
@@ -20,7 +21,6 @@ import java.nio.file.Paths;
 public class AppleSkin
 {
 	public static Logger Log = LogManager.getLogger(ModInfo.MODID);
-	private static final Path configPath = Paths.get("config", ModInfo.MODID + ".toml");
 
 	public AppleSkin()
 	{
@@ -30,7 +30,7 @@ public class AppleSkin
 			net.minecraftforge.fml.config.ModConfig.Type.CLIENT,
 			ModConfig.SPEC
 		);
-		ModConfig.init(configPath);
+		ModConfig.init(FMLPaths.CONFIGDIR.get().resolve(ModInfo.MODID + "-client.toml"));
 
 		// Register ourselves for server and other game events we are interested in
 		MinecraftForge.EVENT_BUS.register(this);
