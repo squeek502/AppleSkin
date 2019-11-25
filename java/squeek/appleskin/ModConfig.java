@@ -1,22 +1,23 @@
 package squeek.appleskin;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 
-import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
 
 public class ModConfig
 {
 	public static void init(Path file)
 	{
-		SPEC.setConfig(CommentedFileConfig.builder(file).build());
+		final CommentedFileConfig configData = CommentedFileConfig.builder(file)
+			.sync()
+			.autosave()
+			.writingMode(WritingMode.REPLACE)
+			.build();
+
+		configData.load();
+		SPEC.setConfig(configData);
 	}
 
 	private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
