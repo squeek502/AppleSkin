@@ -1,6 +1,7 @@
 package squeek.appleskin.client;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.effect.StatusEffects;
@@ -8,7 +9,6 @@ import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
-import org.lwjgl.opengl.GL11;
 import squeek.appleskin.helpers.FoodHelper;
 import squeek.appleskin.helpers.HungerHelper;
 
@@ -28,8 +28,8 @@ public class HUDOverlayHandler
 		MinecraftClient mc = MinecraftClient.getInstance();
 		PlayerEntity player = mc.player;
 
-		int left = mc.window.getScaledWidth() / 2 + 91;
-		int top = mc.window.getScaledHeight() - foodIconsOffset;
+		int left = mc.getWindow().getScaledWidth() / 2 + 91;
+		int top = mc.getWindow().getScaledHeight() - foodIconsOffset;
 
 		drawExhaustionOverlay(HungerHelper.getExhaustion(player), mc, left, top, 1f);
 	}
@@ -41,8 +41,8 @@ public class HUDOverlayHandler
 		ItemStack heldItem = player.getMainHandStack();
 		HungerManager stats = player.getHungerManager();
 
-		int left = mc.window.getScaledWidth() / 2 + 91;
-		int top = mc.window.getScaledHeight() - foodIconsOffset;
+		int left = mc.getWindow().getScaledWidth() / 2 + 91;
+		int top = mc.getWindow().getScaledHeight() - foodIconsOffset;
 
 		// saturation overlay
 		drawSaturationOverlay(0, stats.getSaturationLevel(), mc, left, top, 1f);
@@ -149,23 +149,23 @@ public class HUDOverlayHandler
 
 	private static void enableAlpha(float alpha)
 	{
-		GlStateManager.enableBlend();
+		RenderSystem.enableBlend();
 
 		if (alpha == 1f)
 			return;
 
-		GlStateManager.color4f(1.0F, 1.0F, 1.0F, alpha);
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha);
+		RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
 	}
 
 	private static void disableAlpha(float alpha)
 	{
-		GlStateManager.disableBlend();
+		RenderSystem.disableBlend();
 
 		if (alpha == 1f)
 			return;
 
-		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 	}
 
 	public static void onClientTick()
