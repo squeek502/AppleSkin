@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[28,)"
+loaderVersion="[29,)"
 issueTrackerURL="https://github.com/squeek502/AppleSkin"
 
 [[mods]]
@@ -11,11 +11,3 @@ displayURL="https://github.com/squeek502/AppleSkin"
 #logoFile="appleskin.png"
 authors="squeek"
 description="Adds various food-related HUD improvements"
-
-# Required for PlayerEvent/TickEvent change in 28.0.45
-[[dependencies.appleskin]]
-    modId="forge"
-    mandatory=true
-    versionRange="[28.0.45,)"
-    ordering="NONE"
-    side="BOTH"

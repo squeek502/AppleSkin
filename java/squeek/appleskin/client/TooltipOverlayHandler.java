@@ -1,6 +1,7 @@
 package squeek.appleskin.client;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.Screen;
@@ -82,15 +83,15 @@ public class TooltipOverlayHandler
 		int toolTipBottomY = toolTipY + toolTipH + 1 + TOOLTIP_REAL_HEIGHT_OFFSET_BOTTOM;
 		int toolTipRightX = toolTipX + toolTipW + 1 + TOOLTIP_REAL_WIDTH_OFFSET_RIGHT;
 
-		boolean shouldDrawBelow = toolTipBottomY + 20 < mc.mainWindow.getScaledHeight() - 3;
+		boolean shouldDrawBelow = toolTipBottomY + 20 < mc.func_228018_at_().getScaledHeight() - 3;
 
 		int rightX = toolTipRightX - 3;
 		int leftX = rightX - (Math.max(barsNeeded * 9 + (int) (mc.fontRenderer.getStringWidth(hungerText) * 0.75f), saturationBarsNeeded * 6 + (int) (mc.fontRenderer.getStringWidth(saturationText) * 0.75f))) - 3;
 		int topY = (shouldDrawBelow ? toolTipBottomY : toolTipY - 20 + TOOLTIP_REAL_HEIGHT_OFFSET_TOP);
 		int bottomY = topY + 19;
 
-		GlStateManager.disableLighting();
-		GlStateManager.disableDepthTest();
+		RenderSystem.disableLighting();
+		RenderSystem.disableDepthTest();
 
 		// bg
 		AbstractGui.fill(leftX - 1, topY, rightX + 1, bottomY, 0xF0100010);
@@ -98,9 +99,9 @@ public class TooltipOverlayHandler
 		AbstractGui.fill(leftX, topY, rightX, bottomY, 0x66FFFFFF);
 
 		// drawRect disables blending and modifies color, so reset them
-		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.enableBlend();
+		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 		int x = rightX - 2;
 		int startX = x;
@@ -123,19 +124,19 @@ public class TooltipOverlayHandler
 			else
 				gui.blit(x, y, 34, 27, 9, 9);
 
-			GlStateManager.color4f(1.0F, 1.0F, 1.0F, .25F);
+			RenderSystem.color4f(1.0F, 1.0F, 1.0F, .25F);
 			gui.blit(x, y, defaultFoodValues.hunger - 1 == i ? 115 : 106, 27, 9, 9);
-			GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+			RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 			if (modifiedFoodValues.hunger > i)
 				gui.blit(x, y, modifiedFoodValues.hunger - 1 == i ? 61 : 52, 27, 9, 9);
 		}
 		if (hungerText != null)
 		{
-			GlStateManager.pushMatrix();
-			GlStateManager.scalef(0.75F, 0.75F, 0.75F);
+			RenderSystem.pushMatrix();
+			RenderSystem.scalef(0.75F, 0.75F, 0.75F);
 			mc.fontRenderer.drawStringWithShadow(hungerText, x * 4 / 3 - mc.fontRenderer.getStringWidth(hungerText) + 2, y * 4 / 3 + 2, 0xFFDDDDDD);
-			GlStateManager.popMatrix();
+			RenderSystem.popMatrix();
 		}
 
 		y += 10;
@@ -143,7 +144,7 @@ public class TooltipOverlayHandler
 		float modifiedSaturationIncrement = modifiedFoodValues.getSaturationIncrement();
 		float absModifiedSaturationIncrement = Math.abs(modifiedSaturationIncrement);
 
-		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.getTextureManager().bindTexture(modIcons);
 		for (int i = 0; i < saturationBarsNeeded * 2; i += 2)
 		{
@@ -153,28 +154,28 @@ public class TooltipOverlayHandler
 
 			boolean shouldBeFaded = absModifiedSaturationIncrement <= i;
 			if (shouldBeFaded)
-				GlStateManager.color4f(1.0F, 1.0F, 1.0F, .5F);
+				RenderSystem.color4f(1.0F, 1.0F, 1.0F, .5F);
 
 			gui.blit(x, y, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7);
 
 			if (shouldBeFaded)
-				GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+				RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 		}
 		if (saturationText != null)
 		{
-			GlStateManager.pushMatrix();
-			GlStateManager.scalef(0.75F, 0.75F, 0.75F);
+			RenderSystem.pushMatrix();
+			RenderSystem.scalef(0.75F, 0.75F, 0.75F);
 			mc.fontRenderer.drawStringWithShadow(saturationText, x * 4 / 3 - mc.fontRenderer.getStringWidth(saturationText) + 2, y * 4 / 3 + 1, 0xFFDDDDDD);
-			GlStateManager.popMatrix();
+			RenderSystem.popMatrix();
 		}
 
-		GlStateManager.disableBlend();
-		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.disableBlend();
+		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 		// reset to drawHoveringText state
-		GlStateManager.disableRescaleNormal();
+		RenderSystem.disableRescaleNormal();
 		RenderHelper.disableStandardItemLighting();
-		GlStateManager.disableLighting();
-		GlStateManager.disableDepthTest();
+		RenderSystem.disableLighting();
+		RenderSystem.disableDepthTest();
 	}
 }
