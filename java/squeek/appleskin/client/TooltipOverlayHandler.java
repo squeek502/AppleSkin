@@ -80,29 +80,29 @@ public class TooltipOverlayHandler
 		int startX = x;
 		int y = bottomY - 18;
 
-		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_LOCATION);
+		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_TEXTURE);
 
 		for (int i = 0; i < barsNeeded * 2; i += 2)
 		{
 			x -= 9;
 
 			if (modifiedFoodValues.hunger < 0)
-				gui.blit(x, y, 34, 27, 9, 9);
+				gui.drawTexture(x, y, 34, 27, 9, 9);
 			else if (modifiedFoodValues.hunger > defaultFoodValues.hunger && defaultFoodValues.hunger <= i)
-				gui.blit(x, y, 133, 27, 9, 9);
+				gui.drawTexture(x, y, 133, 27, 9, 9);
 			else if (modifiedFoodValues.hunger > i + 1 || defaultFoodValues.hunger == modifiedFoodValues.hunger)
-				gui.blit(x, y, 16, 27, 9, 9);
+				gui.drawTexture(x, y, 16, 27, 9, 9);
 			else if (modifiedFoodValues.hunger == i + 1)
-				gui.blit(x, y, 124, 27, 9, 9);
+				gui.drawTexture(x, y, 124, 27, 9, 9);
 			else
-				gui.blit(x, y, 34, 27, 9, 9);
+				gui.drawTexture(x, y, 34, 27, 9, 9);
 
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, .25F);
-			gui.blit(x, y, defaultFoodValues.hunger - 1 == i ? 115 : 106, 27, 9, 9);
+			gui.drawTexture(x, y, defaultFoodValues.hunger - 1 == i ? 115 : 106, 27, 9, 9);
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 			if (modifiedFoodValues.hunger > i)
-				gui.blit(x, y, modifiedFoodValues.hunger - 1 == i ? 61 : 52, 27, 9, 9);
+				gui.drawTexture(x, y, modifiedFoodValues.hunger - 1 == i ? 61 : 52, 27, 9, 9);
 		}
 		if (hungerText != null)
 		{
@@ -129,7 +129,7 @@ public class TooltipOverlayHandler
 			if (shouldBeFaded)
 				RenderSystem.color4f(1.0F, 1.0F, 1.0F, .5F);
 
-			gui.blit(x, y, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7);
+			gui.drawTexture(x, y, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7);
 
 			if (shouldBeFaded)
 				RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
