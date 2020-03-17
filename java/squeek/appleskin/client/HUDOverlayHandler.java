@@ -81,18 +81,18 @@ public class HUDOverlayHandler
 			float effectiveSaturationOfBar = (saturationLevel + saturationGained) / 2 - i;
 
 			if (effectiveSaturationOfBar >= 1)
-				mc.inGameHud.blit(x, y, 27, 0, 9, 9);
+				mc.inGameHud.drawTexture(x, y, 27, 0, 9, 9);
 			else if (effectiveSaturationOfBar > .5)
-				mc.inGameHud.blit(x, y, 18, 0, 9, 9);
+				mc.inGameHud.drawTexture(x, y, 18, 0, 9, 9);
 			else if (effectiveSaturationOfBar > .25)
-				mc.inGameHud.blit(x, y, 9, 0, 9, 9);
+				mc.inGameHud.drawTexture(x, y, 9, 0, 9, 9);
 			else if (effectiveSaturationOfBar > 0)
-				mc.inGameHud.blit(x, y, 0, 0, 9, 9);
+				mc.inGameHud.drawTexture(x, y, 0, 0, 9, 9);
 		}
 		disableAlpha(alpha);
 
 		// rebind default icons
-		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_LOCATION);
+		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_TEXTURE);
 	}
 
 	public static void drawHungerOverlay(int hungerRestored, int foodLevel, MinecraftClient mc, int left, int top, float alpha)
@@ -103,7 +103,7 @@ public class HUDOverlayHandler
 		int startBar = foodLevel / 2;
 		int endBar = (int) Math.ceil(Math.min(20, foodLevel + hungerRestored) / 2f);
 		int barsNeeded = endBar - startBar;
-		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_LOCATION);
+		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_TEXTURE);
 
 		enableAlpha(alpha);
 		for (int i = startBar; i < startBar + barsNeeded; ++i)
@@ -120,12 +120,12 @@ public class HUDOverlayHandler
 				background = 13;
 			}
 
-			mc.inGameHud.blit(x, y, 16 + background * 9, 27, 9, 9);
+			mc.inGameHud.drawTexture(x, y, 16 + background * 9, 27, 9, 9);
 
 			if (idx < foodLevel + hungerRestored)
-				mc.inGameHud.blit(x, y, icon + 36, 27, 9, 9);
+				mc.inGameHud.drawTexture(x, y, icon + 36, 27, 9, 9);
 			else if (idx == foodLevel + hungerRestored)
-				mc.inGameHud.blit(x, y, icon + 45, 27, 9, 9);
+				mc.inGameHud.drawTexture(x, y, icon + 45, 27, 9, 9);
 		}
 		disableAlpha(alpha);
 	}
@@ -140,11 +140,11 @@ public class HUDOverlayHandler
 		int height = 9;
 
 		enableAlpha(.75f);
-		mc.inGameHud.blit(left - width, top, 81 - width, 18, width, height);
+		mc.inGameHud.drawTexture(left - width, top, 81 - width, 18, width, height);
 		disableAlpha(.75f);
 
 		// rebind default icons
-		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_LOCATION);
+		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_TEXTURE);
 	}
 
 	private static void enableAlpha(float alpha)
