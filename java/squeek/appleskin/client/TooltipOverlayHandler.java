@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -16,7 +17,7 @@ public class TooltipOverlayHandler
 	public static final int TOOLTIP_REAL_HEIGHT_OFFSET_TOP = -3;
 	public static final int TOOLTIP_REAL_WIDTH_OFFSET_RIGHT = 3;
 
-	public static void onRenderTooltip(ItemStack hoveredStack, int toolTipX, int toolTipY, int toolTipW, int toolTipH)
+	public static void onRenderTooltip(MatrixStack matrixStack, ItemStack hoveredStack, int toolTipX, int toolTipY, int toolTipW, int toolTipH)
 	{
 		if (hoveredStack == null || hoveredStack.isEmpty())
 			return;
@@ -67,9 +68,9 @@ public class TooltipOverlayHandler
 		RenderSystem.disableDepthTest();
 
 		// bg
-		Screen.fill(leftX - 1, topY, rightX + 1, bottomY, 0xF0100010);
-		Screen.fill(leftX, (shouldDrawBelow ? bottomY : topY - 1), rightX, (shouldDrawBelow ? bottomY + 1 : topY), 0xF0100010);
-		Screen.fill(leftX, topY, rightX, bottomY, 0x66FFFFFF);
+		Screen.fill(matrixStack, leftX - 1, topY, rightX + 1, bottomY, 0xF0100010);
+		Screen.fill(matrixStack, leftX, (shouldDrawBelow ? bottomY : topY - 1), rightX, (shouldDrawBelow ? bottomY + 1 : topY), 0xF0100010);
+		Screen.fill(matrixStack, leftX, topY, rightX, bottomY, 0x66FFFFFF);
 
 		// fill disables blending and modifies color, so reset them
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -87,28 +88,28 @@ public class TooltipOverlayHandler
 			x -= 9;
 
 			if (modifiedFoodValues.hunger < 0)
-				gui.drawTexture(x, y, 34, 27, 9, 9);
+				gui.drawTexture(matrixStack, x, y, 34, 27, 9, 9);
 			else if (modifiedFoodValues.hunger > defaultFoodValues.hunger && defaultFoodValues.hunger <= i)
-				gui.drawTexture(x, y, 133, 27, 9, 9);
+				gui.drawTexture(matrixStack, x, y, 133, 27, 9, 9);
 			else if (modifiedFoodValues.hunger > i + 1 || defaultFoodValues.hunger == modifiedFoodValues.hunger)
-				gui.drawTexture(x, y, 16, 27, 9, 9);
+				gui.drawTexture(matrixStack, x, y, 16, 27, 9, 9);
 			else if (modifiedFoodValues.hunger == i + 1)
-				gui.drawTexture(x, y, 124, 27, 9, 9);
+				gui.drawTexture(matrixStack, x, y, 124, 27, 9, 9);
 			else
-				gui.drawTexture(x, y, 34, 27, 9, 9);
+				gui.drawTexture(matrixStack, x, y, 34, 27, 9, 9);
 
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, .25F);
-			gui.drawTexture(x, y, defaultFoodValues.hunger - 1 == i ? 115 : 106, 27, 9, 9);
+			gui.drawTexture(matrixStack, x, y, defaultFoodValues.hunger - 1 == i ? 115 : 106, 27, 9, 9);
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 			if (modifiedFoodValues.hunger > i)
-				gui.drawTexture(x, y, modifiedFoodValues.hunger - 1 == i ? 61 : 52, 27, 9, 9);
+				gui.drawTexture(matrixStack, x, y, modifiedFoodValues.hunger - 1 == i ? 61 : 52, 27, 9, 9);
 		}
 		if (hungerText != null)
 		{
 			RenderSystem.pushMatrix();
 			RenderSystem.scalef(0.75F, 0.75F, 0.75F);
-			mc.textRenderer.drawWithShadow(hungerText, x * 4 / 3 - mc.textRenderer.getStringWidth(hungerText) + 2, y * 4 / 3 + 2, 0xFFDDDDDD);
+			mc.textRenderer.drawWithShadow(matrixStack, hungerText, x * 4 / 3 - mc.textRenderer.getStringWidth(hungerText) + 2, y * 4 / 3 + 2, 0xFFDDDDDD);
 			RenderSystem.popMatrix();
 		}
 
@@ -129,7 +130,7 @@ public class TooltipOverlayHandler
 			if (shouldBeFaded)
 				RenderSystem.color4f(1.0F, 1.0F, 1.0F, .5F);
 
-			gui.drawTexture(x, y, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7);
+			gui.drawTexture(matrixStack, x, y, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7);
 
 			if (shouldBeFaded)
 				RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -138,7 +139,7 @@ public class TooltipOverlayHandler
 		{
 			RenderSystem.pushMatrix();
 			RenderSystem.scalef(0.75F, 0.75F, 0.75F);
-			mc.textRenderer.drawWithShadow(saturationText, x * 4 / 3 - mc.textRenderer.getStringWidth(saturationText) + 2, y * 4 / 3 + 1, 0xFFDDDDDD);
+			mc.textRenderer.drawWithShadow(matrixStack, saturationText, x * 4 / 3 - mc.textRenderer.getStringWidth(saturationText) + 2, y * 4 / 3 + 1, 0xFFDDDDDD);
 			RenderSystem.popMatrix();
 		}
 
