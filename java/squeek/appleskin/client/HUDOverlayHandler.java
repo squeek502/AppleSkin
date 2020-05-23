@@ -75,6 +75,8 @@ public class HUDOverlayHandler
 		Minecraft mc = Minecraft.getInstance();
 		PlayerEntity player = mc.player;
 		ItemStack heldItem = player.getHeldItemMainhand();
+		if(!FoodHelper.isFood(heldItem))
+			heldItem = player.getHeldItemOffhand();
 		FoodStats stats = player.getFoodStats();
 
 		int left = mc.func_228018_at_().getScaledWidth() / 2 + 91;
