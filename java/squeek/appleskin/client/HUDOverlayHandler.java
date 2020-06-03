@@ -186,6 +186,9 @@ public class HUDOverlayHandler
 
 		float maxExhaustion = HungerHelper.getMaxExhaustion(mc.player);
 		float ratio = exhaustion / maxExhaustion;
+		//Clamp to 1 to prevent texture being rendered where it shouldn't
+		if(ratio > 1)
+			ratio = 1;
 		int width = (int) (ratio * 81);
 		int height = 9;
 
