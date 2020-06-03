@@ -32,6 +32,9 @@ public class HUDOverlayHandler
 
 	private static final ResourceLocation modIcons = new ResourceLocation(ModInfo.MODID_LOWER, "textures/icons.png");
 
+	final int[] normalSaturationTextures = new int[] {27, 18, 9, 0};
+	final int[] rottenSaturationTextures = new int[] {63, 54, 45, 36};
+
 	public static void init()
 	{
 		MinecraftForge.EVENT_BUS.register(new HUDOverlayHandler());
@@ -84,7 +87,7 @@ public class HUDOverlayHandler
 
 		// saturation overlay
 		if (ModConfig.SHOW_SATURATION_OVERLAY.get())
-			drawSaturationOverlay(0, stats.getSaturationLevel(), mc, left, top, 1f);
+			drawSaturationOverlay(0, stats.getSaturationLevel(), mc, left, top, 1f, normalSaturationTextures);
 
 		if (!ModConfig.SHOW_FOOD_VALUES_OVERLAY.get() || heldItem.isEmpty() || !FoodHelper.isFood(heldItem))
 		{
@@ -101,11 +104,18 @@ public class HUDOverlayHandler
 		{
 			int newFoodValue = stats.getFoodLevel() + foodValues.hunger;
 			float newSaturationValue = stats.getSaturationLevel() + foodValues.getSaturationIncrement();
-			drawSaturationOverlay(newSaturationValue > newFoodValue ? newFoodValue - stats.getSaturationLevel() : foodValues.getSaturationIncrement(), stats.getSaturationLevel(), mc, left, top, flashAlpha);
+			drawSaturationOverlay(
+					newSaturationValue > newFoodValue ? newFoodValue - stats.getSaturationLevel() : foodValues.getSaturationIncrement(),
+					stats.getSaturationLevel(),
+					mc,
+					left,
+					top,
+					flashAlpha,
+					FoodHelper.isRotten(heldItem) ? rottenSaturationTextures : normalSaturationTextures);
 		}
 	}
 
-	public static void drawSaturationOverlay(float saturationGained, float saturationLevel, Minecraft mc, int left, int top, float alpha)
+	public static void drawSaturationOverlay(float saturationGained, float saturationLevel, Minecraft mc, int left, int top, float alpha, int[] textureXPositions)
 	{
 		if (saturationLevel + saturationGained < 0)
 			return;
@@ -123,13 +133,13 @@ public class HUDOverlayHandler
 			float effectiveSaturationOfBar = (saturationLevel + saturationGained) / 2 - i;
 
 			if (effectiveSaturationOfBar >= 1)
-				mc.ingameGUI.blit(x, y, 27, 0, 9, 9);
+				mc.ingameGUI.blit(x, y, textureXPositions[0], 0, 9, 9);
 			else if (effectiveSaturationOfBar > .5)
-				mc.ingameGUI.blit(x, y, 18, 0, 9, 9);
+				mc.ingameGUI.blit(x, y, textureXPositions[1], 0, 9, 9);
 			else if (effectiveSaturationOfBar > .25)
-				mc.ingameGUI.blit(x, y, 9, 0, 9, 9);
+				mc.ingameGUI.blit(x, y, textureXPositions[2], 0, 9, 9);
 			else if (effectiveSaturationOfBar > 0)
-				mc.ingameGUI.blit(x, y, 0, 0, 9, 9);
+				mc.ingameGUI.blit(x, y, textureXPositions[3], 0, 9, 9);
 		}
 		disableAlpha(alpha);
 
