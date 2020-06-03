@@ -38,7 +38,7 @@ public class TooltipOverlayHandler
 	//These are the texture locations that should be used for normal food
 	final int[] normalBarTextures = new int[] {43, 133, 16, 124, 34, 115, 106, 61, 52};
 	//These are the texture locations that should be used for rotten food
-	final int[] rottenBarTextures = new int[] {43, 133, 16, 124, 34, 115, 106, 97, 87};
+	final int[] rottenBarTextures = new int[] {43, 133, 16, 133, 34, 115, 106, 97, 87};
 
 	@SubscribeEvent
 	public void onRenderTooltip(RenderTooltipEvent.PostText event)

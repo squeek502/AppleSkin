@@ -87,7 +87,13 @@ public class HUDOverlayHandler
 
 		// saturation overlay
 		if (ModConfig.SHOW_SATURATION_OVERLAY.get())
-			drawSaturationOverlay(0, stats.getSaturationLevel(), mc, left, top, 1f, normalSaturationTextures);
+			drawSaturationOverlay(0,
+					stats.getSaturationLevel(),
+					mc,
+					left,
+					top,
+					1f,
+					mc.player.isPotionActive(Effects.HUNGER) ? rottenSaturationTextures : normalSaturationTextures);
 
 		if (!ModConfig.SHOW_FOOD_VALUES_OVERLAY.get() || heldItem.isEmpty() || !FoodHelper.isFood(heldItem))
 		{
@@ -98,7 +104,7 @@ public class HUDOverlayHandler
 
 		// restored hunger/saturation overlay while holding food
 		FoodHelper.BasicFoodValues foodValues = FoodHelper.getModifiedFoodValues(heldItem, player);
-		drawHungerOverlay(foodValues.hunger, stats.getFoodLevel(), mc, left, top, flashAlpha);
+		drawHungerOverlay(foodValues.hunger, stats.getFoodLevel(), mc, left, top, flashAlpha, FoodHelper.isRotten(heldItem));
 
 		if (ModConfig.SHOW_SATURATION_OVERLAY.get())
 		{
@@ -111,7 +117,7 @@ public class HUDOverlayHandler
 					left,
 					top,
 					flashAlpha,
-					FoodHelper.isRotten(heldItem) ? rottenSaturationTextures : normalSaturationTextures);
+					FoodHelper.isRotten(heldItem) || mc.player.isPotionActive(Effects.HUNGER) ? rottenSaturationTextures : normalSaturationTextures);
 		}
 	}
 
@@ -147,7 +153,7 @@ public class HUDOverlayHandler
 		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
 	}
 
-	public static void drawHungerOverlay(int hungerRestored, int foodLevel, Minecraft mc, int left, int top, float alpha)
+	public static void drawHungerOverlay(int hungerRestored, int foodLevel, Minecraft mc, int left, int top, float alpha, boolean useRottenTextures)
 	{
 		if (hungerRestored == 0)
 			return;
@@ -166,7 +172,7 @@ public class HUDOverlayHandler
 			int icon = 16;
 			int background = 13;
 
-			if (mc.player.isPotionActive(Effects.HUNGER))
+			if (mc.player.isPotionActive(Effects.HUNGER) || useRottenTextures)
 			{
 				icon += 36;
 				background = 13;
