@@ -7,15 +7,12 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.EffectType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.ModInfo;
@@ -35,10 +32,48 @@ public class TooltipOverlayHandler
 		MinecraftForge.EVENT_BUS.register(new TooltipOverlayHandler());
 	}
 
-	//These are the texture locations that should be used for normal food
-	final int[] normalBarTextures = new int[] {43, 133, 16, 124, 34, 115, 106, 61, 52};
-	//These are the texture locations that should be used for rotten food
-	final int[] rottenBarTextures = new int[] {43, 133, 16, 133, 34, 115, 106, 97, 87};
+	private static final TextureOffsets normalBarTextureOffsets = new TextureOffsets();
+
+	static
+	{
+		normalBarTextureOffsets.containerNegativeHunger = 43;
+		normalBarTextureOffsets.containerExtraHunger = 133;
+		normalBarTextureOffsets.containerNormalHunger = 16;
+		normalBarTextureOffsets.containerPartialHunger = 124;
+		normalBarTextureOffsets.containerMissingHunger = 34;
+		normalBarTextureOffsets.shankMissingFull = 70;
+		normalBarTextureOffsets.shankMissingPartial = normalBarTextureOffsets.shankMissingFull + 9;
+		normalBarTextureOffsets.shankFull = 61;
+		normalBarTextureOffsets.shankPartial = normalBarTextureOffsets.shankFull + 9;
+	}
+
+	private static final TextureOffsets rottenBarTextureOffsets = new TextureOffsets();
+
+	static
+	{
+		rottenBarTextureOffsets.containerNegativeHunger = normalBarTextureOffsets.containerNegativeHunger;
+		rottenBarTextureOffsets.containerExtraHunger = normalBarTextureOffsets.containerExtraHunger;
+		rottenBarTextureOffsets.containerNormalHunger = normalBarTextureOffsets.containerNormalHunger;
+		rottenBarTextureOffsets.containerPartialHunger = normalBarTextureOffsets.containerPartialHunger;
+		rottenBarTextureOffsets.containerMissingHunger = normalBarTextureOffsets.containerMissingHunger;
+		rottenBarTextureOffsets.shankMissingFull = 106;
+		rottenBarTextureOffsets.shankMissingPartial = rottenBarTextureOffsets.shankMissingFull + 9;
+		rottenBarTextureOffsets.shankFull = 88;
+		rottenBarTextureOffsets.shankPartial = rottenBarTextureOffsets.shankFull + 9;
+	}
+
+	static class TextureOffsets
+	{
+		int containerNegativeHunger;
+		int containerExtraHunger;
+		int containerNormalHunger;
+		int containerPartialHunger;
+		int containerMissingHunger;
+		int shankMissingFull;
+		int shankMissingPartial;
+		int shankFull;
+		int shankPartial;
+	}
 
 	@SubscribeEvent
 	public void onRenderTooltip(RenderTooltipEvent.PostText event)
@@ -116,28 +151,28 @@ public class TooltipOverlayHandler
 
 		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
 
-		int[] bars = FoodHelper.isRotten(hoveredStack) ? rottenBarTextures : normalBarTextures;
+		TextureOffsets offsets = FoodHelper.isRotten(hoveredStack) ? rottenBarTextureOffsets : normalBarTextureOffsets;
 		for (int i = 0; i < barsNeeded * 2; i += 2)
 		{
 			x -= 9;
 
 			if (modifiedFoodValues.hunger < 0)
-				gui.blit(x, y, bars[0], 27, 9, 9);
+				gui.blit(x, y, offsets.containerNegativeHunger, 27, 9, 9);
 			else if (modifiedFoodValues.hunger > defaultFoodValues.hunger && defaultFoodValues.hunger <= i)
-				gui.blit(x, y, bars[1], 27, 9, 9);
+				gui.blit(x, y, offsets.containerExtraHunger, 27, 9, 9);
 			else if (modifiedFoodValues.hunger > i + 1 || defaultFoodValues.hunger == modifiedFoodValues.hunger)
-				gui.blit(x, y, bars[2], 27, 9, 9);
+				gui.blit(x, y, offsets.containerNormalHunger, 27, 9, 9);
 			else if (modifiedFoodValues.hunger == i + 1)
-				gui.blit(x, y, bars[3], 27, 9, 9);
+				gui.blit(x, y, offsets.containerPartialHunger, 27, 9, 9);
 			else
-				gui.blit(x, y, bars[4], 27, 9, 9);
+				gui.blit(x, y, offsets.containerMissingHunger, 27, 9, 9);
 
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, .25F);
-			gui.blit(x, y, defaultFoodValues.hunger - 1 == i ? bars[5] : bars[6], 27, 9, 9);
+			gui.blit(x, y, defaultFoodValues.hunger - 1 == i ? offsets.shankMissingPartial : offsets.shankMissingFull, 27, 9, 9);
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 			if (modifiedFoodValues.hunger > i)
-				gui.blit(x, y, modifiedFoodValues.hunger - 1 == i ? bars[7] : bars[8], 27, 9, 9);
+				gui.blit(x, y, modifiedFoodValues.hunger - 1 == i ? offsets.shankPartial : offsets.shankFull, 27, 9, 9);
 		}
 		if (hungerText != null)
 		{
