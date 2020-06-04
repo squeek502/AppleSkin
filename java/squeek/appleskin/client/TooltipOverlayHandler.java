@@ -43,7 +43,7 @@ public class TooltipOverlayHandler
 		normalBarTextureOffsets.containerMissingHunger = 34;
 		normalBarTextureOffsets.shankMissingFull = 70;
 		normalBarTextureOffsets.shankMissingPartial = normalBarTextureOffsets.shankMissingFull + 9;
-		normalBarTextureOffsets.shankFull = 61;
+		normalBarTextureOffsets.shankFull = 52;
 		normalBarTextureOffsets.shankPartial = normalBarTextureOffsets.shankFull + 9;
 	}
 
