@@ -48,7 +48,7 @@ public class FoodHelper
 		if (AppleSkin.hasAppleCore)
 			return AppleCoreHelper.isFood(itemStack);
 
-		return itemStack.getItem() instanceof ItemFood;
+		return itemStack != null && itemStack.getItem() instanceof ItemFood;
 	}
 
 	public static BasicFoodValues getDefaultFoodValues(ItemStack itemStack)
