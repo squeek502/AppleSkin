@@ -74,6 +74,8 @@ public class HUDOverlayHandler
 		Minecraft mc = Minecraft.getInstance();
 		PlayerEntity player = mc.player;
 		ItemStack heldItem = player.getHeldItemMainhand();
+		if(!FoodHelper.isFood(heldItem))
+			heldItem = player.getHeldItemOffhand();
 		FoodStats stats = player.getFoodStats();
 
 		int left = mc.mainWindow.getScaledWidth() / 2 + 91;
@@ -174,7 +176,8 @@ public class HUDOverlayHandler
 		mc.getTextureManager().bindTexture(modIcons);
 
 		float maxExhaustion = HungerHelper.getMaxExhaustion(mc.player);
-		float ratio = exhaustion / maxExhaustion;
+		// clamp between 0 and 1
+		float ratio = Math.min(1, Math.max(0, exhaustion / maxExhaustion));
 		int width = (int) (ratio * 81);
 		int height = 9;
 
