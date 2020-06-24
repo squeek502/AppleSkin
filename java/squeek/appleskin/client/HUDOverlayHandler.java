@@ -180,7 +180,8 @@ public class HUDOverlayHandler
 		mc.getTextureManager().bindTexture(modIcons);
 
 		float maxExhaustion = HungerHelper.getMaxExhaustion(mc.player);
-		float ratio = exhaustion / maxExhaustion;
+		// clamp between 0 and 1
+		float ratio = Math.min(1, Math.max(0, exhaustion / maxExhaustion));
 		int width = (int) (ratio * 81);
 		int height = 9;
 
