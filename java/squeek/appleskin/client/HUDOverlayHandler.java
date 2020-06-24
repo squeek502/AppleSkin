@@ -40,6 +40,8 @@ public class HUDOverlayHandler
 		MinecraftClient mc = MinecraftClient.getInstance();
 		PlayerEntity player = mc.player;
 		ItemStack heldItem = player.getMainHandStack();
+		if (!FoodHelper.isFood(heldItem))
+			heldItem = player.getOffHandStack();
 		HungerManager stats = player.getHungerManager();
 
 		int left = mc.getWindow().getScaledWidth() / 2 + 91;
@@ -57,7 +59,7 @@ public class HUDOverlayHandler
 
 		// restored hunger/saturation overlay while holding food
 		FoodHelper.BasicFoodValues foodValues = FoodHelper.getModifiedFoodValues(heldItem, player);
-		drawHungerOverlay(matrixStack, foodValues.hunger, stats.getFoodLevel(), mc, left, top, flashAlpha);
+		drawHungerOverlay(matrixStack, foodValues.hunger, stats.getFoodLevel(), mc, left, top, flashAlpha, FoodHelper.isRotten(heldItem));
 
 		int newFoodValue = stats.getFoodLevel() + foodValues.hunger;
 		float newSaturationValue = stats.getSaturationLevel() + foodValues.getSaturationIncrement();
@@ -96,7 +98,7 @@ public class HUDOverlayHandler
 		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_TEXTURE);
 	}
 
-	public static void drawHungerOverlay(MatrixStack matrixStack, int hungerRestored, int foodLevel, MinecraftClient mc, int left, int top, float alpha)
+	public static void drawHungerOverlay(MatrixStack matrixStack, int hungerRestored, int foodLevel, MinecraftClient mc, int left, int top, float alpha, boolean useRottenTextures)
 	{
 		if (hungerRestored == 0)
 			return;
@@ -113,15 +115,18 @@ public class HUDOverlayHandler
 			int x = left - i * 8 - 9;
 			int y = top;
 			int icon = 16;
-			int background = 13;
+			int background = 1;
 
-			if (mc.player.hasStatusEffect(StatusEffects.HUNGER))
+			if (useRottenTextures)
 			{
 				icon += 36;
 				background = 13;
 			}
 
+			// very faint background
+			RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha * 0.1f);
 			mc.inGameHud.drawTexture(matrixStack, x, y, 16 + background * 9, 27, 9, 9);
+			RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha);
 
 			if (idx < foodLevel + hungerRestored)
 				mc.inGameHud.drawTexture(matrixStack, x, y, icon + 36, 27, 9, 9);
@@ -136,7 +141,8 @@ public class HUDOverlayHandler
 		mc.getTextureManager().bindTexture(modIcons);
 
 		float maxExhaustion = HungerHelper.getMaxExhaustion(mc.player);
-		float ratio = exhaustion / maxExhaustion;
+		// clamp between 0 and 1
+		float ratio = Math.min(1, Math.max(0, exhaustion / maxExhaustion));
 		int width = (int) (ratio * 81);
 		int height = 9;
 

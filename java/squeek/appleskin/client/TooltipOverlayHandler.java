@@ -17,6 +17,49 @@ public class TooltipOverlayHandler
 	public static final int TOOLTIP_REAL_HEIGHT_OFFSET_TOP = -3;
 	public static final int TOOLTIP_REAL_WIDTH_OFFSET_RIGHT = 3;
 
+	private static final TextureOffsets normalBarTextureOffsets = new TextureOffsets();
+
+	static
+	{
+		normalBarTextureOffsets.containerNegativeHunger = 43;
+		normalBarTextureOffsets.containerExtraHunger = 133;
+		normalBarTextureOffsets.containerNormalHunger = 16;
+		normalBarTextureOffsets.containerPartialHunger = 124;
+		normalBarTextureOffsets.containerMissingHunger = 34;
+		normalBarTextureOffsets.shankMissingFull = 70;
+		normalBarTextureOffsets.shankMissingPartial = normalBarTextureOffsets.shankMissingFull + 9;
+		normalBarTextureOffsets.shankFull = 52;
+		normalBarTextureOffsets.shankPartial = normalBarTextureOffsets.shankFull + 9;
+	}
+
+	private static final TextureOffsets rottenBarTextureOffsets = new TextureOffsets();
+
+	static
+	{
+		rottenBarTextureOffsets.containerNegativeHunger = normalBarTextureOffsets.containerNegativeHunger;
+		rottenBarTextureOffsets.containerExtraHunger = normalBarTextureOffsets.containerExtraHunger;
+		rottenBarTextureOffsets.containerNormalHunger = normalBarTextureOffsets.containerNormalHunger;
+		rottenBarTextureOffsets.containerPartialHunger = normalBarTextureOffsets.containerPartialHunger;
+		rottenBarTextureOffsets.containerMissingHunger = normalBarTextureOffsets.containerMissingHunger;
+		rottenBarTextureOffsets.shankMissingFull = 106;
+		rottenBarTextureOffsets.shankMissingPartial = rottenBarTextureOffsets.shankMissingFull + 9;
+		rottenBarTextureOffsets.shankFull = 88;
+		rottenBarTextureOffsets.shankPartial = rottenBarTextureOffsets.shankFull + 9;
+	}
+
+	static class TextureOffsets
+	{
+		int containerNegativeHunger;
+		int containerExtraHunger;
+		int containerNormalHunger;
+		int containerPartialHunger;
+		int containerMissingHunger;
+		int shankMissingFull;
+		int shankMissingPartial;
+		int shankFull;
+		int shankPartial;
+	}
+
 	public static void onRenderTooltip(MatrixStack matrixStack, ItemStack hoveredStack, int toolTipX, int toolTipY, int toolTipW, int toolTipH)
 	{
 		if (hoveredStack == null || hoveredStack.isEmpty())
@@ -83,27 +126,28 @@ public class TooltipOverlayHandler
 
 		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_TEXTURE);
 
+		TextureOffsets offsets = FoodHelper.isRotten(hoveredStack) ? rottenBarTextureOffsets : normalBarTextureOffsets;
 		for (int i = 0; i < barsNeeded * 2; i += 2)
 		{
 			x -= 9;
 
 			if (modifiedFoodValues.hunger < 0)
-				gui.drawTexture(matrixStack, x, y, 34, 27, 9, 9);
+				gui.drawTexture(matrixStack, x, y, offsets.containerNegativeHunger, 27, 9, 9);
 			else if (modifiedFoodValues.hunger > defaultFoodValues.hunger && defaultFoodValues.hunger <= i)
-				gui.drawTexture(matrixStack, x, y, 133, 27, 9, 9);
+				gui.drawTexture(matrixStack, x, y, offsets.containerExtraHunger, 27, 9, 9);
 			else if (modifiedFoodValues.hunger > i + 1 || defaultFoodValues.hunger == modifiedFoodValues.hunger)
-				gui.drawTexture(matrixStack, x, y, 16, 27, 9, 9);
+				gui.drawTexture(matrixStack, x, y, offsets.containerNormalHunger, 27, 9, 9);
 			else if (modifiedFoodValues.hunger == i + 1)
-				gui.drawTexture(matrixStack, x, y, 124, 27, 9, 9);
+				gui.drawTexture(matrixStack, x, y, offsets.containerPartialHunger, 27, 9, 9);
 			else
-				gui.drawTexture(matrixStack, x, y, 34, 27, 9, 9);
+				gui.drawTexture(matrixStack, x, y, offsets.containerMissingHunger, 27, 9, 9);
 
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, .25F);
-			gui.drawTexture(matrixStack, x, y, defaultFoodValues.hunger - 1 == i ? 115 : 106, 27, 9, 9);
+			gui.drawTexture(matrixStack, x, y, defaultFoodValues.hunger - 1 == i ? offsets.shankMissingPartial : offsets.shankMissingFull, 27, 9, 9);
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 			if (modifiedFoodValues.hunger > i)
-				gui.drawTexture(matrixStack, x, y, modifiedFoodValues.hunger - 1 == i ? 61 : 52, 27, 9, 9);
+				gui.drawTexture(matrixStack, x, y, modifiedFoodValues.hunger - 1 == i ? offsets.shankPartial : offsets.shankFull, 27, 9, 9);
 		}
 		if (hungerText != null)
 		{
