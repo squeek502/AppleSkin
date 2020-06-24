@@ -1,8 +1,11 @@
 package squeek.appleskin.helpers;
 
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffectType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.ItemStack;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class FoodHelper
 {
@@ -57,12 +60,28 @@ public class FoodHelper
 
 	public static BasicFoodValues getModifiedFoodValues(ItemStack itemStack, PlayerEntity player)
 	{
-		if (itemStack.getItem() instanceof DynamicFood) {
-			DynamicFood food = (DynamicFood)itemStack.getItem();
+		if (itemStack.getItem() instanceof DynamicFood)
+		{
+			DynamicFood food = (DynamicFood) itemStack.getItem();
 			int hunger = food.getDynamicHunger(itemStack, player);
 			float saturationModifier = food.getDynamicSaturation(itemStack, player);
 			return new BasicFoodValues(hunger, saturationModifier);
 		}
 		return getDefaultFoodValues(itemStack);
+	}
+
+	public static boolean isRotten(ItemStack itemStack)
+	{
+		if (!isFood(itemStack))
+			return false;
+
+		for (Pair<StatusEffectInstance, Float> effect : itemStack.getItem().getFoodComponent().getStatusEffects())
+		{
+			if (effect.getLeft() != null && effect.getLeft().getEffectType() != null && effect.getLeft().getEffectType().getType() == StatusEffectType.HARMFUL)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }
