@@ -80,6 +80,8 @@ public class HUDOverlayHandler
 		Minecraft mc = Minecraft.getMinecraft();
 		EntityPlayer player = mc.player;
 		ItemStack heldItem = player.getHeldItemMainhand();
+		if(!FoodHelper.isFood(heldItem))
+			heldItem = player.getHeldItemOffhand();
 		FoodStats stats = player.getFoodStats();
 
 		ScaledResolution scale = event.getResolution();
