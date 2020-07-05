@@ -1,18 +1,17 @@
 package squeek.appleskin.client;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Effects;
 import net.minecraft.util.FoodStats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -54,10 +53,10 @@ public class HUDOverlayHandler
 		Minecraft mc = Minecraft.getInstance();
 		PlayerEntity player = mc.player;
 
-		int left = mc.func_228018_at_().getScaledWidth() / 2 + 91;
-		int top = mc.func_228018_at_().getScaledHeight() - foodIconsOffset;
+		int left = mc.getMainWindow().getScaledWidth() / 2 + 91;
+		int top = mc.getMainWindow().getScaledHeight() - foodIconsOffset;
 
-		drawExhaustionOverlay(HungerHelper.getExhaustion(player), mc, left, top, 1f);
+		drawExhaustionOverlay(HungerHelper.getExhaustion(player), mc, event.getMatrixStack(), left, top, 1f);
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOW)
@@ -79,12 +78,12 @@ public class HUDOverlayHandler
 			heldItem = player.getHeldItemOffhand();
 		FoodStats stats = player.getFoodStats();
 
-		int left = mc.func_228018_at_().getScaledWidth() / 2 + 91;
-		int top = mc.func_228018_at_().getScaledHeight() - foodIconsOffset;
+		int left = mc.getMainWindow().getScaledWidth() / 2 + 91;
+		int top = mc.getMainWindow().getScaledHeight() - foodIconsOffset;
 
 		// saturation overlay
 		if (ModConfig.SHOW_SATURATION_OVERLAY.get())
-			drawSaturationOverlay(0, stats.getSaturationLevel(), mc, left, top, 1f);
+			drawSaturationOverlay(0, stats.getSaturationLevel(), mc, event.getMatrixStack(), left, top, 1f);
 
 		if (!ModConfig.SHOW_FOOD_VALUES_OVERLAY.get() || heldItem.isEmpty() || !FoodHelper.isFood(heldItem))
 		{
@@ -95,17 +94,17 @@ public class HUDOverlayHandler
 
 		// restored hunger/saturation overlay while holding food
 		FoodHelper.BasicFoodValues foodValues = FoodHelper.getModifiedFoodValues(heldItem, player);
-		drawHungerOverlay(foodValues.hunger, stats.getFoodLevel(), mc, left, top, flashAlpha, FoodHelper.isRotten(heldItem));
+		drawHungerOverlay(foodValues.hunger, stats.getFoodLevel(), mc, event.getMatrixStack(), left, top, flashAlpha, FoodHelper.isRotten(heldItem));
 
 		if (ModConfig.SHOW_SATURATION_OVERLAY.get())
 		{
 			int newFoodValue = stats.getFoodLevel() + foodValues.hunger;
 			float newSaturationValue = stats.getSaturationLevel() + foodValues.getSaturationIncrement();
-			drawSaturationOverlay(newSaturationValue > newFoodValue ? newFoodValue - stats.getSaturationLevel() : foodValues.getSaturationIncrement(), stats.getSaturationLevel(), mc, left, top, flashAlpha);
+			drawSaturationOverlay(newSaturationValue > newFoodValue ? newFoodValue - stats.getSaturationLevel() : foodValues.getSaturationIncrement(), stats.getSaturationLevel(), mc, event.getMatrixStack(), left, top, flashAlpha);
 		}
 	}
 
-	public static void drawSaturationOverlay(float saturationGained, float saturationLevel, Minecraft mc, int left, int top, float alpha)
+	public static void drawSaturationOverlay(float saturationGained, float saturationLevel, Minecraft mc, MatrixStack matrixStack, int left, int top, float alpha)
 	{
 		if (saturationLevel + saturationGained < 0)
 			return;
@@ -123,21 +122,21 @@ public class HUDOverlayHandler
 			float effectiveSaturationOfBar = (saturationLevel + saturationGained) / 2 - i;
 
 			if (effectiveSaturationOfBar >= 1)
-				mc.ingameGUI.blit(x, y, 27, 0, 9, 9);
+				mc.ingameGUI.func_238474_b_(matrixStack, x, y, 27, 0, 9, 9);
 			else if (effectiveSaturationOfBar > .5)
-				mc.ingameGUI.blit(x, y, 18, 0, 9, 9);
+				mc.ingameGUI.func_238474_b_(matrixStack, x, y, 18, 0, 9, 9);
 			else if (effectiveSaturationOfBar > .25)
-				mc.ingameGUI.blit(x, y, 9, 0, 9, 9);
+				mc.ingameGUI.func_238474_b_(matrixStack, x, y, 9, 0, 9, 9);
 			else if (effectiveSaturationOfBar > 0)
-				mc.ingameGUI.blit(x, y, 0, 0, 9, 9);
+				mc.ingameGUI.func_238474_b_(matrixStack, x, y, 0, 0, 9, 9);
 		}
 		disableAlpha(alpha);
 
 		// rebind default icons
-		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
+		mc.getTextureManager().bindTexture(AbstractGui.field_230665_h_);
 	}
 
-	public static void drawHungerOverlay(int hungerRestored, int foodLevel, Minecraft mc, int left, int top, float alpha, boolean useRottenTextures)
+	public static void drawHungerOverlay(int hungerRestored, int foodLevel, Minecraft mc, MatrixStack matrixStack, int left, int top, float alpha, boolean useRottenTextures)
 	{
 		if (hungerRestored == 0)
 			return;
@@ -145,7 +144,7 @@ public class HUDOverlayHandler
 		int startBar = foodLevel / 2;
 		int endBar = (int) Math.ceil(Math.min(20, foodLevel + hungerRestored) / 2f);
 		int barsNeeded = endBar - startBar;
-		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
+		mc.getTextureManager().bindTexture(AbstractGui.field_230665_h_);
 
 		enableAlpha(alpha);
 		for (int i = startBar; i < startBar + barsNeeded; ++i)
@@ -164,18 +163,18 @@ public class HUDOverlayHandler
 
 			// very faint background
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha * 0.1f);
-			mc.ingameGUI.blit(x, y, 16 + background * 9, 27, 9, 9);
+			mc.ingameGUI.func_238474_b_(matrixStack, x, y, 16 + background * 9, 27, 9, 9);
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha);
 
 			if (idx < foodLevel + hungerRestored)
-				mc.ingameGUI.blit(x, y, icon + 36, 27, 9, 9);
+				mc.ingameGUI.func_238474_b_(matrixStack, x, y, icon + 36, 27, 9, 9);
 			else if (idx == foodLevel + hungerRestored)
-				mc.ingameGUI.blit(x, y, icon + 45, 27, 9, 9);
+				mc.ingameGUI.func_238474_b_(matrixStack, x, y, icon + 45, 27, 9, 9);
 		}
 		disableAlpha(alpha);
 	}
 
-	public static void drawExhaustionOverlay(float exhaustion, Minecraft mc, int left, int top, float alpha)
+	public static void drawExhaustionOverlay(float exhaustion, Minecraft mc, MatrixStack matrixStack, int left, int top, float alpha)
 	{
 		mc.getTextureManager().bindTexture(modIcons);
 
@@ -186,11 +185,11 @@ public class HUDOverlayHandler
 		int height = 9;
 
 		enableAlpha(.75f);
-		mc.ingameGUI.blit(left - width, top, 81 - width, 18, width, height);
+		mc.ingameGUI.func_238474_b_(matrixStack, left - width, top, 81 - width, 18, width, height);
 		disableAlpha(.75f);
 
 		// rebind default icons
-		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
+		mc.getTextureManager().bindTexture(AbstractGui.field_230665_h_);
 	}
 
 	public static void enableAlpha(float alpha)

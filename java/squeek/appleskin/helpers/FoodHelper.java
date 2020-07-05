@@ -1,11 +1,11 @@
 package squeek.appleskin.helpers;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Food;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.EffectType;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class FoodHelper
 {
@@ -69,7 +69,7 @@ public class FoodHelper
 			return false;
 
 		for (Pair<EffectInstance, Float> effect : itemStack.getItem().getFood().getEffects()) {
-			if (effect.getLeft() != null && effect.getLeft().getPotion() != null && effect.getLeft().getPotion().getEffectType() == EffectType.HARMFUL) {
+			if (effect.getFirst() != null && effect.getFirst().getPotion() != null && effect.getFirst().getPotion().getEffectType() == EffectType.HARMFUL) {
 				return true;
 			}
 		}

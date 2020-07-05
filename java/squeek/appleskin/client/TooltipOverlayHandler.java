@@ -1,5 +1,6 @@
 package squeek.appleskin.client;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -96,6 +97,7 @@ public class TooltipOverlayHandler
 			return;
 
 		PlayerEntity player = mc.player;
+		MatrixStack matrixStack = event.getMatrixStack();
 		int toolTipY = event.getY();
 		int toolTipX = event.getX();
 		int toolTipW = event.getWidth();
@@ -125,7 +127,7 @@ public class TooltipOverlayHandler
 		int toolTipBottomY = toolTipY + toolTipH + 1 + TOOLTIP_REAL_HEIGHT_OFFSET_BOTTOM;
 		int toolTipRightX = toolTipX + toolTipW + 1 + TOOLTIP_REAL_WIDTH_OFFSET_RIGHT;
 
-		boolean shouldDrawBelow = toolTipBottomY + 20 < mc.func_228018_at_().getScaledHeight() - 3;
+		boolean shouldDrawBelow = toolTipBottomY + 20 < mc.getMainWindow().getScaledHeight() - 3;
 
 		int rightX = toolTipRightX - 3;
 		int leftX = rightX - (Math.max(barsNeeded * 9 + (int) (mc.fontRenderer.getStringWidth(hungerText) * 0.75f), saturationBarsNeeded * 6 + (int) (mc.fontRenderer.getStringWidth(saturationText) * 0.75f))) - 3;
@@ -136,9 +138,9 @@ public class TooltipOverlayHandler
 		RenderSystem.disableDepthTest();
 
 		// bg
-		AbstractGui.fill(leftX - 1, topY, rightX + 1, bottomY, 0xF0100010);
-		AbstractGui.fill(leftX, (shouldDrawBelow ? bottomY : topY - 1), rightX, (shouldDrawBelow ? bottomY + 1 : topY), 0xF0100010);
-		AbstractGui.fill(leftX, topY, rightX, bottomY, 0x66FFFFFF);
+		AbstractGui.func_238467_a_(matrixStack, leftX - 1, topY, rightX + 1, bottomY, 0xF0100010);
+		AbstractGui.func_238467_a_(matrixStack, leftX, (shouldDrawBelow ? bottomY : topY - 1), rightX, (shouldDrawBelow ? bottomY + 1 : topY), 0xF0100010);
+		AbstractGui.func_238467_a_(matrixStack, leftX, topY, rightX, bottomY, 0x66FFFFFF);
 
 		// drawRect disables blending and modifies color, so reset them
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -149,7 +151,7 @@ public class TooltipOverlayHandler
 		int startX = x;
 		int y = bottomY - 18;
 
-		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
+		mc.getTextureManager().bindTexture(AbstractGui.field_230665_h_);
 
 		TextureOffsets offsets = FoodHelper.isRotten(hoveredStack) ? rottenBarTextureOffsets : normalBarTextureOffsets;
 		for (int i = 0; i < barsNeeded * 2; i += 2)
@@ -157,28 +159,28 @@ public class TooltipOverlayHandler
 			x -= 9;
 
 			if (modifiedFoodValues.hunger < 0)
-				gui.blit(x, y, offsets.containerNegativeHunger, 27, 9, 9);
+				gui.func_238474_b_(matrixStack, x, y, offsets.containerNegativeHunger, 27, 9, 9);
 			else if (modifiedFoodValues.hunger > defaultFoodValues.hunger && defaultFoodValues.hunger <= i)
-				gui.blit(x, y, offsets.containerExtraHunger, 27, 9, 9);
+				gui.func_238474_b_(matrixStack, x, y, offsets.containerExtraHunger, 27, 9, 9);
 			else if (modifiedFoodValues.hunger > i + 1 || defaultFoodValues.hunger == modifiedFoodValues.hunger)
-				gui.blit(x, y, offsets.containerNormalHunger, 27, 9, 9);
+				gui.func_238474_b_(matrixStack, x, y, offsets.containerNormalHunger, 27, 9, 9);
 			else if (modifiedFoodValues.hunger == i + 1)
-				gui.blit(x, y, offsets.containerPartialHunger, 27, 9, 9);
+				gui.func_238474_b_(matrixStack, x, y, offsets.containerPartialHunger, 27, 9, 9);
 			else
-				gui.blit(x, y, offsets.containerMissingHunger, 27, 9, 9);
+				gui.func_238474_b_(matrixStack, x, y, offsets.containerMissingHunger, 27, 9, 9);
 
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, .25F);
-			gui.blit(x, y, defaultFoodValues.hunger - 1 == i ? offsets.shankMissingPartial : offsets.shankMissingFull, 27, 9, 9);
+			gui.func_238474_b_(matrixStack, x, y, defaultFoodValues.hunger - 1 == i ? offsets.shankMissingPartial : offsets.shankMissingFull, 27, 9, 9);
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 			if (modifiedFoodValues.hunger > i)
-				gui.blit(x, y, modifiedFoodValues.hunger - 1 == i ? offsets.shankPartial : offsets.shankFull, 27, 9, 9);
+				gui.func_238474_b_(matrixStack, x, y, modifiedFoodValues.hunger - 1 == i ? offsets.shankPartial : offsets.shankFull, 27, 9, 9);
 		}
 		if (hungerText != null)
 		{
 			RenderSystem.pushMatrix();
 			RenderSystem.scalef(0.75F, 0.75F, 0.75F);
-			mc.fontRenderer.drawStringWithShadow(hungerText, x * 4 / 3 - mc.fontRenderer.getStringWidth(hungerText) + 2, y * 4 / 3 + 2, 0xFFDDDDDD);
+			mc.fontRenderer.func_238406_a_(matrixStack, hungerText, x * 4 / 3 - mc.fontRenderer.getStringWidth(hungerText) + 2, y * 4 / 3 + 2, 0xFFDDDDDD, false);
 			RenderSystem.popMatrix();
 		}
 
@@ -199,7 +201,7 @@ public class TooltipOverlayHandler
 			if (shouldBeFaded)
 				RenderSystem.color4f(1.0F, 1.0F, 1.0F, .5F);
 
-			gui.blit(x, y, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7);
+			gui.func_238474_b_(matrixStack, x, y, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7);
 
 			if (shouldBeFaded)
 				RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -208,7 +210,7 @@ public class TooltipOverlayHandler
 		{
 			RenderSystem.pushMatrix();
 			RenderSystem.scalef(0.75F, 0.75F, 0.75F);
-			mc.fontRenderer.drawStringWithShadow(saturationText, x * 4 / 3 - mc.fontRenderer.getStringWidth(saturationText) + 2, y * 4 / 3 + 1, 0xFFDDDDDD);
+			mc.fontRenderer.func_238406_a_(matrixStack, saturationText, x * 4 / 3 - mc.fontRenderer.getStringWidth(saturationText) + 2, y * 4 / 3 + 1, 0xFFDDDDDD, false);
 			RenderSystem.popMatrix();
 		}
 
