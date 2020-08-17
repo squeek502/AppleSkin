@@ -138,9 +138,9 @@ public class TooltipOverlayHandler
 		RenderSystem.disableDepthTest();
 
 		// bg
-		AbstractGui.func_238467_a_(matrixStack, leftX - 1, topY, rightX + 1, bottomY, 0xF0100010);
-		AbstractGui.func_238467_a_(matrixStack, leftX, (shouldDrawBelow ? bottomY : topY - 1), rightX, (shouldDrawBelow ? bottomY + 1 : topY), 0xF0100010);
-		AbstractGui.func_238467_a_(matrixStack, leftX, topY, rightX, bottomY, 0x66FFFFFF);
+		AbstractGui.fill(matrixStack, leftX - 1, topY, rightX + 1, bottomY, 0xF0100010);
+		AbstractGui.fill(matrixStack, leftX, (shouldDrawBelow ? bottomY : topY - 1), rightX, (shouldDrawBelow ? bottomY + 1 : topY), 0xF0100010);
+		AbstractGui.fill(matrixStack, leftX, topY, rightX, bottomY, 0x66FFFFFF);
 
 		// drawRect disables blending and modifies color, so reset them
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -151,7 +151,7 @@ public class TooltipOverlayHandler
 		int startX = x;
 		int y = bottomY - 18;
 
-		mc.getTextureManager().bindTexture(AbstractGui.field_230665_h_);
+		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
 
 		TextureOffsets offsets = FoodHelper.isRotten(hoveredStack) ? rottenBarTextureOffsets : normalBarTextureOffsets;
 		for (int i = 0; i < barsNeeded * 2; i += 2)
@@ -159,22 +159,22 @@ public class TooltipOverlayHandler
 			x -= 9;
 
 			if (modifiedFoodValues.hunger < 0)
-				gui.func_238474_b_(matrixStack, x, y, offsets.containerNegativeHunger, 27, 9, 9);
+				gui.blit(matrixStack, x, y, offsets.containerNegativeHunger, 27, 9, 9);
 			else if (modifiedFoodValues.hunger > defaultFoodValues.hunger && defaultFoodValues.hunger <= i)
-				gui.func_238474_b_(matrixStack, x, y, offsets.containerExtraHunger, 27, 9, 9);
+				gui.blit(matrixStack, x, y, offsets.containerExtraHunger, 27, 9, 9);
 			else if (modifiedFoodValues.hunger > i + 1 || defaultFoodValues.hunger == modifiedFoodValues.hunger)
-				gui.func_238474_b_(matrixStack, x, y, offsets.containerNormalHunger, 27, 9, 9);
+				gui.blit(matrixStack, x, y, offsets.containerNormalHunger, 27, 9, 9);
 			else if (modifiedFoodValues.hunger == i + 1)
-				gui.func_238474_b_(matrixStack, x, y, offsets.containerPartialHunger, 27, 9, 9);
+				gui.blit(matrixStack, x, y, offsets.containerPartialHunger, 27, 9, 9);
 			else
-				gui.func_238474_b_(matrixStack, x, y, offsets.containerMissingHunger, 27, 9, 9);
+				gui.blit(matrixStack, x, y, offsets.containerMissingHunger, 27, 9, 9);
 
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, .25F);
-			gui.func_238474_b_(matrixStack, x, y, defaultFoodValues.hunger - 1 == i ? offsets.shankMissingPartial : offsets.shankMissingFull, 27, 9, 9);
+			gui.blit(matrixStack, x, y, defaultFoodValues.hunger - 1 == i ? offsets.shankMissingPartial : offsets.shankMissingFull, 27, 9, 9);
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 			if (modifiedFoodValues.hunger > i)
-				gui.func_238474_b_(matrixStack, x, y, modifiedFoodValues.hunger - 1 == i ? offsets.shankPartial : offsets.shankFull, 27, 9, 9);
+				gui.blit(matrixStack, x, y, modifiedFoodValues.hunger - 1 == i ? offsets.shankPartial : offsets.shankFull, 27, 9, 9);
 		}
 		if (hungerText != null)
 		{
@@ -201,7 +201,7 @@ public class TooltipOverlayHandler
 			if (shouldBeFaded)
 				RenderSystem.color4f(1.0F, 1.0F, 1.0F, .5F);
 
-			gui.func_238474_b_(matrixStack, x, y, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7);
+			gui.blit(matrixStack, x, y, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7);
 
 			if (shouldBeFaded)
 				RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
