@@ -122,18 +122,18 @@ public class HUDOverlayHandler
 			float effectiveSaturationOfBar = (saturationLevel + saturationGained) / 2 - i;
 
 			if (effectiveSaturationOfBar >= 1)
-				mc.ingameGUI.func_238474_b_(matrixStack, x, y, 27, 0, 9, 9);
+				mc.ingameGUI.blit(matrixStack, x, y, 27, 0, 9, 9);
 			else if (effectiveSaturationOfBar > .5)
-				mc.ingameGUI.func_238474_b_(matrixStack, x, y, 18, 0, 9, 9);
+				mc.ingameGUI.blit(matrixStack, x, y, 18, 0, 9, 9);
 			else if (effectiveSaturationOfBar > .25)
-				mc.ingameGUI.func_238474_b_(matrixStack, x, y, 9, 0, 9, 9);
+				mc.ingameGUI.blit(matrixStack, x, y, 9, 0, 9, 9);
 			else if (effectiveSaturationOfBar > 0)
-				mc.ingameGUI.func_238474_b_(matrixStack, x, y, 0, 0, 9, 9);
+				mc.ingameGUI.blit(matrixStack, x, y, 0, 0, 9, 9);
 		}
 		disableAlpha(alpha);
 
 		// rebind default icons
-		mc.getTextureManager().bindTexture(AbstractGui.field_230665_h_);
+		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
 	}
 
 	public static void drawHungerOverlay(int hungerRestored, int foodLevel, Minecraft mc, MatrixStack matrixStack, int left, int top, float alpha, boolean useRottenTextures)
@@ -144,7 +144,7 @@ public class HUDOverlayHandler
 		int startBar = foodLevel / 2;
 		int endBar = (int) Math.ceil(Math.min(20, foodLevel + hungerRestored) / 2f);
 		int barsNeeded = endBar - startBar;
-		mc.getTextureManager().bindTexture(AbstractGui.field_230665_h_);
+		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
 
 		enableAlpha(alpha);
 		for (int i = startBar; i < startBar + barsNeeded; ++i)
@@ -163,13 +163,13 @@ public class HUDOverlayHandler
 
 			// very faint background
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha * 0.1f);
-			mc.ingameGUI.func_238474_b_(matrixStack, x, y, 16 + background * 9, 27, 9, 9);
+			mc.ingameGUI.blit(matrixStack, x, y, 16 + background * 9, 27, 9, 9);
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha);
 
 			if (idx < foodLevel + hungerRestored)
-				mc.ingameGUI.func_238474_b_(matrixStack, x, y, icon + 36, 27, 9, 9);
+				mc.ingameGUI.blit(matrixStack, x, y, icon + 36, 27, 9, 9);
 			else if (idx == foodLevel + hungerRestored)
-				mc.ingameGUI.func_238474_b_(matrixStack, x, y, icon + 45, 27, 9, 9);
+				mc.ingameGUI.blit(matrixStack, x, y, icon + 45, 27, 9, 9);
 		}
 		disableAlpha(alpha);
 	}
@@ -185,11 +185,11 @@ public class HUDOverlayHandler
 		int height = 9;
 
 		enableAlpha(.75f);
-		mc.ingameGUI.func_238474_b_(matrixStack, left - width, top, 81 - width, 18, width, height);
+		mc.ingameGUI.blit(matrixStack, left - width, top, 81 - width, 18, width, height);
 		disableAlpha(.75f);
 
 		// rebind default icons
-		mc.getTextureManager().bindTexture(AbstractGui.field_230665_h_);
+		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
 	}
 
 	public static void enableAlpha(float alpha)
