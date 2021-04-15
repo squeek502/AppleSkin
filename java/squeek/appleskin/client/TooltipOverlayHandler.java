@@ -100,6 +100,7 @@ public class TooltipOverlayHandler
 		MatrixStack matrixStack = event.getMatrixStack();
 		int toolTipY = event.getY();
 		int toolTipX = event.getX();
+		int toolTipZ = 400; // tooltip text zLevel is 400d, hardcode in GuiUtils.
 		int toolTipW = event.getWidth();
 		int toolTipH = event.getHeight();
 
@@ -136,6 +137,9 @@ public class TooltipOverlayHandler
 
 		RenderSystem.disableLighting();
 		RenderSystem.disableDepthTest();
+
+		matrixStack.push();
+		matrixStack.translate(0.0D, 0.0D, toolTipZ);
 
 		// bg
 		AbstractGui.fill(matrixStack, leftX - 1, topY, rightX + 1, bottomY, 0xF0100010);
@@ -213,6 +217,8 @@ public class TooltipOverlayHandler
 			mc.fontRenderer.func_238406_a_(matrixStack, saturationText, x * 4 / 3 - mc.fontRenderer.getStringWidth(saturationText) + 2, y * 4 / 3 + 1, 0xFFDDDDDD, false);
 			RenderSystem.popMatrix();
 		}
+
+		matrixStack.pop();
 
 		RenderSystem.disableBlend();
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
