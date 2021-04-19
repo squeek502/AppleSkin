@@ -53,6 +53,12 @@ public class ModConfig
 	private static final String SHOW_FOOD_VALUES_OVERLAY_COMMENT =
 		"If true, shows the hunger (and saturation if " + SHOW_SATURATION_OVERLAY_NAME + " is true) that would be restored by food you are currently holding";
 
+	public static final ForgeConfigSpec.BooleanValue SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND;
+	public static boolean SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND_DEFAULT = true;
+	private static final String SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND_NAME = "showFoodValuesHudOverlayWhenOffhand";
+	private static final String SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND_COMMENT =
+		"If true, shows the hunger (and saturation if " + SHOW_SATURATION_OVERLAY_NAME + " is true) that would be restored by food you are offhand holding";
+
 	public static final ForgeConfigSpec.BooleanValue SHOW_FOOD_EXHAUSTION_UNDERLAY;
 	public static boolean SHOW_FOOD_EXHAUSTION_UNDERLAY_DEFAULT = true;
 	private static final String SHOW_FOOD_EXHAUSTION_UNDERLAY_NAME = "showFoodExhaustionHudUnderlay";
@@ -80,6 +86,9 @@ public class ModConfig
 		SHOW_FOOD_VALUES_OVERLAY = BUILDER
 			.comment(SHOW_FOOD_VALUES_OVERLAY_COMMENT)
 			.define(SHOW_FOOD_VALUES_OVERLAY_NAME, SHOW_FOOD_VALUES_OVERLAY_DEFAULT);
+		SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND = BUILDER
+			.comment(SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND_COMMENT)
+			.define(SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND_NAME, SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND_DEFAULT);
 		SHOW_FOOD_EXHAUSTION_UNDERLAY = BUILDER
 			.comment(SHOW_FOOD_EXHAUSTION_UNDERLAY_COMMENT)
 			.define(SHOW_FOOD_EXHAUSTION_UNDERLAY_NAME, SHOW_FOOD_EXHAUSTION_UNDERLAY_DEFAULT);
