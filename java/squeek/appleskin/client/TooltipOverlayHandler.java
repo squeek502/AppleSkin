@@ -7,8 +7,11 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import squeek.appleskin.helpers.FoodHelper;
+
+import java.util.List;
 
 public class TooltipOverlayHandler
 {
@@ -60,76 +63,161 @@ public class TooltipOverlayHandler
 		int shankPartial;
 	}
 
-	public static void onRenderTooltip(MatrixStack matrixStack, ItemStack hoveredStack, int toolTipX, int toolTipY, int toolTipW, int toolTipH)
-	{
-		if (hoveredStack == null || hoveredStack.isEmpty())
+	// Bind to text line, because food overlay must apply line offset of all case.
+	static class FoodOverlayTextComponent extends LiteralText {
+
+		private FoodOverlay foodOverlay;
+		FoodOverlayTextComponent(FoodOverlay foodOverlay) {
+			super(foodOverlay.getTooltip());
+			this.foodOverlay = foodOverlay;
+		}
+
+		public FoodOverlayTextComponent copy() {
+			return new FoodOverlayTextComponent(foodOverlay);
+		}
+	}
+
+	static class FoodOverlay {
+
+		private FoodHelper.BasicFoodValues defaultFoodValues;
+		private FoodHelper.BasicFoodValues modifiedFoodValues;
+
+		private int biggestHunger;
+		private float biggestSaturationIncrement;
+
+		private int hungerBars;
+		private String hungerBarsText;
+
+		private int saturationBars;
+		private String saturationBarsText;
+
+		private String tooltip;
+
+		private ItemStack itemStack;
+
+		FoodOverlay(ItemStack itemStack, PlayerEntity player) {
+			this.itemStack = itemStack;
+
+			defaultFoodValues = FoodHelper.getDefaultFoodValues(itemStack);
+			modifiedFoodValues = FoodHelper.getModifiedFoodValues(itemStack, player);
+
+			biggestHunger = Math.max(defaultFoodValues.hunger, modifiedFoodValues.hunger);
+			biggestSaturationIncrement = Math.max(defaultFoodValues.getSaturationIncrement(), modifiedFoodValues.getSaturationIncrement());
+
+			hungerBars = (int) Math.ceil(Math.abs(biggestHunger) / 2f);
+			if (hungerBars > 10) {
+				hungerBarsText = "x" + ((biggestHunger < 0 ? -1 : 1) * hungerBars);
+				hungerBars = 1;
+			}
+
+			saturationBars = (int) Math.max(1, Math.ceil(Math.abs(biggestSaturationIncrement) / 2f));
+			if (saturationBars > 10) {
+				saturationBarsText = "x" + ((biggestSaturationIncrement < 0 ? -1 : 1) * saturationBars);
+				saturationBars = 1;
+			}
+
+			tooltip = getPlaceholder();
+		}
+
+		String getTooltip() {
+			return tooltip;
+		}
+		String getPlaceholder() {
+			// 9x9 icon convert to scale of blank string.
+			float scale = 2.2f;
+
+			float hungerBarsLength = (float) hungerBars * scale;
+			if (hungerBarsText != null) {
+				hungerBarsLength += hungerBarsText.length();
+			}
+
+			float saturationBarsLength = (float) saturationBars * scale;
+			if (saturationBarsText != null) {
+				saturationBarsLength += saturationBarsText.length();
+			}
+
+			int length = (int) Math.ceil(Math.max(hungerBarsLength, saturationBarsLength * 0.8f));
+			StringBuilder s = new StringBuilder(" ");
+			for (int i = 0; i < length; i++) {
+				s.append(" ");
+			}
+
+			return s.toString();
+		}
+
+		boolean shouldRenderHungerBars() {
+			return hungerBars > 0;
+		}
+
+		boolean shouldRenderSaturationBars() {
+			return saturationBars > 0;
+		}
+	}
+
+
+	public static void onItemTooltip(ItemStack hoveredStack, List tooltip) {
+		// When hoveredStack or tooltip is null an unknown exception occurs.
+		if (hoveredStack == null || tooltip == null) {
 			return;
+		}
+		//
+		if (!shouldShowTooltip(hoveredStack)) {
+			return;
+		}
+
+		MinecraftClient mc = MinecraftClient.getInstance();
+		FoodOverlay foodOverlay = new FoodOverlay(hoveredStack, mc.player);
+		if (foodOverlay.shouldRenderHungerBars()) {
+			tooltip.add(new FoodOverlayTextComponent(foodOverlay));
+		}
+		if (foodOverlay.shouldRenderSaturationBars()) {
+			tooltip.add(new FoodOverlayTextComponent(foodOverlay));
+		}
+	}
+
+	public static void onRenderTooltip(MatrixStack matrixStack, List tooltip, int toolTipX, int toolTipY, int toolTipW, int toolTipH)
+	{
+		// When matrixStack or tooltip is null an unknown exception occurs.
+		if (matrixStack == null || tooltip == null) {
+			return;
+		}
 
 		MinecraftClient mc = MinecraftClient.getInstance();
 		Screen gui = mc.currentScreen;
-
-		if (gui == null)
+		if (gui == null) {
 			return;
+		}
 
-		if (!FoodHelper.isFood(hoveredStack))
+		// Find food overlay of text lines.
+		FoodOverlay foodOverlay = null;
+		for (int i = 0; i < tooltip.size(); ++i) {
+			if (tooltip.get(i) instanceof FoodOverlayTextComponent) {
+				toolTipY += i * 10;
+				foodOverlay = ((FoodOverlayTextComponent)tooltip.get(i)).foodOverlay;
+				break;
+			}
+		}
+
+		// Not found overlay text lines, maybe some mods removed it.
+		if (foodOverlay == null) {
 			return;
+		}
 
-		PlayerEntity player = mc.player;
-
-		FoodHelper.BasicFoodValues defaultFoodValues = FoodHelper.getDefaultFoodValues(hoveredStack);
-		FoodHelper.BasicFoodValues modifiedFoodValues = FoodHelper.getModifiedFoodValues(hoveredStack, player);
-
-		if (defaultFoodValues.equals(modifiedFoodValues) && defaultFoodValues.hunger == 0)
-			return;
-
-		int biggestHunger = Math.max(defaultFoodValues.hunger, modifiedFoodValues.hunger);
-		float biggestSaturationIncrement = Math.max(defaultFoodValues.getSaturationIncrement(), modifiedFoodValues.getSaturationIncrement());
-
-		int barsNeeded = (int) Math.ceil(Math.abs(biggestHunger) / 2f);
-		boolean hungerOverflow = barsNeeded > 10;
-		String hungerText = hungerOverflow ? ((biggestHunger < 0 ? -1 : 1) * barsNeeded) + "x " : null;
-		if (hungerOverflow)
-			barsNeeded = 1;
-
-		int saturationBarsNeeded = (int) Math.max(1, Math.ceil(Math.abs(biggestSaturationIncrement) / 2f));
-		boolean saturationOverflow = saturationBarsNeeded > 10;
-		String saturationText = saturationOverflow ? ((biggestSaturationIncrement < 0 ? -1 : 1) * saturationBarsNeeded) + "x " : null;
-		if (saturationOverflow)
-			saturationBarsNeeded = 1;
-
-		int toolTipBottomY = toolTipY + toolTipH + 1 + TOOLTIP_REAL_HEIGHT_OFFSET_BOTTOM;
-		int toolTipRightX = toolTipX + toolTipW + 1 + TOOLTIP_REAL_WIDTH_OFFSET_RIGHT;
-
-		boolean shouldDrawBelow = toolTipBottomY + 20 < mc.getWindow().getScaledHeight() - 3;
-
-		int rightX = toolTipRightX - 3;
-		int leftX = rightX - (Math.max(barsNeeded * 9 + (int) (mc.textRenderer.getWidth(hungerText) * 0.75f), saturationBarsNeeded * 6 + (int) (mc.textRenderer.getWidth(saturationText) * 0.75f))) - 3;
-		int topY = (shouldDrawBelow ? toolTipBottomY : toolTipY - 20 + TOOLTIP_REAL_HEIGHT_OFFSET_TOP);
-		int bottomY = topY + 19;
+		FoodHelper.BasicFoodValues defaultFoodValues = foodOverlay.defaultFoodValues;
+		FoodHelper.BasicFoodValues modifiedFoodValues = foodOverlay.modifiedFoodValues;
 
 		RenderSystem.disableLighting();
-		RenderSystem.disableDepthTest();
+		RenderSystem.enableDepthTest();
 
-		// bg
-		Screen.fill(matrixStack, leftX - 1, topY, rightX + 1, bottomY, 0xF0100010);
-		Screen.fill(matrixStack, leftX, (shouldDrawBelow ? bottomY : topY - 1), rightX, (shouldDrawBelow ? bottomY + 1 : topY), 0xF0100010);
-		Screen.fill(matrixStack, leftX, topY, rightX, bottomY, 0x66FFFFFF);
+		matrixStack.push();
+		matrixStack.translate(0.0D, 0.0D, 500D); // zLevel must higher than of the background.
 
-		// fill disables blending and modifies color, so reset them
-		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.enableBlend();
-		RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
-
-		int x = rightX - 2;
-		int startX = x;
-		int y = bottomY - 18;
+		int x = toolTipX;
+		int y = toolTipY + 2;
 
 		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_TEXTURE);
-
-		TextureOffsets offsets = FoodHelper.isRotten(hoveredStack) ? rottenBarTextureOffsets : normalBarTextureOffsets;
-		for (int i = 0; i < barsNeeded * 2; i += 2)
-		{
-			x -= 9;
+		TextureOffsets offsets = FoodHelper.isRotten(foodOverlay.itemStack) ? rottenBarTextureOffsets : normalBarTextureOffsets;
+		for (int i = 0; i < foodOverlay.hungerBars * 2; i += 2) {
 
 			if (modifiedFoodValues.hunger < 0)
 				gui.drawTexture(matrixStack, x, y, offsets.containerNegativeHunger, 27, 9, 9);
@@ -148,27 +236,27 @@ public class TooltipOverlayHandler
 
 			if (modifiedFoodValues.hunger > i)
 				gui.drawTexture(matrixStack, x, y, modifiedFoodValues.hunger - 1 == i ? offsets.shankPartial : offsets.shankFull, 27, 9, 9);
+
+			x += 9;
 		}
-		if (hungerText != null)
-		{
-			RenderSystem.pushMatrix();
-			RenderSystem.scalef(0.75F, 0.75F, 0.75F);
-			mc.textRenderer.drawWithShadow(matrixStack, hungerText, x * 4 / 3 - mc.textRenderer.getWidth(hungerText) + 2, y * 4 / 3 + 2, 0xFFDDDDDD);
-			RenderSystem.popMatrix();
+		if (foodOverlay.hungerBarsText != null) {
+			matrixStack.push();
+			matrixStack.translate(x, y, 0);
+			matrixStack.scale(0.75f, 0.75f, 0.75f);
+			mc.textRenderer.drawWithShadow(matrixStack, foodOverlay.hungerBarsText, 2, 2, 0xFFDDDDDD);
+			matrixStack.pop();
 		}
 
+		x = toolTipX;
 		y += 10;
-		x = startX;
+
 		float modifiedSaturationIncrement = modifiedFoodValues.getSaturationIncrement();
 		float absModifiedSaturationIncrement = Math.abs(modifiedSaturationIncrement);
 
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.getTextureManager().bindTexture(modIcons);
-		for (int i = 0; i < saturationBarsNeeded * 2; i += 2)
-		{
+		for (int i = 0; i < foodOverlay.saturationBars * 2; i += 2) {
 			float effectiveSaturationOfBar = (absModifiedSaturationIncrement - i) / 2f;
-
-			x -= 6;
 
 			boolean shouldBeFaded = absModifiedSaturationIncrement <= i;
 			if (shouldBeFaded)
@@ -178,14 +266,18 @@ public class TooltipOverlayHandler
 
 			if (shouldBeFaded)
 				RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+			x += 7;
 		}
-		if (saturationText != null)
-		{
-			RenderSystem.pushMatrix();
-			RenderSystem.scalef(0.75F, 0.75F, 0.75F);
-			mc.textRenderer.drawWithShadow(matrixStack, saturationText, x * 4 / 3 - mc.textRenderer.getWidth(saturationText) + 2, y * 4 / 3 + 1, 0xFFDDDDDD);
-			RenderSystem.popMatrix();
+		if (foodOverlay.saturationBarsText != null) {
+			matrixStack.push();
+			matrixStack.translate(x, y, 0);
+			matrixStack.scale(0.75f, 0.75f, 0.75f);
+			mc.textRenderer.drawWithShadow(matrixStack, foodOverlay.saturationBarsText, 2, 1, 0xFFDDDDDD);
+			matrixStack.pop();
 		}
+
+		matrixStack.pop();
 
 		RenderSystem.disableBlend();
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -194,5 +286,17 @@ public class TooltipOverlayHandler
 		RenderSystem.disableRescaleNormal();
 		RenderSystem.disableLighting();
 		RenderSystem.disableDepthTest();
+	}
+
+	private static boolean shouldShowTooltip(ItemStack hoveredStack) {
+		if (hoveredStack.isEmpty()) {
+			return false;
+		}
+
+		if (!FoodHelper.isFood(hoveredStack)) {
+			return false;
+		}
+
+		return true;
 	}
 }
