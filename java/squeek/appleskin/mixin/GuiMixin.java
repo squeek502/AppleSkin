@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import squeek.appleskin.client.TooltipOverlayHandler;
 
@@ -15,23 +16,16 @@ import java.util.List;
 @Mixin(Screen.class)
 public class GuiMixin
 {
-	private static ItemStack cachedItemStack;
-
-	@Inject(at = @At("HEAD"), method = "renderTooltip(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/item/ItemStack;II)V")
-	private void renderTooltipStart(MatrixStack matrixStack, ItemStack itemStack, int x, int y, CallbackInfo info)
+	@Inject(at = @At("RETURN"), method = "getTooltipFromItem(Lnet/minecraft/item/ItemStack;)Ljava/util/List;")
+	private void getTooltipFromItem(ItemStack itemStack, CallbackInfoReturnable<List> info)
 	{
-		cachedItemStack = itemStack;
-	}
-
-	@Inject(at = @At("TAIL"), method = "renderTooltip(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/item/ItemStack;II)V")
-	private void renderTooltipEnd(MatrixStack matrixStack, ItemStack itemStack, int x, int y, CallbackInfo info)
-	{
-		cachedItemStack = null;
+		List tooltip = info.getReturnValue();
+		TooltipOverlayHandler.onItemTooltip(itemStack, tooltip);
 	}
 
 	@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;push()V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD, method = "renderTooltip(Lnet/minecraft/client/util/math/MatrixStack;Ljava/util/List;II)V")
-	private void renderTooltipCB(MatrixStack matrixStack, List tooltip, int mouseX, int mouseY, CallbackInfo info, int w, int x, int y, int w2, int h)
+	private void renderTooltip(MatrixStack matrixStack, List tooltip, int mouseX, int mouseY, CallbackInfo info, int w, int x, int y, int w2, int h)
 	{
-		TooltipOverlayHandler.onRenderTooltip(matrixStack, cachedItemStack, x, y, w, h);
+		TooltipOverlayHandler.onRenderTooltip(matrixStack, tooltip, x, y, w, h);
 	}
 }
