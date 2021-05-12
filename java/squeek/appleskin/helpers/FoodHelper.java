@@ -64,7 +64,8 @@ public class FoodHelper
 		return getDefaultFoodValues(itemStack);
 	}
 
-	public static boolean isRotten(ItemStack itemStack) {
+	public static boolean isRotten(ItemStack itemStack)
+    {
 		if(!isFood(itemStack))
 			return false;
 
