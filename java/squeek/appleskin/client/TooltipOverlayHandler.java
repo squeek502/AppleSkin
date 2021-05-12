@@ -1,14 +1,14 @@
 package squeek.appleskin.client;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
+import squeek.appleskin.AppleSkin;
+import squeek.appleskin.event.TooltipOverlayEvent;
 import squeek.appleskin.helpers.FoodHelper;
 
 import java.util.List;
@@ -64,10 +64,11 @@ public class TooltipOverlayHandler
 	}
 
 	// Bind to text line, because food overlay must apply line offset of all case.
-	static class FoodOverlayTextComponent extends LiteralText {
-
+	static class FoodOverlayTextComponent extends LiteralText
+	{
 		private FoodOverlay foodOverlay;
-		FoodOverlayTextComponent(FoodOverlay foodOverlay) {
+		FoodOverlayTextComponent(FoodOverlay foodOverlay)
+		{
 			super(foodOverlay.getTooltip());
 			this.foodOverlay = foodOverlay;
 		}
@@ -77,8 +78,8 @@ public class TooltipOverlayHandler
 		}
 	}
 
-	static class FoodOverlay {
-
+	static class FoodOverlay
+	{
 		private FoodHelper.BasicFoodValues defaultFoodValues;
 		private FoodHelper.BasicFoodValues modifiedFoodValues;
 
@@ -95,11 +96,11 @@ public class TooltipOverlayHandler
 
 		private ItemStack itemStack;
 
-		FoodOverlay(ItemStack itemStack, PlayerEntity player) {
+		FoodOverlay(ItemStack itemStack, FoodHelper.BasicFoodValues defaultFoodValues, FoodHelper.BasicFoodValues modifiedFoodValues)
+		{
 			this.itemStack = itemStack;
-
-			defaultFoodValues = FoodHelper.getDefaultFoodValues(itemStack);
-			modifiedFoodValues = FoodHelper.getModifiedFoodValues(itemStack, player);
+			this.defaultFoodValues = defaultFoodValues;
+			this.modifiedFoodValues = modifiedFoodValues;
 
 			biggestHunger = Math.max(defaultFoodValues.hunger, modifiedFoodValues.hunger);
 			biggestSaturationIncrement = Math.max(defaultFoodValues.getSaturationIncrement(), modifiedFoodValues.getSaturationIncrement());
@@ -115,14 +116,13 @@ public class TooltipOverlayHandler
 				saturationBarsText = "x" + ((biggestSaturationIncrement < 0 ? -1 : 1) * saturationBars);
 				saturationBars = 1;
 			}
-
-			tooltip = getPlaceholder();
 		}
 
-		String getTooltip() {
-			return tooltip;
-		}
-		String getPlaceholder() {
+		String getTooltip()
+		{
+			if (tooltip != null) {
+				return tooltip;
+			}
 			// 9x9 icon convert to scale of blank string.
 			float scale = 2.2f;
 
@@ -142,31 +142,44 @@ public class TooltipOverlayHandler
 				s.append(" ");
 			}
 
-			return s.toString();
+			tooltip = s.toString();
+			return tooltip;
 		}
 
-		boolean shouldRenderHungerBars() {
+		boolean shouldRenderHungerBars()
+		{
 			return hungerBars > 0;
 		}
 
-		boolean shouldRenderSaturationBars() {
+		boolean shouldRenderSaturationBars()
+		{
 			return saturationBars > 0;
 		}
 	}
-
-
-	public static void onItemTooltip(ItemStack hoveredStack, List tooltip) {
+	
+	public static void onItemTooltip(ItemStack hoveredStack, List tooltip)
+	{
 		// When hoveredStack or tooltip is null an unknown exception occurs.
 		if (hoveredStack == null || tooltip == null) {
 			return;
 		}
-		//
 		if (!shouldShowTooltip(hoveredStack)) {
 			return;
 		}
 
 		MinecraftClient mc = MinecraftClient.getInstance();
-		FoodOverlay foodOverlay = new FoodOverlay(hoveredStack, mc.player);
+
+		FoodHelper.BasicFoodValues defaultFoodValues = FoodHelper.getDefaultFoodValues(hoveredStack);
+		FoodHelper.BasicFoodValues modifiedFoodValues = FoodHelper.getModifiedFoodValues(hoveredStack, mc.player);
+
+		// Notify everyone that we should render tooltip overlay
+		TooltipOverlayEvent.Pre prerenderEvent = new TooltipOverlayEvent.Pre(hoveredStack, defaultFoodValues, modifiedFoodValues);
+		AppleSkin.EVENT_BUS.post(prerenderEvent);
+		if (prerenderEvent.isCanceled) {
+			return;
+		}
+
+		FoodOverlay foodOverlay = new FoodOverlay(prerenderEvent.itemStack, prerenderEvent.defaultFoodValues, prerenderEvent.modifiedFoodValues);
 		if (foodOverlay.shouldRenderHungerBars()) {
 			tooltip.add(new FoodOverlayTextComponent(foodOverlay));
 		}
@@ -206,14 +219,27 @@ public class TooltipOverlayHandler
 		FoodHelper.BasicFoodValues defaultFoodValues = foodOverlay.defaultFoodValues;
 		FoodHelper.BasicFoodValues modifiedFoodValues = foodOverlay.modifiedFoodValues;
 
+		int x = toolTipX;
+		int y = toolTipY + 2;
+
+		// Notify everyone that we should render tooltip overlay
+		TooltipOverlayEvent.Post renderEvent = new TooltipOverlayEvent.Post(foodOverlay.itemStack, x, y, matrixStack, defaultFoodValues, modifiedFoodValues);
+		AppleSkin.EVENT_BUS.post(renderEvent);
+		if (renderEvent.isCanceled) {
+			return;
+		}
+
+		x = renderEvent.x;
+		y = renderEvent.y;
+		matrixStack = renderEvent.matrixStack;
+		defaultFoodValues = renderEvent.defaultFoodValues;
+		modifiedFoodValues = renderEvent.modifiedFoodValues;
+
 		RenderSystem.disableLighting();
 		RenderSystem.enableDepthTest();
 
 		matrixStack.push();
 		matrixStack.translate(0.0D, 0.0D, 500D); // zLevel must higher than of the background.
-
-		int x = toolTipX;
-		int y = toolTipY + 2;
 
 		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_TEXTURE);
 		TextureOffsets offsets = FoodHelper.isRotten(foodOverlay.itemStack) ? rottenBarTextureOffsets : normalBarTextureOffsets;
@@ -288,7 +314,8 @@ public class TooltipOverlayHandler
 		RenderSystem.disableDepthTest();
 	}
 
-	private static boolean shouldShowTooltip(ItemStack hoveredStack) {
+	private static boolean shouldShowTooltip(ItemStack hoveredStack)
+	{
 		if (hoveredStack.isEmpty()) {
 			return false;
 		}

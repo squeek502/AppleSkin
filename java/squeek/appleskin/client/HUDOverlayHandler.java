@@ -5,11 +5,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import squeek.appleskin.AppleSkin;
+import squeek.appleskin.event.HUDOverlayEvent;
 import squeek.appleskin.helpers.FoodHelper;
 import squeek.appleskin.helpers.HungerHelper;
 
@@ -31,39 +32,70 @@ public class HUDOverlayHandler
 
 		int left = mc.getWindow().getScaledWidth() / 2 + 91;
 		int top = mc.getWindow().getScaledHeight() - foodIconsOffset;
+		float exhaustion = HungerHelper.getExhaustion(player);
 
-		drawExhaustionOverlay(matrixStack, HungerHelper.getExhaustion(player), mc, left, top, 1f);
+		// Notify everyone that we should render exhaustion hud overlay
+		HUDOverlayEvent.Exhaustion renderEvent = new HUDOverlayEvent.Exhaustion(exhaustion, left, top, matrixStack);
+		AppleSkin.EVENT_BUS.post(renderEvent);
+		if (!renderEvent.isCanceled) {
+			drawExhaustionOverlay(renderEvent, 1f, mc);
+		}
 	}
 
 	public static void onRender(MatrixStack matrixStack)
 	{
 		MinecraftClient mc = MinecraftClient.getInstance();
 		PlayerEntity player = mc.player;
-		ItemStack heldItem = player.getMainHandStack();
-		if (!FoodHelper.isFood(heldItem))
-			heldItem = player.getOffHandStack();
 		HungerManager stats = player.getHungerManager();
 
 		int left = mc.getWindow().getScaledWidth() / 2 + 91;
 		int top = mc.getWindow().getScaledHeight() - foodIconsOffset;
+		float saturationLevel = stats.getSaturationLevel();
 
-		// saturation overlay
-		drawSaturationOverlay(matrixStack, 0, stats.getSaturationLevel(), mc, left, top, 1f);
+		// Notify everyone that we should render saturation hud overlay
+		HUDOverlayEvent.Saturation saturationRenderEvent = new HUDOverlayEvent.Saturation(saturationLevel, left, top, matrixStack);
+		AppleSkin.EVENT_BUS.post(saturationRenderEvent);
 
-		if (heldItem.isEmpty() || !FoodHelper.isFood(heldItem))
-		{
+		// Draw saturation overlay
+		if (!saturationRenderEvent.isCanceled) {
+			drawSaturationOverlay(saturationRenderEvent, 0, 1f, mc);
+		}
+
+		ItemStack heldItem = player.getMainHandStack();
+		if (!FoodHelper.isFood(heldItem))
+			heldItem = player.getOffHandStack();
+
+		if (heldItem.isEmpty() || !FoodHelper.isFood(heldItem)) {
 			flashAlpha = 0;
 			alphaDir = 1;
 			return;
 		}
 
 		// restored hunger/saturation overlay while holding food
+		int foodLevel = stats.getFoodLevel();
 		FoodHelper.BasicFoodValues foodValues = FoodHelper.getModifiedFoodValues(heldItem, player);
-		drawHungerOverlay(matrixStack, foodValues.hunger, stats.getFoodLevel(), mc, left, top, flashAlpha, FoodHelper.isRotten(heldItem));
+
+		// Notify everyone that we should render hunger hud overlay
+		HUDOverlayEvent.Hunger renderRenderEvent = new HUDOverlayEvent.Hunger(foodLevel, heldItem, foodValues, left, top, matrixStack);
+		AppleSkin.EVENT_BUS.post(renderRenderEvent);
+		if (renderRenderEvent.isCanceled) {
+			flashAlpha = 0;
+			alphaDir = 1;
+			return;
+		}
+		foodValues = renderRenderEvent.modifiedFoodValues;
+
+		// Draw hunger overlay
+		drawHungerOverlay(renderRenderEvent, flashAlpha, FoodHelper.isRotten(heldItem), mc);
 
 		int newFoodValue = stats.getFoodLevel() + foodValues.hunger;
-		float newSaturationValue = stats.getSaturationLevel() + foodValues.getSaturationIncrement();
-		drawSaturationOverlay(matrixStack, newSaturationValue > newFoodValue ? newFoodValue - stats.getSaturationLevel() : foodValues.getSaturationIncrement(), stats.getSaturationLevel(), mc, left, top, flashAlpha);
+		float newSaturationValue = saturationLevel + foodValues.getSaturationIncrement();
+
+		// Draw saturation overlay of gained
+		if (!saturationRenderEvent.isCanceled) {
+			float saturationGained = newSaturationValue > newFoodValue ? newFoodValue - saturationLevel : foodValues.getSaturationIncrement();
+			drawSaturationOverlay(saturationRenderEvent, saturationGained, flashAlpha, mc);
+		}
 	}
 
 	public static void drawSaturationOverlay(MatrixStack matrixStack, float saturationGained, float saturationLevel, MinecraftClient mc, int left, int top, float alpha)
@@ -77,8 +109,7 @@ public class HUDOverlayHandler
 		mc.getTextureManager().bindTexture(modIcons);
 
 		enableAlpha(alpha);
-		for (int i = startBar; i < startBar + barsNeeded; ++i)
-		{
+		for (int i = startBar; i < startBar + barsNeeded; ++i) {
 			int x = left - i * 8 - 9;
 			int y = top;
 			float effectiveSaturationOfBar = (saturationLevel + saturationGained) / 2 - i;
@@ -188,5 +219,18 @@ public class HUDOverlayHandler
 			flashAlpha = 0f;
 			alphaDir = 1;
 		}
+	}
+
+	private static void drawExhaustionOverlay(HUDOverlayEvent.Exhaustion event, float alpha, MinecraftClient mc)
+	{
+		drawExhaustionOverlay(event.matrixStack, event.exhaustion, mc, event.x, event.y, alpha);
+	}
+	private static void drawSaturationOverlay(HUDOverlayEvent.Saturation event, float saturationGained, float alpha, MinecraftClient mc)
+	{
+		drawSaturationOverlay(event.matrixStack, saturationGained, event.saturationLevel, mc, event.x, event.y, alpha);
+	}
+	private static void drawHungerOverlay(HUDOverlayEvent.Hunger event, float alpha, boolean useRottenTextures, MinecraftClient mc)
+	{
+		drawHungerOverlay(event.matrixStack, event.modifiedFoodValues.hunger, event.foodLevel, mc, event.x, event.y, alpha, useRottenTextures);
 	}
 }

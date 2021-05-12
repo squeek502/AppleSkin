@@ -19,8 +19,7 @@ public class GuiMixin
 	@Inject(at = @At("RETURN"), method = "getTooltipFromItem(Lnet/minecraft/item/ItemStack;)Ljava/util/List;")
 	private void getTooltipFromItem(ItemStack itemStack, CallbackInfoReturnable<List> info)
 	{
-		List tooltip = info.getReturnValue();
-		TooltipOverlayHandler.onItemTooltip(itemStack, tooltip);
+		TooltipOverlayHandler.onItemTooltip(itemStack, info.getReturnValue());
 	}
 
 	@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;push()V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD, method = "renderTooltip(Lnet/minecraft/client/util/math/MatrixStack;Ljava/util/List;II)V")
