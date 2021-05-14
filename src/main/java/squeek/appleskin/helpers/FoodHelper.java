@@ -6,11 +6,11 @@ import net.minecraft.item.Food;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.EffectType;
+import squeek.appleskin.api.food.IFood;
 
 public class FoodHelper
 {
-	public static class BasicFoodValues
-	{
+	public static class BasicFoodValues implements IFood {
 		public final int hunger;
 		public final float saturationModifier;
 
@@ -18,6 +18,10 @@ public class FoodHelper
 		{
 			this.hunger = hunger;
 			this.saturationModifier = saturationModifier;
+		}
+
+		public int getHunger() {
+			return hunger;
 		}
 
 		public float getSaturationIncrement()
@@ -43,6 +47,16 @@ public class FoodHelper
 			result = 31 * result + (saturationModifier != +0.0f ? Float.floatToIntBits(saturationModifier) : 0);
 			return result;
 		}
+
+		@Override
+		public int getHunger(ItemStack stack, PlayerEntity player) {
+			return getHunger();
+		}
+
+		@Override
+		public float getSaturationIncrement(ItemStack stack, PlayerEntity player) {
+			return getSaturationIncrement();
+		}
 	}
 
 	public static boolean isFood(ItemStack itemStack)
@@ -61,6 +75,13 @@ public class FoodHelper
 
 	public static BasicFoodValues getModifiedFoodValues(ItemStack itemStack, PlayerEntity player)
 	{
+		if (itemStack.getItem() instanceof IFood) {
+			IFood food = (IFood) itemStack.getItem();
+			int hunger = food.getHunger(itemStack, player);
+			float saturationModifier = food.getSaturationIncrement(itemStack, player);
+			return new BasicFoodValues(hunger, saturationModifier);
+		}
+
 		return getDefaultFoodValues(itemStack);
 	}
 

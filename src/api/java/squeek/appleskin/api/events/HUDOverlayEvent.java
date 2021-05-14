@@ -1,12 +1,23 @@
-package squeek.appleskin.event;
+package squeek.appleskin.api.events;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.item.ItemStack;
-import squeek.appleskin.helpers.FoodHelper;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
+import squeek.appleskin.api.food.IFood;
 
-
-public class HUDOverlayEvent
+@Cancelable
+public class HUDOverlayEvent extends Event
 {
+
+    public static class Pre extends HUDOverlayEvent
+    {
+        public Pre(int x, int y, MatrixStack matrixStack)
+        {
+            super(x, y, matrixStack);
+        }
+    }
+
     public static class Exhaustion extends HUDOverlayEvent
     {
         public Exhaustion(float exhaustion, int x, int y, MatrixStack matrixStack)
@@ -31,15 +42,15 @@ public class HUDOverlayEvent
 
     public static class Hunger extends HUDOverlayEvent
     {
-        public Hunger(int foodLevel, ItemStack itemStack, FoodHelper.BasicFoodValues modifiedFoodValues, int x, int y, MatrixStack matrixStack)
+        public Hunger(int foodLevel, ItemStack itemStack, IFood modifiedFood, int x, int y, MatrixStack matrixStack)
         {
             super(x, y, matrixStack);
             this.foodLevel = foodLevel;
             this.itemStack = itemStack;
-            this.modifiedFoodValues = modifiedFoodValues;
+            this.modifiedFood = modifiedFood;
         }
 
-        public FoodHelper.BasicFoodValues modifiedFoodValues;
+        public IFood modifiedFood;
         public ItemStack itemStack;
         public int foodLevel;
     }
@@ -54,5 +65,9 @@ public class HUDOverlayEvent
     public int x;
     public int y;
     public MatrixStack matrixStack;
-    public boolean isCanceled = false;
+
+    @Override
+    public boolean isCancelable() {
+        return true;
+    }
 }
