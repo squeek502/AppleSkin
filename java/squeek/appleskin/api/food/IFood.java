@@ -7,8 +7,8 @@ import net.minecraft.item.ItemStack;
 /**
  * An interface for foods whose hunger/saturation restoration can vary by the ItemStack.
  */
-public interface IFood {
-
+public interface IFood
+{
     /**
      * @param stack the stack to check
      * @param player the player to check

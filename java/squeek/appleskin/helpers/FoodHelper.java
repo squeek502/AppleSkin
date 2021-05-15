@@ -10,7 +10,8 @@ import squeek.appleskin.api.food.IFood;
 
 public class FoodHelper
 {
-	public static class BasicFoodValues implements IFood {
+	public static class BasicFoodValues implements IFood
+	{
 		public final int hunger;
 		public final float saturationModifier;
 
@@ -20,7 +21,8 @@ public class FoodHelper
 			this.saturationModifier = saturationModifier;
 		}
 
-		public int getHunger() {
+		public int getHunger()
+		{
 			return hunger;
 		}
 
@@ -49,12 +51,14 @@ public class FoodHelper
 		}
 
 		@Override
-		public int getHunger(ItemStack stack, PlayerEntity player) {
+		public int getHunger(ItemStack stack, PlayerEntity player)
+		{
 			return getHunger();
 		}
 
 		@Override
-		public float getSaturationIncrement(ItemStack stack, PlayerEntity player) {
+		public float getSaturationIncrement(ItemStack stack, PlayerEntity player)
+		{
 			return getSaturationIncrement();
 		}
 	}
@@ -81,13 +85,12 @@ public class FoodHelper
 			float saturationModifier = food.getSaturationIncrement(itemStack, player);
 			return new BasicFoodValues(hunger, saturationModifier);
 		}
-
 		return getDefaultFoodValues(itemStack);
 	}
 
 	public static boolean isRotten(ItemStack itemStack)
     {
-		if(!isFood(itemStack))
+		if (!isFood(itemStack))
 			return false;
 
 		for (Pair<EffectInstance, Float> effect : itemStack.getItem().getFood().getEffects()) {

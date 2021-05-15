@@ -20,8 +20,8 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.ModInfo;
-import squeek.appleskin.api.events.TooltipOverlayEvent;
 import squeek.appleskin.api.food.IFood;
+import squeek.appleskin.api.event.TooltipOverlayEvent;
 import squeek.appleskin.helpers.FoodHelper;
 import squeek.appleskin.helpers.KeyHelper;
 
@@ -137,7 +137,8 @@ public class TooltipOverlayHandler
 			}
 		}
 
-		String getTooltip() {
+		String getTooltip()
+		{
 			if (tooltip != null) {
 				return tooltip;
 			}
@@ -193,17 +194,17 @@ public class TooltipOverlayHandler
 		}
 
 		Minecraft mc = Minecraft.getInstance();
-		FoodHelper.BasicFoodValues defaultFoodValues = FoodHelper.getDefaultFoodValues(hoveredStack);
-		FoodHelper.BasicFoodValues modifiedFoodValues = FoodHelper.getModifiedFoodValues(hoveredStack, mc.player);
+		IFood defaultFood = FoodHelper.getDefaultFoodValues(hoveredStack);
+		IFood modifiedFood = FoodHelper.getModifiedFoodValues(hoveredStack, mc.player);
 
 		// Notify everyone that we should render tooltip overlay
-		TooltipOverlayEvent.Pre prerenderEvent = new TooltipOverlayEvent.Pre(hoveredStack, defaultFoodValues, modifiedFoodValues);
+		TooltipOverlayEvent.Pre prerenderEvent = new TooltipOverlayEvent.Pre(hoveredStack, defaultFood, modifiedFood);
 		MinecraftForge.EVENT_BUS.post(prerenderEvent);
 		if (prerenderEvent.isCanceled()) {
 			return;
 		}
 
-		FoodOverlay foodOverlay = new FoodOverlay(prerenderEvent.itemStack, prerenderEvent.food, prerenderEvent.modifiedFood, mc.player);
+		FoodOverlay foodOverlay = new FoodOverlay(prerenderEvent.itemStack, prerenderEvent.defaultFood, prerenderEvent.modifiedFood, mc.player);
 		if (foodOverlay.shouldRenderHungerBars()) {
 			tooltip.add(new FoodOverlayTextComponent(foodOverlay));
 		}
@@ -265,8 +266,10 @@ public class TooltipOverlayHandler
 
 		toolTipX = renderEvent.x;
 		toolTipY = renderEvent.y;
-		defaultFood = renderEvent.food;
+
+		defaultFood = renderEvent.defaultFood;
 		modifiedFood = renderEvent.modifiedFood;
+
 		itemStack = renderEvent.itemStack;
 		matrixStack = renderEvent.matrixStack;
 

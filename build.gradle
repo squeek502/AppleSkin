@@ -14,19 +14,6 @@ apply plugin: 'eclipse'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
-sourceSets {
-	api
-	main {
-		compileClasspath += sourceSets.api.output
-		runtimeClasspath += sourceSets.api.output
-	}
-	test
-}
-
-configurations {
-	apiCompile.extendsFrom(compile)
-}
-
 minecraft {
 	mappings channel: mappings_channel, version: mappings_version
 
@@ -38,7 +25,6 @@ minecraft {
 			mods {
 				appleskin {
 					source sourceSets.main
-					source sourceSets.api
 				}
 			}
 		}
@@ -48,7 +34,6 @@ minecraft {
 			mods {
 				appleskin {
 					source sourceSets.main
-					source sourceSets.api
 				}
 			}
 		}
@@ -58,6 +43,10 @@ minecraft {
 group = project.projectDir.name.toLowerCase()
 def modId = project.projectDir.name
 archivesBaseName = modId + "-mc" + minecraft_version
+
+sourceSets.main.java.srcDirs += 'java'
+sourceSets.main.java.srcDirs += 'apis'
+sourceSets.main.resources.srcDirs += 'resources'
 
 dependencies {
 	minecraft 'net.minecraftforge:forge:'+minecraft_version+'-'+forge_version
@@ -75,12 +64,6 @@ processResources {
 }
 
 jar {
-
-	from sourceSets.main.output.classesDirs
-	from sourceSets.api.output.classesDirs
-	from sourceSets.main.output.resourcesDir
-	from sourceSets.api.output.resourcesDir
-
 	manifest {
 		attributes([
 			"Specification-Title": "appleskin",
@@ -97,12 +80,11 @@ jar {
 task sourcesJar(type: Jar) {
 	classifier = "sources"
 	from sourceSets.main.allJava
-	from sourceSets.api.allJava
 }
 
 task apiJar(type: Jar) {
 	classifier = "api"
-	from sourceSets.api.output
+	from sourceSets.main.output
 	include "squeek/appleskin/api/**"
 }
 

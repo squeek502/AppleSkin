@@ -1,4 +1,4 @@
-package squeek.appleskin.api.events;
+package squeek.appleskin.api.event;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.item.ItemStack;
@@ -32,20 +32,21 @@ public class TooltipOverlayEvent extends Event
         public MatrixStack matrixStack;
     }
 
-    private TooltipOverlayEvent(ItemStack itemStack, IFood food, IFood modifiedFood)
+    private TooltipOverlayEvent(ItemStack itemStack, IFood defaultFood, IFood modifiedFood)
     {
         this.itemStack = itemStack;
-        this.food = food;
+        this.defaultFood = defaultFood;
         this.modifiedFood = modifiedFood;
     }
 
-    public IFood food;
+    public IFood defaultFood;
     public IFood modifiedFood;
 
     public ItemStack itemStack;
 
     @Override
-    public boolean isCancelable() {
+    public boolean isCancelable()
+    {
         return true;
     }
 }

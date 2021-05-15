@@ -1,4 +1,4 @@
-package squeek.appleskin.api.events;
+package squeek.appleskin.api.event;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.item.ItemStack;
@@ -9,7 +9,6 @@ import squeek.appleskin.api.food.IFood;
 @Cancelable
 public class HUDOverlayEvent extends Event
 {
-
     public static class Pre extends HUDOverlayEvent
     {
         public Pre(int x, int y, MatrixStack matrixStack)
@@ -67,7 +66,8 @@ public class HUDOverlayEvent extends Event
     public MatrixStack matrixStack;
 
     @Override
-    public boolean isCancelable() {
+    public boolean isCancelable()
+    {
         return true;
     }
 }

@@ -17,7 +17,6 @@ import squeek.appleskin.network.SyncHandler;
 @Mod(ModInfo.MODID)
 public class AppleSkin
 {
-
 	public static Logger Log = LogManager.getLogger(ModInfo.MODID);
 
 	public AppleSkin()
