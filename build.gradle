@@ -43,8 +43,19 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 	from sourceSets.main.allSource
 }
 
+task apiJar(type: Jar, dependsOn: classes) {
+	classifier = "api"
+ 	from sourceSets.main.output
+ 	include "squeek/appleskin/api/**"
+}
+
 jar {
 	from "LICENSE"
+}
+
+artifacts {
+ 	archives sourcesJar
+ 	archives apiJar
 }
 
 // configure the maven publication
