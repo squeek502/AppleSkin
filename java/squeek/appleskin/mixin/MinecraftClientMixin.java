@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import squeek.appleskin.client.HUDOverlayHandler;
 
+@SuppressWarnings("unused")
 @Mixin(MinecraftClient.class)
-public class MinecraftClientMixin
-{
+public class MinecraftClientMixin {
 	@Inject(at = @At("HEAD"), method = "tick")
 	void onTick(CallbackInfo info)
 	{

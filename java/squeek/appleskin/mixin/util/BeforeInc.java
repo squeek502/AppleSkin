@@ -14,22 +14,20 @@ import org.spongepowered.asm.util.Annotations;
 import java.util.Collection;
 import java.util.ListIterator;
 
+@SuppressWarnings({"unused", "UnstableApiUsage"})
 @InjectionPoint.AtCode("APPLESKIN_IINC")
-public class BeforeInc extends InjectionPoint
-{
+public class BeforeInc extends InjectionPoint {
 	private final int ordinal;
 	private final Integer intValue;
 
-	public BeforeInc(IMixinContext context, AnnotationNode node, String returnType)
-	{
-		super(Annotations.<String>getValue(node, "slice", ""), Selector.DEFAULT, null);
+	public BeforeInc(IMixinContext context, AnnotationNode node, String returnType) {
+		super(Annotations.getValue(node, "slice", ""), Selector.DEFAULT, null);
 
 		this.ordinal = Annotations.<Integer>getValue(node, "ordinal", -1);
 		this.intValue = Annotations.<Integer>getValue(node, "intValue", (Integer) null);
 	}
 
-	public BeforeInc(InjectionPointData data)
-	{
+	public BeforeInc(InjectionPointData data) {
 		super(data);
 
 		this.ordinal = data.getOrdinal();
@@ -37,20 +35,16 @@ public class BeforeInc extends InjectionPoint
 	}
 
 	@Override
-	public boolean find(String desc, InsnList insns, Collection<AbstractInsnNode> nodes)
-	{
+	public boolean find(String desc, InsnList insns, Collection<AbstractInsnNode> nodes) {
 		boolean found = false;
 
 		ListIterator<AbstractInsnNode> iter = insns.iterator();
-		for (int ordinal = 0; iter.hasNext(); )
-		{
+		for (int ordinal = 0; iter.hasNext(); ) {
 			AbstractInsnNode insn = iter.next();
 
 			boolean matchesInsn = this.matchesIncInsn(insn);
-			if (matchesInsn)
-			{
-				if (this.ordinal == -1 || this.ordinal == ordinal)
-				{
+			if (matchesInsn) {
+				if (this.ordinal == -1 || this.ordinal == ordinal) {
 					nodes.add(insn);
 					found = true;
 				}
@@ -61,10 +55,8 @@ public class BeforeInc extends InjectionPoint
 		return found;
 	}
 
-	private boolean matchesIncInsn(AbstractInsnNode insn)
-	{
-		if (insn.getOpcode() != Opcodes.IINC)
-		{
+	private boolean matchesIncInsn(AbstractInsnNode insn) {
+		if (insn.getOpcode() != Opcodes.IINC) {
 			return false;
 		}
 

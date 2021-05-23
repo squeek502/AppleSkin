@@ -10,17 +10,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import squeek.appleskin.network.SyncHandler;
 
+@SuppressWarnings({"unused", "ConstantConditions"})
 @Mixin(ServerPlayerEntity.class)
-public abstract class ServerPlayerEntityMixin extends Entity
-{
+public abstract class ServerPlayerEntityMixin extends Entity {
 	public ServerPlayerEntityMixin(EntityType<?> entityType, World world)
 	{
 		super(entityType, world);
 	}
 
 	@Inject(at = @At("HEAD"), method = "tick")
-	void onUpdate(CallbackInfo info)
-	{
+	void onUpdate(CallbackInfo info) {
 		ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
 		SyncHandler.onPlayerUpdate(player);
 	}

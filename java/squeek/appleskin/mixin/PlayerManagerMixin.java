@@ -9,12 +9,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import squeek.appleskin.network.SyncHandler;
 
+@SuppressWarnings("unused")
 @Mixin(PlayerManager.class)
-public class PlayerManagerMixin
-{
+public class PlayerManagerMixin {
 	@Inject(at = @At("TAIL"), method = "onPlayerConnect")
-	private void onPlayerConnect(ClientConnection conn, ServerPlayerEntity player, CallbackInfo info)
-	{
+	private void onPlayerConnect(ClientConnection conn, ServerPlayerEntity player, CallbackInfo info) {
 		SyncHandler.onPlayerLoggedIn(player);
 	}
 }

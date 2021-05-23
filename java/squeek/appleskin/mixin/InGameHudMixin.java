@@ -9,9 +9,9 @@ import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import squeek.appleskin.client.HUDOverlayHandler;
 
+@SuppressWarnings("unused")
 @Mixin(InGameHud.class)
-public class InGameHudMixin
-{
+public class InGameHudMixin {
 	@Inject(at = @At(value = "CONSTANT", args = "stringValue=food", shift = At.Shift.BY, by = 2), method = "renderStatusBars(Lnet/minecraft/client/util/math/MatrixStack;)V")
 	private void renderFoodPre(MatrixStack stack, CallbackInfo info)
 	{

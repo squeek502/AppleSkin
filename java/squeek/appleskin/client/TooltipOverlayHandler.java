@@ -1,29 +1,25 @@
 package squeek.appleskin.client;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import squeek.appleskin.helpers.FoodHelper;
 
 import java.util.List;
 
-public class TooltipOverlayHandler
-{
-	private static Identifier modIcons = new Identifier("appleskin", "textures/icons.png");
-	public static final int TOOLTIP_REAL_HEIGHT_OFFSET_BOTTOM = 3;
-	public static final int TOOLTIP_REAL_HEIGHT_OFFSET_TOP = -3;
-	public static final int TOOLTIP_REAL_WIDTH_OFFSET_RIGHT = 3;
+public class TooltipOverlayHandler {
+	private static final Identifier modIcons = new Identifier("appleskin", "textures/icons.png");
 
 	private static final TextureOffsets normalBarTextureOffsets = new TextureOffsets();
 
-	static
-	{
+	static {
 		normalBarTextureOffsets.containerNegativeHunger = 43;
 		normalBarTextureOffsets.containerExtraHunger = 133;
 		normalBarTextureOffsets.containerNormalHunger = 16;
@@ -37,8 +33,7 @@ public class TooltipOverlayHandler
 
 	private static final TextureOffsets rottenBarTextureOffsets = new TextureOffsets();
 
-	static
-	{
+	static {
 		rottenBarTextureOffsets.containerNegativeHunger = normalBarTextureOffsets.containerNegativeHunger;
 		rottenBarTextureOffsets.containerExtraHunger = normalBarTextureOffsets.containerExtraHunger;
 		rottenBarTextureOffsets.containerNormalHunger = normalBarTextureOffsets.containerNormalHunger;
@@ -50,8 +45,7 @@ public class TooltipOverlayHandler
 		rottenBarTextureOffsets.shankPartial = rottenBarTextureOffsets.shankFull + 9;
 	}
 
-	static class TextureOffsets
-	{
+	static class TextureOffsets {
 		int containerNegativeHunger;
 		int containerExtraHunger;
 		int containerNormalHunger;
@@ -66,7 +60,7 @@ public class TooltipOverlayHandler
 	// Bind to text line, because food overlay must apply line offset of all case.
 	static class FoodOverlayTextComponent extends LiteralText {
 
-		private FoodOverlay foodOverlay;
+		private final FoodOverlay foodOverlay;
 		FoodOverlayTextComponent(FoodOverlay foodOverlay) {
 			super(foodOverlay.getTooltip());
 			this.foodOverlay = foodOverlay;
@@ -137,12 +131,8 @@ public class TooltipOverlayHandler
 			}
 
 			int length = (int) Math.ceil(Math.max(hungerBarsLength, saturationBarsLength * 0.8f));
-			StringBuilder s = new StringBuilder(" ");
-			for (int i = 0; i < length; i++) {
-				s.append(" ");
-			}
 
-			return s.toString();
+			return " " + " ".repeat(Math.max(0, length));
 		}
 
 		boolean shouldRenderHungerBars() {
@@ -155,7 +145,7 @@ public class TooltipOverlayHandler
 	}
 
 
-	public static void onItemTooltip(ItemStack hoveredStack, List tooltip) {
+	public static void onItemTooltip(ItemStack hoveredStack, List<Text> tooltip) {
 		// When hoveredStack or tooltip is null an unknown exception occurs.
 		if (hoveredStack == null || tooltip == null) {
 			return;
@@ -175,8 +165,7 @@ public class TooltipOverlayHandler
 		}
 	}
 
-	public static void onRenderTooltip(MatrixStack matrixStack, List tooltip, int toolTipX, int toolTipY, int toolTipW, int toolTipH)
-	{
+	public static void onRenderTooltip(MatrixStack matrixStack, List<TooltipComponent> tooltip, int toolTipX, int toolTipY, int toolTipW, int toolTipH) {
 		// When matrixStack or tooltip is null an unknown exception occurs.
 		if (matrixStack == null || tooltip == null) {
 			return;
@@ -206,7 +195,7 @@ public class TooltipOverlayHandler
 		FoodHelper.BasicFoodValues defaultFoodValues = foodOverlay.defaultFoodValues;
 		FoodHelper.BasicFoodValues modifiedFoodValues = foodOverlay.modifiedFoodValues;
 
-		RenderSystem.disableLighting();
+//		RenderSystem.disableLighting();
 		RenderSystem.enableDepthTest();
 
 		matrixStack.push();
@@ -214,8 +203,7 @@ public class TooltipOverlayHandler
 
 		int x = toolTipX;
 		int y = toolTipY + 2;
-
-		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_TEXTURE);
+		RenderSystem.setShaderTexture(0, Screen.GUI_ICONS_TEXTURE);
 		TextureOffsets offsets = FoodHelper.isRotten(foodOverlay.itemStack) ? rottenBarTextureOffsets : normalBarTextureOffsets;
 		for (int i = 0; i < foodOverlay.hungerBars * 2; i += 2) {
 
@@ -230,9 +218,9 @@ public class TooltipOverlayHandler
 			else
 				gui.drawTexture(matrixStack, x, y, offsets.containerMissingHunger, 27, 9, 9);
 
-			RenderSystem.color4f(1.0F, 1.0F, 1.0F, .25F);
+			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, .25F);
 			gui.drawTexture(matrixStack, x, y, defaultFoodValues.hunger - 1 == i ? offsets.shankMissingPartial : offsets.shankMissingFull, 27, 9, 9);
-			RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
 			if (modifiedFoodValues.hunger > i)
 				gui.drawTexture(matrixStack, x, y, modifiedFoodValues.hunger - 1 == i ? offsets.shankPartial : offsets.shankFull, 27, 9, 9);
@@ -253,19 +241,19 @@ public class TooltipOverlayHandler
 		float modifiedSaturationIncrement = modifiedFoodValues.getSaturationIncrement();
 		float absModifiedSaturationIncrement = Math.abs(modifiedSaturationIncrement);
 
-		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.getTextureManager().bindTexture(modIcons);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShaderTexture(0, modIcons);
 		for (int i = 0; i < foodOverlay.saturationBars * 2; i += 2) {
 			float effectiveSaturationOfBar = (absModifiedSaturationIncrement - i) / 2f;
 
 			boolean shouldBeFaded = absModifiedSaturationIncrement <= i;
 			if (shouldBeFaded)
-				RenderSystem.color4f(1.0F, 1.0F, 1.0F, .5F);
+				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, .5F);
 
 			gui.drawTexture(matrixStack, x, y, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7);
 
 			if (shouldBeFaded)
-				RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
 			x += 7;
 		}
@@ -280,11 +268,11 @@ public class TooltipOverlayHandler
 		matrixStack.pop();
 
 		RenderSystem.disableBlend();
-		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
 		// reset to drawHoveringText state
-		RenderSystem.disableRescaleNormal();
-		RenderSystem.disableLighting();
+//		RenderSystem.disableRescaleNormal();
+//		RenderSystem.disableLighting();
 		RenderSystem.disableDepthTest();
 	}
 
@@ -293,10 +281,6 @@ public class TooltipOverlayHandler
 			return false;
 		}
 
-		if (!FoodHelper.isFood(hoveredStack)) {
-			return false;
-		}
-
-		return true;
+		return FoodHelper.isFood(hoveredStack);
 	}
 }
