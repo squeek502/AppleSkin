@@ -14,9 +14,6 @@ import squeek.appleskin.client.HUDOverlayHandler;
 import squeek.appleskin.client.TooltipOverlayHandler;
 import squeek.appleskin.network.SyncHandler;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 @Mod(ModInfo.MODID)
 public class AppleSkin
 {

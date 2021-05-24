@@ -76,3 +76,20 @@ jar {
 		])
 	}
 }
+
+task sourcesJar(type: Jar) {
+	classifier = "sources"
+	from sourceSets.main.allJava
+}
+
+task apiJar(type: Jar) {
+	classifier = "api"
+	from sourceSets.main.output
+	include "squeek/appleskin/api/**"
+}
+
+artifacts {
+	archives sourcesJar
+	archives apiJar
+}
+
