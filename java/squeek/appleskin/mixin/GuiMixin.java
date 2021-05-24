@@ -6,9 +6,9 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
@@ -28,5 +28,12 @@ public class GuiMixin {
 	@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;push()V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD, method = "renderTooltipFromComponents(Lnet/minecraft/client/util/math/MatrixStack;Ljava/util/List;II)V")
 	private void renderTooltip(MatrixStack matrixStack, List<TooltipComponent> tooltip, int mouseX, int mouseY, CallbackInfo info, int w, int h, int x, int y) {
 		TooltipOverlayHandler.onRenderTooltip(matrixStack, tooltip, x, y, w, h);
+		System.out.println(h);
+	}
+
+	@ModifyVariable(at = @At(value = "LOAD", ordinal = 1), method = "renderTooltipFromComponents(Lnet/minecraft/client/util/math/MatrixStack;Ljava/util/List;II)V", index = 12, print = true)
+	private int modifyInt(int originalValue) {
+		System.out.println(originalValue);
+		return originalValue;
 	}
 }

@@ -14,7 +14,10 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import squeek.appleskin.duck.ITooltipGetOrderedText;
 import squeek.appleskin.helpers.FoodHelper;
+import sun.misc.Unsafe;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 
 public class TooltipOverlayHandler {
@@ -184,6 +187,10 @@ public class TooltipOverlayHandler {
 	}
 
 	public static void onRenderTooltip(MatrixStack matrixStack, List<TooltipComponent> tooltip, int toolTipX, int toolTipY, int toolTipW, int toolTipH) {
+
+
+
+
 		// When matrixStack or tooltip is null an unknown exception occurs.
 		if (matrixStack == null || tooltip == null) {
 			return;
