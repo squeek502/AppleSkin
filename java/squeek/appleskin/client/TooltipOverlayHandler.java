@@ -14,10 +14,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import squeek.appleskin.duck.ITooltipGetOrderedText;
 import squeek.appleskin.helpers.FoodHelper;
-import sun.misc.Unsafe;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.List;
 
 public class TooltipOverlayHandler {
@@ -64,12 +61,16 @@ public class TooltipOverlayHandler {
 	}
 
 	// Bind to text line, because food overlay must apply line offset of all case.
-	static class FoodOverlayTextComponent extends LiteralText {
+	public static class FoodOverlayTooltipComponent extends LiteralText {
 
 		private final FoodOverlay foodOverlay;
-		FoodOverlayTextComponent(FoodOverlay foodOverlay) {
+		FoodOverlayTooltipComponent(FoodOverlay foodOverlay) {
 			super(foodOverlay.getTooltip());
 			this.foodOverlay = foodOverlay;
+		}
+
+		public FoodOverlay getFoodOverlay() {
+			return foodOverlay;
 		}
 
 		@Override
@@ -77,17 +78,13 @@ public class TooltipOverlayHandler {
 			return new FoodOverlayOrderedText(this.foodOverlay);
 		}
 
-		public FoodOverlayTextComponent copy() {
-			return new FoodOverlayTextComponent(foodOverlay);
+		public FoodOverlayTooltipComponent copy() {
+			return new FoodOverlayTooltipComponent(foodOverlay);
 		}
 	}
 
-	static class FoodOverlayOrderedText implements OrderedText {
-
-		private final FoodOverlay foodOverlay;
-		FoodOverlayOrderedText(FoodOverlay foodOverlay) {
-			this.foodOverlay = foodOverlay;
-		}
+	record FoodOverlayOrderedText(
+			FoodOverlay foodOverlay) implements OrderedText {
 
 		@Override
 		public boolean accept(CharacterVisitor visitor) {
@@ -95,7 +92,7 @@ public class TooltipOverlayHandler {
 		}
 	}
 
-	static class FoodOverlay {
+	public static class FoodOverlay {
 
 		private final FoodHelper.BasicFoodValues defaultFoodValues;
 		private final FoodHelper.BasicFoodValues modifiedFoodValues;
@@ -163,6 +160,14 @@ public class TooltipOverlayHandler {
 		boolean shouldRenderSaturationBars() {
 			return saturationBars > 0;
 		}
+
+		public int getHungerBars() {
+			return hungerBars;
+		}
+
+		public int getSaturationBars() {
+			return saturationBars;
+		}
 	}
 
 
@@ -179,18 +184,15 @@ public class TooltipOverlayHandler {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		FoodOverlay foodOverlay = new FoodOverlay(hoveredStack, mc.player);
 		if (foodOverlay.shouldRenderHungerBars()) {
-			tooltip.add(new FoodOverlayTextComponent(foodOverlay));
+			tooltip.add(new FoodOverlayTooltipComponent(foodOverlay));
 		}
 		if (foodOverlay.shouldRenderSaturationBars()) {
-			tooltip.add(new FoodOverlayTextComponent(foodOverlay));
+			tooltip.add(new FoodOverlayTooltipComponent(foodOverlay));
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public static void onRenderTooltip(MatrixStack matrixStack, List<TooltipComponent> tooltip, int toolTipX, int toolTipY, int toolTipW, int toolTipH) {
-
-
-
-
 		// When matrixStack or tooltip is null an unknown exception occurs.
 		if (matrixStack == null || tooltip == null) {
 			return;
@@ -207,7 +209,7 @@ public class TooltipOverlayHandler {
 		for (int i = 0; i < tooltip.size(); ++i) {
 			if (((ITooltipGetOrderedText)tooltip.get(i)).getText() instanceof FoodOverlayOrderedText) {
 				toolTipY += i * 10;
-				foodOverlay = ((FoodOverlayOrderedText)((ITooltipGetOrderedText)tooltip.get(i)).getText()).foodOverlay;
+				foodOverlay = ((FoodOverlayOrderedText)((ITooltipGetOrderedText)tooltip.get(i)).getText()).foodOverlay();
 				break;
 			}
 		}
@@ -220,7 +222,6 @@ public class TooltipOverlayHandler {
 		FoodHelper.BasicFoodValues defaultFoodValues = foodOverlay.defaultFoodValues;
 		FoodHelper.BasicFoodValues modifiedFoodValues = foodOverlay.modifiedFoodValues;
 
-//		RenderSystem.disableLighting();
 		RenderSystem.enableDepthTest();
 
 		matrixStack.push();
@@ -295,9 +296,6 @@ public class TooltipOverlayHandler {
 		RenderSystem.disableBlend();
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-		// reset to drawHoveringText state
-//		RenderSystem.disableRescaleNormal();
-//		RenderSystem.disableLighting();
 		RenderSystem.disableDepthTest();
 	}
 
