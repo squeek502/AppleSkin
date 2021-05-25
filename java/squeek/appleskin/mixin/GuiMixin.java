@@ -36,12 +36,14 @@ public class GuiMixin {
 
 	@ModifyVariable(at = @At(value = "STORE"), method = "renderTooltipFromComponents(Lnet/minecraft/client/util/math/MatrixStack;Ljava/util/List;II)V", ordinal = 2)
 	private int modifyInt(int originalValue) {
-		for (Text text : this.tooltip) {
-			if (text instanceof TooltipOverlayHandler.FoodOverlayTooltipComponent) {
-				TooltipOverlayHandler.FoodOverlay foodOverlay = ((TooltipOverlayHandler.FoodOverlayTooltipComponent)text).getFoodOverlay();
-				int hungerLength = foodOverlay.getHungerBars() * 9;
-				int saturationLength = foodOverlay.getSaturationBars() * 7;
-				originalValue = Math.max(originalValue, Math.max(hungerLength, saturationLength));
+		if (this.tooltip != null) {
+			for (Text text : this.tooltip) {
+				if (text instanceof TooltipOverlayHandler.FoodOverlayTooltipComponent) {
+					TooltipOverlayHandler.FoodOverlay foodOverlay = ((TooltipOverlayHandler.FoodOverlayTooltipComponent)text).getFoodOverlay();
+					int hungerLength = foodOverlay.getHungerBars() * 9;
+					int saturationLength = foodOverlay.getSaturationBars() * 7;
+					originalValue = Math.max(originalValue, Math.max(hungerLength, saturationLength));
+				}
 			}
 		}
 		return originalValue;
