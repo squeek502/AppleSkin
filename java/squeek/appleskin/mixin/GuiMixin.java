@@ -22,7 +22,7 @@ public class GuiMixin
 		TooltipOverlayHandler.onItemTooltip(itemStack, info.getReturnValue());
 	}
 
-	@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;push()V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD, method = "renderTooltip(Lnet/minecraft/client/util/math/MatrixStack;Ljava/util/List;II)V")
+	@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;push()V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD, method = "renderOrderedTooltip(Lnet/minecraft/client/util/math/MatrixStack;Ljava/util/List;II)V")
 	private void renderTooltip(MatrixStack matrixStack, List tooltip, int mouseX, int mouseY, CallbackInfo info, int w, int x, int y, int w2, int h)
 	{
 		TooltipOverlayHandler.onRenderTooltip(matrixStack, tooltip, x, y, w, h);

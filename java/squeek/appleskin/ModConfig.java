@@ -3,13 +3,15 @@ package squeek.appleskin;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
+import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 
 
-@Config(name = "appleskin-client")
+@Config(name = "appleskin")
 public class ModConfig implements ConfigData {
 
+    @ConfigEntry.Gui.Excluded
     public static ModConfig INSTANCE;
 
     public static void init() {
@@ -34,7 +36,6 @@ public class ModConfig implements ConfigData {
 
     @Comment("If true, shows your food exhaustion as a progress bar behind the hunger bars")
     public boolean showFoodExhaustionHudUnderlay = true;
-
-    @Comment("If true, adds a line that shows your hunger, saturation, and exhaustion level in the F3 debug overlay")
-    public boolean showFoodStatsInDebugOverlay = true;
 }
+
+
