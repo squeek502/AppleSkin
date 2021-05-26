@@ -9,5 +9,6 @@ public class AppleSkin implements ClientModInitializer
 	public void onInitializeClient()
 	{
 		SyncHandler.init();
+		ModConfig.init();
 	}
 }

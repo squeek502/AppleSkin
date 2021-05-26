@@ -9,6 +9,7 @@ import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import squeek.appleskin.ModConfig;
 import squeek.appleskin.api.event.HUDOverlayEvent;
 import squeek.appleskin.api.food.IFood;
 import squeek.appleskin.helpers.FoodHelper;
@@ -27,6 +28,9 @@ public class HUDOverlayHandler
 	{
 		foodIconsOffset = FOOD_BAR_HEIGHT;
 
+		if (!ModConfig.INSTANCE.showFoodExhaustionHudUnderlay)
+			return;
+
 		MinecraftClient mc = MinecraftClient.getInstance();
 		PlayerEntity player = mc.player;
 
@@ -44,6 +48,9 @@ public class HUDOverlayHandler
 
 	public static void onRender(MatrixStack matrixStack)
 	{
+		if (!ModConfig.INSTANCE.showFoodValuesHudOverlay && !ModConfig.INSTANCE.showSaturationHudOverlay)
+			return;
+
 		MinecraftClient mc = MinecraftClient.getInstance();
 		PlayerEntity player = mc.player;
 		HungerManager stats = player.getHungerManager();
@@ -62,7 +69,16 @@ public class HUDOverlayHandler
 
 		// Notify everyone that we should render saturation hud overlay
 		HUDOverlayEvent.Saturation saturationRenderEvent = new HUDOverlayEvent.Saturation(saturationLevel, left, top, matrixStack);
-		HUDOverlayEvent.Saturation.EVENT.invoker().interact(saturationRenderEvent);
+
+		// Cancel render overlay event when configuration disabled.
+		if (!ModConfig.INSTANCE.showSaturationHudOverlay) {
+			saturationRenderEvent.isCanceled = true;
+		}
+
+		// Notify everyone that we should render saturation hud overlay
+		if (!saturationRenderEvent.isCanceled) {
+			HUDOverlayEvent.Saturation.EVENT.invoker().interact(saturationRenderEvent);
+		}
 
 		// Draw saturation overlay
 		if (!saturationRenderEvent.isCanceled) {
@@ -70,10 +86,11 @@ public class HUDOverlayHandler
 		}
 
 		ItemStack heldItem = player.getMainHandStack();
-		if (!FoodHelper.isFood(heldItem))
+		if (ModConfig.INSTANCE.showFoodValuesHudOverlayWhenOffhand && !FoodHelper.isFood(heldItem)) {
 			heldItem = player.getOffHandStack();
+		}
 
-		if (heldItem.isEmpty() || !FoodHelper.isFood(heldItem)) {
+		if (!ModConfig.INSTANCE.showFoodValuesHudOverlay || heldItem.isEmpty() || !FoodHelper.isFood(heldItem)) {
 			resetFlash();
 			return;
 		}

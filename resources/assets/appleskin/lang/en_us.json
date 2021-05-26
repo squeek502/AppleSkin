@@ -1,0 +1,9 @@
+{
+  "text.autoconfig.appleskin.title": "Apple Skin",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltip": "Shows food in tooltip",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways": "Shows food in tooltip by automatically",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay": "Shows main-hand food in HUD",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlayWhenOffhand": "Shows off-hand food in HUD",
+  "text.autoconfig.appleskin.option.showFoodExhaustionHudUnderlay": "Shows exhaustion level in HUD",
+  "text.autoconfig.appleskin.option.showSaturationHudOverlay": "Shows saturation level in HUD"
+}

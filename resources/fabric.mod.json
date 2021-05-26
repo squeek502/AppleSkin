@@ -21,6 +21,9 @@
   "entrypoints": {
     "client": [
       "squeek.appleskin.AppleSkin"
+    ],
+    "modmenu": [
+      "squeek.appleskin.gui.ModMenuIntegration"
     ]
   },
   "mixins": [

@@ -8,9 +8,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
+import squeek.appleskin.ModConfig;
 import squeek.appleskin.api.event.TooltipOverlayEvent;
 import squeek.appleskin.api.food.IFood;
 import squeek.appleskin.helpers.FoodHelper;
+import squeek.appleskin.helpers.KeyHelper;
 
 import java.util.List;
 
@@ -325,6 +327,11 @@ public class TooltipOverlayHandler
 	private static boolean shouldShowTooltip(ItemStack hoveredStack)
 	{
 		if (hoveredStack.isEmpty()) {
+			return false;
+		}
+
+		boolean shouldShowTooltip = (ModConfig.INSTANCE.showFoodValuesInTooltip && KeyHelper.isShiftKeyDown()) || ModConfig.INSTANCE.showFoodValuesInTooltipAlways;
+		if (!shouldShowTooltip) {
 			return false;
 		}
 
