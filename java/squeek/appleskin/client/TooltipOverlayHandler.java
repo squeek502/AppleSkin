@@ -6,7 +6,9 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.CharacterVisitor;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.OrderedText;
 import net.minecraft.util.Identifier;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.api.event.TooltipOverlayEvent;
@@ -67,7 +69,7 @@ public class TooltipOverlayHandler
 	}
 
 	// Bind to text line, because food overlay must apply line offset of all case.
-	static class FoodOverlayTextComponent extends LiteralText
+	static class FoodOverlayTextComponent extends LiteralText implements OrderedText
 	{
 		private FoodOverlay foodOverlay;
 		FoodOverlayTextComponent(FoodOverlay foodOverlay)
@@ -78,6 +80,16 @@ public class TooltipOverlayHandler
 
 		public FoodOverlayTextComponent copy() {
 			return new FoodOverlayTextComponent(foodOverlay);
+		}
+
+		@Override
+		public OrderedText asOrderedText() {
+			return this;
+		}
+
+		@Override
+		public boolean accept(CharacterVisitor visitor) {
+			return true;
 		}
 	}
 
@@ -190,7 +202,7 @@ public class TooltipOverlayHandler
 		}
 	}
 
-	public static void onRenderTooltip(MatrixStack matrixStack, List tooltip, int toolTipX, int toolTipY, int toolTipW, int toolTipH)
+	public static void onRenderTooltip(MatrixStack matrixStack, List<? extends OrderedText> tooltip, int toolTipX, int toolTipY, int toolTipW, int toolTipH)
 	{
 		// When matrixStack or tooltip is null an unknown exception occurs.
 		if (matrixStack == null || tooltip == null) {
