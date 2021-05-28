@@ -2,6 +2,7 @@ package squeek.appleskin.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextVisitFactory;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
@@ -89,7 +90,7 @@ public class TooltipOverlayHandler
 
 		@Override
 		public boolean accept(CharacterVisitor visitor) {
-			return true;
+			return TextVisitFactory.visitFormatted(this, getStyle(), visitor);
 		}
 	}
 
