@@ -3,21 +3,14 @@ package squeek.appleskin.api.event;
 import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
-import squeek.appleskin.api.food.IFood;
+import squeek.appleskin.api.food.FoodValues;
 import squeek.appleskin.api.handler.EventHandler;
 
 public class HUDOverlayEvent
 {
-    public static class Pre extends HUDOverlayEvent
-    {
-        public Pre(int x, int y, MatrixStack matrixStack)
-        {
-            super(x, y, matrixStack);
-        }
-
-        public static Event<EventHandler<Pre>> EVENT = EventHandler.createArrayBacked();
-    }
-
+    /**
+     * If cancelled, will stop all rendering of the exhaustion meter.
+     */
     public static class Exhaustion extends HUDOverlayEvent
     {
         public Exhaustion(float exhaustion, int x, int y, MatrixStack matrixStack)
@@ -26,11 +19,14 @@ public class HUDOverlayEvent
             this.exhaustion = exhaustion;
         }
 
-        public float exhaustion;
+        public final float exhaustion;
 
         public static Event<EventHandler<Exhaustion>> EVENT = EventHandler.createArrayBacked();
     }
 
+    /**
+     * If cancelled, will stop all rendering of the saturation overlay.
+     */
     public static class Saturation extends HUDOverlayEvent
     {
         public Saturation(float saturationLevel, int x, int y, MatrixStack matrixStack)
@@ -39,26 +35,29 @@ public class HUDOverlayEvent
             this.saturationLevel = saturationLevel;
         }
 
-        public float saturationLevel;
+        public final float saturationLevel;
 
         public static Event<EventHandler<Saturation>> EVENT = EventHandler.createArrayBacked();
     }
 
-    public static class Hunger extends HUDOverlayEvent
+    /**
+     * If cancelled, will stop all rendering of the hunger restored overlay.
+     */
+    public static class HungerRestored extends HUDOverlayEvent
     {
-        public Hunger(int foodLevel, ItemStack itemStack, IFood modifiedFood, int x, int y, MatrixStack matrixStack)
+        public HungerRestored(int foodLevel, ItemStack itemStack, FoodValues foodValues, int x, int y, MatrixStack matrixStack)
         {
             super(x, y, matrixStack);
-            this.foodLevel = foodLevel;
+            this.currentFoodLevel = foodLevel;
             this.itemStack = itemStack;
-            this.modifiedFood = modifiedFood;
+            this.foodValues = foodValues;
         }
 
-        public IFood modifiedFood;
-        public ItemStack itemStack;
-        public int foodLevel;
+        public final FoodValues foodValues;
+        public final ItemStack itemStack;
+        public final int currentFoodLevel;
 
-        public static Event<EventHandler<Hunger>> EVENT = EventHandler.createArrayBacked();
+        public static Event<EventHandler<HungerRestored>> EVENT = EventHandler.createArrayBacked();
     }
 
     private HUDOverlayEvent(int x, int y, MatrixStack matrixStack)
