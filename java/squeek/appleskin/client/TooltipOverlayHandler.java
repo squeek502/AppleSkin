@@ -265,6 +265,8 @@ public class TooltipOverlayHandler
 
 		RenderSystem.disableLighting();
 		RenderSystem.enableDepthTest();
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
 
 		matrixStack.push();
 		matrixStack.translate(0.0D, 0.0D, 500D); // zLevel must higher than of the background.
@@ -282,7 +284,11 @@ public class TooltipOverlayHandler
 			else if (modifiedFoodHunger == i + 1)
 				gui.drawTexture(matrixStack, x, y, offsets.containerPartialHunger, 27, 9, 9);
 			else
+			{
+				RenderSystem.color4f(1.0F, 1.0F, 1.0F, .5F);
 				gui.drawTexture(matrixStack, x, y, offsets.containerMissingHunger, 27, 9, 9);
+				RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+			}
 
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, .25F);
 			gui.drawTexture(matrixStack, x, y, defaultFoodHunger - 1 == i ? offsets.shankMissingPartial : offsets.shankMissingFull, 27, 9, 9);
