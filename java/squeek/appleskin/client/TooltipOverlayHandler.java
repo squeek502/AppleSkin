@@ -279,6 +279,8 @@ public class TooltipOverlayHandler
 
 		RenderSystem.disableLighting();
 		RenderSystem.disableDepthTest();
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
 
 		matrixStack.push();
 		matrixStack.translate(0.0D, 0.0D, toolTipZ);
@@ -302,7 +304,11 @@ public class TooltipOverlayHandler
 			else if (modifiedHunger == i + 1)
 				gui.blit(matrixStack, x, y, offsets.containerPartialHunger, 27, 9, 9);
 			else
+			{
+				RenderSystem.color4f(1.0F, 1.0F, 1.0F, .5F);
 				gui.blit(matrixStack, x, y, offsets.containerMissingHunger, 27, 9, 9);
+				RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+			}
 
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, .25F);
 			gui.blit(matrixStack, x, y, defaultHunger - 1 == i ? offsets.shankMissingPartial : offsets.shankMissingFull, 27, 9, 9);
