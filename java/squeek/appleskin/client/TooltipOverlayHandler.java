@@ -291,6 +291,9 @@ public class TooltipOverlayHandler
 		int defaultHunger = defaultFood.hunger;
 		int modifiedHunger = modifiedFood.hunger;
 
+		// Render from right to left so that the icons 'face' the right way
+		x += (foodOverlay.hungerBars - 1) * 9;
+
 		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
 		TextureOffsets offsets = FoodHelper.isRotten(hoveredStack) ? rottenBarTextureOffsets : normalBarTextureOffsets;
 		for (int i = 0; i < foodOverlay.hungerBars * 2; i += 2) {
@@ -317,9 +320,10 @@ public class TooltipOverlayHandler
 			if (modifiedHunger > i)
 				gui.blit(matrixStack, x, y, modifiedHunger - 1 == i ? offsets.shankPartial : offsets.shankFull, 27, 9, 9);
 
-			x += 9;
+			x -= 9;
 		}
 		if (foodOverlay.hungerBarsText != null) {
+			x += 18;
 			matrixStack.push();
 			matrixStack.translate(x, y, 0);
 			matrixStack.scale(0.75f, 0.75f, 0.75f);
@@ -332,6 +336,9 @@ public class TooltipOverlayHandler
 
 		float modifiedSaturationIncrement = modifiedFood.getSaturationIncrement();
 		float absModifiedSaturationIncrement = Math.abs(modifiedSaturationIncrement);
+
+		// Render from right to left so that the icons 'face' the right way
+		x += (foodOverlay.saturationBars - 1) * 7;
 
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.getTextureManager().bindTexture(modIcons);
@@ -347,9 +354,10 @@ public class TooltipOverlayHandler
 			if (shouldBeFaded)
 				RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-			x += 7;
+			x -= 7;
 		}
 		if (foodOverlay.saturationBarsText != null) {
+			x += 14;
 			matrixStack.push();
 			matrixStack.translate(x, y, 0);
 			matrixStack.scale(0.75f, 0.75f, 0.75f);
