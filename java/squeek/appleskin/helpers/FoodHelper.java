@@ -33,12 +33,14 @@ public class FoodHelper
 	}
 
 	public static boolean isRotten(ItemStack itemStack)
-    {
+	{
 		if (!isFood(itemStack))
 			return false;
 
-		for (Pair<EffectInstance, Float> effect : itemStack.getItem().getFood().getEffects()) {
-			if (effect.getFirst() != null && effect.getFirst().getPotion() != null && effect.getFirst().getPotion().getEffectType() == EffectType.HARMFUL) {
+		for (Pair<EffectInstance, Float> effect : itemStack.getItem().getFood().getEffects())
+		{
+			if (effect.getFirst() != null && effect.getFirst().getPotion() != null && effect.getFirst().getPotion().getEffectType() == EffectType.HARMFUL)
+			{
 				return true;
 			}
 		}

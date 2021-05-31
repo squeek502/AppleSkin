@@ -63,7 +63,8 @@ public class HUDOverlayHandler
 		// Notify everyone that we should render exhaustion hud overlay
 		HUDOverlayEvent.Exhaustion renderEvent = new HUDOverlayEvent.Exhaustion(exhaustion, left, top, event.getMatrixStack());
 		MinecraftForge.EVENT_BUS.post(renderEvent);
-		if (!renderEvent.isCanceled()) {
+		if (!renderEvent.isCanceled())
+		{
 			drawExhaustionOverlay(renderEvent, 1f, mc);
 		}
 	}
@@ -91,25 +92,30 @@ public class HUDOverlayHandler
 		HUDOverlayEvent.Saturation saturationRenderEvent = new HUDOverlayEvent.Saturation(saturationLevel, left, top, event.getMatrixStack());
 
 		// Cancel render overlay event when configuration disabled.
-		if (!ModConfig.SHOW_SATURATION_OVERLAY.get()) {
+		if (!ModConfig.SHOW_SATURATION_OVERLAY.get())
+		{
 			saturationRenderEvent.setCanceled(true);
 		}
 
 		// Notify everyone that we should render saturation hud overlay
-		if (!saturationRenderEvent.isCanceled()) {
+		if (!saturationRenderEvent.isCanceled())
+		{
 			MinecraftForge.EVENT_BUS.post(saturationRenderEvent);
 		}
 
 		// The render saturation event maybe cancelled by other mods
-		if (!saturationRenderEvent.isCanceled()) {
+		if (!saturationRenderEvent.isCanceled())
+		{
 			drawSaturationOverlay(saturationRenderEvent, 0, 1f, mc);
 		}
 
 		ItemStack heldItem = player.getHeldItemMainhand();
-		if (ModConfig.SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND.get() && !FoodHelper.isFood(heldItem)) {
+		if (ModConfig.SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND.get() && !FoodHelper.isFood(heldItem))
+		{
 			heldItem = player.getHeldItemOffhand();
 		}
-		if (!ModConfig.SHOW_FOOD_VALUES_OVERLAY.get() || heldItem.isEmpty() || !FoodHelper.isFood(heldItem)) {
+		if (!ModConfig.SHOW_FOOD_VALUES_OVERLAY.get() || heldItem.isEmpty() || !FoodHelper.isFood(heldItem))
+		{
 			resetFlash();
 			return;
 		}
@@ -124,7 +130,8 @@ public class HUDOverlayHandler
 		// Notify everyone that we should render hunger hud overlay
 		HUDOverlayEvent.HungerRestored renderRenderEvent = new HUDOverlayEvent.HungerRestored(foodLevel, heldItem, modifiedFood, left, top, event.getMatrixStack());
 		MinecraftForge.EVENT_BUS.post(renderRenderEvent);
-		if (renderRenderEvent.isCanceled()) {
+		if (renderRenderEvent.isCanceled())
+		{
 			resetFlash();
 			return;
 		}
@@ -137,7 +144,8 @@ public class HUDOverlayHandler
 		drawHungerOverlay(renderRenderEvent, foodHunger, flashAlpha, FoodHelper.isRotten(heldItem), mc);
 
 		// The render saturation overlay event maybe cancelled by other mods
-		if (!saturationRenderEvent.isCanceled()) {
+		if (!saturationRenderEvent.isCanceled())
+		{
 			int newFoodValue = stats.getFoodLevel() + foodHunger;
 			float newSaturationValue = saturationLevel + foodSaturationIncrement;
 			float saturationGained = newSaturationValue > newFoodValue ? newFoodValue - saturationLevel : foodSaturationIncrement;
@@ -284,10 +292,12 @@ public class HUDOverlayHandler
 	{
 		drawExhaustionOverlay(event.exhaustion, mc, event.matrixStack, event.x, event.y, alpha);
 	}
+
 	private static void drawSaturationOverlay(HUDOverlayEvent.Saturation event, float saturationGained, float alpha, Minecraft mc)
 	{
 		drawSaturationOverlay(saturationGained, event.saturationLevel, mc, event.matrixStack, event.x, event.y, alpha);
 	}
+
 	private static void drawHungerOverlay(HUDOverlayEvent.HungerRestored event, int hunger, float alpha, boolean useRottenTextures, Minecraft mc)
 	{
 		drawHungerOverlay(hunger, event.currentFoodLevel, mc, event.matrixStack, event.x, event.y, alpha, useRottenTextures);
