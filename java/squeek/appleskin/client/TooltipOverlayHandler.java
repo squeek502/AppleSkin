@@ -87,12 +87,14 @@ public class TooltipOverlayHandler
 		}
 
 		@Override
-		public OrderedText asOrderedText() {
+		public OrderedText asOrderedText()
+		{
 			return this;
 		}
 
 		@Override
-		public boolean accept(CharacterVisitor visitor) {
+		public boolean accept(CharacterVisitor visitor)
+		{
 			return TextVisitFactory.visitFormatted(this, getStyle(), visitor);
 		}
 	}
@@ -125,13 +127,15 @@ public class TooltipOverlayHandler
 			biggestSaturationIncrement = Math.max(defaultFood.getSaturationIncrement(), modifiedFood.getSaturationIncrement());
 
 			hungerBars = (int) Math.ceil(Math.abs(biggestHunger) / 2f);
-			if (hungerBars > 10) {
+			if (hungerBars > 10)
+			{
 				hungerBarsText = "x" + ((biggestHunger < 0 ? -1 : 1) * hungerBars);
 				hungerBars = 1;
 			}
 
 			saturationBars = (int) Math.max(1, Math.ceil(Math.abs(biggestSaturationIncrement) / 2f));
-			if (saturationBars > 10) {
+			if (saturationBars > 10)
+			{
 				saturationBarsText = "x" + ((biggestSaturationIncrement < 0 ? -1 : 1) * saturationBars);
 				saturationBars = 1;
 			}
@@ -139,25 +143,29 @@ public class TooltipOverlayHandler
 
 		String getTooltip()
 		{
-			if (tooltip != null) {
+			if (tooltip != null)
+			{
 				return tooltip;
 			}
 			// 9x9 icon convert to scale of blank string.
 			float scale = 2.2f;
 
 			float hungerBarsLength = (float) hungerBars * scale;
-			if (hungerBarsText != null) {
+			if (hungerBarsText != null)
+			{
 				hungerBarsLength += hungerBarsText.length();
 			}
 
 			float saturationBarsLength = (float) saturationBars * scale;
-			if (saturationBarsText != null) {
+			if (saturationBarsText != null)
+			{
 				saturationBarsLength += saturationBarsText.length();
 			}
 
 			int length = (int) Math.ceil(Math.max(hungerBarsLength, saturationBarsLength * 0.8f));
 			StringBuilder s = new StringBuilder(" ");
-			for (int i = 0; i < length; i++) {
+			for (int i = 0; i < length; i++)
+			{
 				s.append(" ");
 			}
 
@@ -179,10 +187,12 @@ public class TooltipOverlayHandler
 	public static void onItemTooltip(ItemStack hoveredStack, List tooltip)
 	{
 		// When hoveredStack or tooltip is null an unknown exception occurs.
-		if (hoveredStack == null || tooltip == null) {
+		if (hoveredStack == null || tooltip == null)
+		{
 			return;
 		}
-		if (!shouldShowTooltip(hoveredStack)) {
+		if (!shouldShowTooltip(hoveredStack))
+		{
 			return;
 		}
 
@@ -198,15 +208,18 @@ public class TooltipOverlayHandler
 		// Notify everyone that we should render tooltip overlay
 		TooltipOverlayEvent.Pre prerenderEvent = new TooltipOverlayEvent.Pre(hoveredStack, defaultFood, modifiedFood);
 		TooltipOverlayEvent.Pre.EVENT.invoker().interact(prerenderEvent);
-		if (prerenderEvent.isCanceled) {
+		if (prerenderEvent.isCanceled)
+		{
 			return;
 		}
 
 		FoodOverlay foodOverlay = new FoodOverlay(prerenderEvent.itemStack, defaultFood, modifiedFood, mc.player);
-		if (foodOverlay.shouldRenderHungerBars()) {
+		if (foodOverlay.shouldRenderHungerBars())
+		{
 			tooltip.add(new FoodOverlayTextComponent(foodOverlay));
 		}
-		if (foodOverlay.shouldRenderSaturationBars()) {
+		if (foodOverlay.shouldRenderSaturationBars())
+		{
 			tooltip.add(new FoodOverlayTextComponent(foodOverlay));
 		}
 	}
@@ -214,28 +227,33 @@ public class TooltipOverlayHandler
 	public static void onRenderTooltip(MatrixStack matrixStack, List<? extends OrderedText> tooltip, int toolTipX, int toolTipY, int toolTipW, int toolTipH)
 	{
 		// When matrixStack or tooltip is null an unknown exception occurs.
-		if (matrixStack == null || tooltip == null) {
+		if (matrixStack == null || tooltip == null)
+		{
 			return;
 		}
 
 		MinecraftClient mc = MinecraftClient.getInstance();
 		Screen gui = mc.currentScreen;
-		if (gui == null) {
+		if (gui == null)
+		{
 			return;
 		}
 
 		// Find food overlay of text lines.
 		FoodOverlay foodOverlay = null;
-		for (int i = 0; i < tooltip.size(); ++i) {
-			if (tooltip.get(i) instanceof FoodOverlayTextComponent) {
+		for (int i = 0; i < tooltip.size(); ++i)
+		{
+			if (tooltip.get(i) instanceof FoodOverlayTextComponent)
+			{
 				toolTipY += i * 10;
-				foodOverlay = ((FoodOverlayTextComponent)tooltip.get(i)).foodOverlay;
+				foodOverlay = ((FoodOverlayTextComponent) tooltip.get(i)).foodOverlay;
 				break;
 			}
 		}
 
 		// Not found overlay text lines, maybe some mods removed it.
-		if (foodOverlay == null) {
+		if (foodOverlay == null)
+		{
 			return;
 		}
 
@@ -250,7 +268,8 @@ public class TooltipOverlayHandler
 		// Notify everyone that we should render tooltip overlay
 		TooltipOverlayEvent.Render renderEvent = new TooltipOverlayEvent.Render(itemStack, x, y, matrixStack, defaultFood, modifiedFood);
 		TooltipOverlayEvent.Render.EVENT.invoker().interact(renderEvent);
-		if (renderEvent.isCanceled) {
+		if (renderEvent.isCanceled)
+		{
 			return;
 		}
 
@@ -276,7 +295,8 @@ public class TooltipOverlayHandler
 
 		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_TEXTURE);
 		TextureOffsets offsets = FoodHelper.isRotten(itemStack) ? rottenBarTextureOffsets : normalBarTextureOffsets;
-		for (int i = 0; i < foodOverlay.hungerBars * 2; i += 2) {
+		for (int i = 0; i < foodOverlay.hungerBars * 2; i += 2)
+		{
 
 			if (modifiedFoodHunger < 0)
 				gui.drawTexture(matrixStack, x, y, offsets.containerNegativeHunger, 27, 9, 9);
@@ -302,7 +322,8 @@ public class TooltipOverlayHandler
 
 			x -= 9;
 		}
-		if (foodOverlay.hungerBarsText != null) {
+		if (foodOverlay.hungerBarsText != null)
+		{
 			x += 18;
 			matrixStack.push();
 			matrixStack.translate(x, y, 0);
@@ -322,7 +343,8 @@ public class TooltipOverlayHandler
 
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.getTextureManager().bindTexture(modIcons);
-		for (int i = 0; i < foodOverlay.saturationBars * 2; i += 2) {
+		for (int i = 0; i < foodOverlay.saturationBars * 2; i += 2)
+		{
 			float effectiveSaturationOfBar = (absModifiedSaturationIncrement - i) / 2f;
 
 			boolean shouldBeFaded = absModifiedSaturationIncrement <= i;
@@ -336,7 +358,8 @@ public class TooltipOverlayHandler
 
 			x -= 7;
 		}
-		if (foodOverlay.saturationBarsText != null) {
+		if (foodOverlay.saturationBarsText != null)
+		{
 			x += 14;
 			matrixStack.push();
 			matrixStack.translate(x, y, 0);
@@ -358,16 +381,19 @@ public class TooltipOverlayHandler
 
 	private static boolean shouldShowTooltip(ItemStack hoveredStack)
 	{
-		if (hoveredStack.isEmpty()) {
+		if (hoveredStack.isEmpty())
+		{
 			return false;
 		}
 
 		boolean shouldShowTooltip = (ModConfig.INSTANCE.showFoodValuesInTooltip && KeyHelper.isShiftKeyDown()) || ModConfig.INSTANCE.showFoodValuesInTooltipAlways;
-		if (!shouldShowTooltip) {
+		if (!shouldShowTooltip)
+		{
 			return false;
 		}
 
-		if (!FoodHelper.isFood(hoveredStack)) {
+		if (!FoodHelper.isFood(hoveredStack))
+		{
 			return false;
 		}
 

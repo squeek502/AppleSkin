@@ -42,7 +42,8 @@ public class HUDOverlayHandler
 		// Notify everyone that we should render exhaustion hud overlay
 		HUDOverlayEvent.Exhaustion renderEvent = new HUDOverlayEvent.Exhaustion(exhaustion, left, top, matrixStack);
 		HUDOverlayEvent.Exhaustion.EVENT.invoker().interact(renderEvent);
-		if (!renderEvent.isCanceled) {
+		if (!renderEvent.isCanceled)
+		{
 			drawExhaustionOverlay(renderEvent, 1f, mc);
 		}
 	}
@@ -64,26 +65,31 @@ public class HUDOverlayHandler
 		HUDOverlayEvent.Saturation saturationRenderEvent = new HUDOverlayEvent.Saturation(saturationLevel, left, top, matrixStack);
 
 		// Cancel render overlay event when configuration disabled.
-		if (!ModConfig.INSTANCE.showSaturationHudOverlay) {
+		if (!ModConfig.INSTANCE.showSaturationHudOverlay)
+		{
 			saturationRenderEvent.isCanceled = true;
 		}
 
 		// Notify everyone that we should render saturation hud overlay
-		if (!saturationRenderEvent.isCanceled) {
+		if (!saturationRenderEvent.isCanceled)
+		{
 			HUDOverlayEvent.Saturation.EVENT.invoker().interact(saturationRenderEvent);
 		}
 
 		// Draw saturation overlay
-		if (!saturationRenderEvent.isCanceled) {
+		if (!saturationRenderEvent.isCanceled)
+		{
 			drawSaturationOverlay(saturationRenderEvent, 0, 1f, mc);
 		}
 
 		ItemStack heldItem = player.getMainHandStack();
-		if (ModConfig.INSTANCE.showFoodValuesHudOverlayWhenOffhand && !FoodHelper.isFood(heldItem)) {
+		if (ModConfig.INSTANCE.showFoodValuesHudOverlayWhenOffhand && !FoodHelper.isFood(heldItem))
+		{
 			heldItem = player.getOffHandStack();
 		}
 
-		if (!ModConfig.INSTANCE.showFoodValuesHudOverlay || heldItem.isEmpty() || !FoodHelper.isFood(heldItem)) {
+		if (!ModConfig.INSTANCE.showFoodValuesHudOverlay || heldItem.isEmpty() || !FoodHelper.isFood(heldItem))
+		{
 			resetFlash();
 			return;
 		}
@@ -99,7 +105,8 @@ public class HUDOverlayHandler
 		// Notify everyone that we should render hunger hud overlay
 		HUDOverlayEvent.HungerRestored hungerRenderEvent = new HUDOverlayEvent.HungerRestored(foodLevel, heldItem, modifiedFood, left, top, matrixStack);
 		HUDOverlayEvent.HungerRestored.EVENT.invoker().interact(hungerRenderEvent);
-		if (hungerRenderEvent.isCanceled) {
+		if (hungerRenderEvent.isCanceled)
+		{
 			resetFlash();
 			return;
 		}
@@ -115,7 +122,8 @@ public class HUDOverlayHandler
 		float newSaturationValue = saturationLevel + foodSaturationIncrement;
 
 		// Draw saturation overlay of gained
-		if (!saturationRenderEvent.isCanceled) {
+		if (!saturationRenderEvent.isCanceled)
+		{
 			float saturationGained = newSaturationValue > newFoodValue ? newFoodValue - saturationLevel : foodSaturationIncrement;
 			drawSaturationOverlay(saturationRenderEvent, saturationGained, flashAlpha, mc);
 		}
@@ -132,7 +140,8 @@ public class HUDOverlayHandler
 		mc.getTextureManager().bindTexture(modIcons);
 
 		enableAlpha(alpha);
-		for (int i = startBar; i < startBar + barsNeeded; ++i) {
+		for (int i = startBar; i < startBar + barsNeeded; ++i)
+		{
 			int x = left - i * 8 - 9;
 			int y = top;
 			float effectiveSaturationOfBar = (saturationLevel + saturationGained) / 2 - i;
@@ -254,10 +263,12 @@ public class HUDOverlayHandler
 	{
 		drawExhaustionOverlay(event.matrixStack, event.exhaustion, mc, event.x, event.y, alpha);
 	}
+
 	private static void drawSaturationOverlay(HUDOverlayEvent.Saturation event, float saturationGained, float alpha, MinecraftClient mc)
 	{
 		drawSaturationOverlay(event.matrixStack, saturationGained, event.saturationLevel, mc, event.x, event.y, alpha);
 	}
+
 	private static void drawHungerOverlay(HUDOverlayEvent.HungerRestored event, int hunger, float alpha, boolean useRottenTextures, MinecraftClient mc)
 	{
 		drawHungerOverlay(event.matrixStack, hunger, event.currentFoodLevel, mc, event.x, event.y, alpha, useRottenTextures);

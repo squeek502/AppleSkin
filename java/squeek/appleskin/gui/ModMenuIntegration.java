@@ -8,9 +8,11 @@ import net.fabricmc.api.Environment;
 import squeek.appleskin.ModConfig;
 
 @Environment(EnvType.CLIENT)
-public class ModMenuIntegration implements ModMenuApi {
-    @Override
-    public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return parent -> AutoConfig.getConfigScreen(ModConfig.class, parent).get();
-    }
+public class ModMenuIntegration implements ModMenuApi
+{
+	@Override
+	public ConfigScreenFactory<?> getModConfigScreenFactory()
+	{
+		return parent -> AutoConfig.getConfigScreen(ModConfig.class, parent).get();
+	}
 }
