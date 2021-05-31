@@ -19,8 +19,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.ModInfo;
-import squeek.appleskin.api.food.IFood;
+import squeek.appleskin.api.event.FoodValuesEvent;
 import squeek.appleskin.api.event.HUDOverlayEvent;
+import squeek.appleskin.api.food.FoodValues;
 import squeek.appleskin.helpers.FoodHelper;
 import squeek.appleskin.helpers.HungerHelper;
 
@@ -87,13 +88,6 @@ public class HUDOverlayHandler
 		int top = mc.getMainWindow().getScaledHeight() - foodIconsOffset;
 		float saturationLevel = stats.getSaturationLevel();
 
-		HUDOverlayEvent.Pre prerenderEvent = new HUDOverlayEvent.Pre(left, top, event.getMatrixStack());
-		MinecraftForge.EVENT_BUS.post(prerenderEvent);
-		if (prerenderEvent.isCanceled()) {
-			resetFlash();
-			return;
-		}
-
 		HUDOverlayEvent.Saturation saturationRenderEvent = new HUDOverlayEvent.Saturation(saturationLevel, left, top, event.getMatrixStack());
 
 		// Cancel render overlay event when configuration disabled.
@@ -121,20 +115,23 @@ public class HUDOverlayHandler
 		}
 
 		int foodLevel = stats.getFoodLevel();
-		IFood modifiedFood = FoodHelper.getModifiedFoodValues(heldItem, player);
+		FoodValues modifiedFood = FoodHelper.getModifiedFoodValues(heldItem, player);
+
+		FoodValuesEvent foodValuesEvent = new FoodValuesEvent(player, heldItem, FoodHelper.getDefaultFoodValues(heldItem), modifiedFood);
+		MinecraftForge.EVENT_BUS.post(foodValuesEvent);
+		modifiedFood = foodValuesEvent.modifiedFoodValues;
 
 		// Notify everyone that we should render hunger hud overlay
-		HUDOverlayEvent.Hunger renderRenderEvent = new HUDOverlayEvent.Hunger(foodLevel, heldItem, modifiedFood, left, top, event.getMatrixStack());
+		HUDOverlayEvent.HungerRestored renderRenderEvent = new HUDOverlayEvent.HungerRestored(foodLevel, heldItem, modifiedFood, left, top, event.getMatrixStack());
 		MinecraftForge.EVENT_BUS.post(renderRenderEvent);
 		if (renderRenderEvent.isCanceled()) {
 			resetFlash();
 			return;
 		}
-		modifiedFood = renderRenderEvent.modifiedFood;
 
 		// Calculate the final hunger and saturation
-		int foodHunger = modifiedFood.getHunger(heldItem, player);
-		float foodSaturationIncrement = modifiedFood.getSaturationIncrement(heldItem, player);
+		int foodHunger = modifiedFood.hunger;
+		float foodSaturationIncrement = modifiedFood.getSaturationIncrement();
 
 		// restored hunger/saturation overlay while holding food
 		drawHungerOverlay(renderRenderEvent, foodHunger, flashAlpha, FoodHelper.isRotten(heldItem), mc);
@@ -291,8 +288,8 @@ public class HUDOverlayHandler
 	{
 		drawSaturationOverlay(saturationGained, event.saturationLevel, mc, event.matrixStack, event.x, event.y, alpha);
 	}
-	private static void drawHungerOverlay(HUDOverlayEvent.Hunger event, int hunger, float alpha, boolean useRottenTextures, Minecraft mc)
+	private static void drawHungerOverlay(HUDOverlayEvent.HungerRestored event, int hunger, float alpha, boolean useRottenTextures, Minecraft mc)
 	{
-		drawHungerOverlay(hunger, event.foodLevel, mc, event.matrixStack, event.x, event.y, alpha, useRottenTextures);
+		drawHungerOverlay(hunger, event.currentFoodLevel, mc, event.matrixStack, event.x, event.y, alpha, useRottenTextures);
 	}
 }

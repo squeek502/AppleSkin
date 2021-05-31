@@ -4,19 +4,14 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-import squeek.appleskin.api.food.IFood;
+import squeek.appleskin.api.food.FoodValues;
 
 @Cancelable
 public class HUDOverlayEvent extends Event
 {
-    public static class Pre extends HUDOverlayEvent
-    {
-        public Pre(int x, int y, MatrixStack matrixStack)
-        {
-            super(x, y, matrixStack);
-        }
-    }
-
+    /**
+     * If cancelled, will stop all rendering of the exhaustion meter.
+     */
     public static class Exhaustion extends HUDOverlayEvent
     {
         public Exhaustion(float exhaustion, int x, int y, MatrixStack matrixStack)
@@ -25,9 +20,12 @@ public class HUDOverlayEvent extends Event
             this.exhaustion = exhaustion;
         }
 
-        public float exhaustion;
+        public final float exhaustion;
     }
 
+    /**
+     * If cancelled, will stop all rendering of the saturation overlay.
+     */
     public static class Saturation extends HUDOverlayEvent
     {
         public Saturation(float saturationLevel, int x, int y, MatrixStack matrixStack)
@@ -36,22 +34,25 @@ public class HUDOverlayEvent extends Event
             this.saturationLevel = saturationLevel;
         }
 
-        public float saturationLevel;
+        public final float saturationLevel;
     }
 
-    public static class Hunger extends HUDOverlayEvent
+    /**
+     * If cancelled, will stop all rendering of the hunger restored overlay.
+     */
+    public static class HungerRestored extends HUDOverlayEvent
     {
-        public Hunger(int foodLevel, ItemStack itemStack, IFood modifiedFood, int x, int y, MatrixStack matrixStack)
+        public HungerRestored(int foodLevel, ItemStack itemStack, FoodValues foodValues, int x, int y, MatrixStack matrixStack)
         {
             super(x, y, matrixStack);
-            this.foodLevel = foodLevel;
+            this.currentFoodLevel = foodLevel;
             this.itemStack = itemStack;
-            this.modifiedFood = modifiedFood;
+            this.foodValues = foodValues;
         }
 
-        public IFood modifiedFood;
-        public ItemStack itemStack;
-        public int foodLevel;
+        public final FoodValues foodValues;
+        public final ItemStack itemStack;
+        public final int currentFoodLevel;
     }
 
     private HUDOverlayEvent(int x, int y, MatrixStack matrixStack)

@@ -20,7 +20,8 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.ModInfo;
-import squeek.appleskin.api.food.IFood;
+import squeek.appleskin.api.event.FoodValuesEvent;
+import squeek.appleskin.api.food.FoodValues;
 import squeek.appleskin.api.event.TooltipOverlayEvent;
 import squeek.appleskin.helpers.FoodHelper;
 import squeek.appleskin.helpers.KeyHelper;
@@ -87,20 +88,23 @@ public class TooltipOverlayHandler
 	static class FoodOverlayTextComponent extends StringTextComponent
 	{
 		private FoodOverlay foodOverlay;
-		FoodOverlayTextComponent(FoodOverlay foodOverlay) {
+
+		FoodOverlayTextComponent(FoodOverlay foodOverlay)
+		{
 			super(foodOverlay.getTooltip());
 			this.foodOverlay = foodOverlay;
 		}
 
-		public FoodOverlayTextComponent copyRaw() {
+		public FoodOverlayTextComponent copyRaw()
+		{
 			return new FoodOverlayTextComponent(foodOverlay);
 		}
 	}
 
 	static class FoodOverlay
 	{
-		private IFood defaultFood;
-		private IFood modifiedFood;
+		private FoodValues defaultFood;
+		private FoodValues modifiedFood;
 
 		private int biggestHunger;
 		private float biggestSaturationIncrement;
@@ -115,14 +119,14 @@ public class TooltipOverlayHandler
 
 		private ItemStack itemStack;
 
-		FoodOverlay(ItemStack itemStack, IFood defaultFood, IFood modifiedFood, PlayerEntity player)
+		FoodOverlay(ItemStack itemStack, FoodValues defaultFood, FoodValues modifiedFood, PlayerEntity player)
 		{
 			this.itemStack = itemStack;
 			this.defaultFood = defaultFood;
 			this.modifiedFood = modifiedFood;
 
-			biggestHunger = Math.max(defaultFood.getHunger(itemStack, player), modifiedFood.getHunger(itemStack, player));
-			biggestSaturationIncrement = Math.max(defaultFood.getSaturationIncrement(itemStack, player), modifiedFood.getSaturationIncrement(itemStack, player));
+			biggestHunger = Math.max(defaultFood.hunger, modifiedFood.hunger);
+			biggestSaturationIncrement = Math.max(defaultFood.getSaturationIncrement(), modifiedFood.getSaturationIncrement());
 
 			hungerBars = (int) Math.ceil(Math.abs(biggestHunger) / 2f);
 			if (hungerBars > 10) {
@@ -194,8 +198,13 @@ public class TooltipOverlayHandler
 		}
 
 		Minecraft mc = Minecraft.getInstance();
-		IFood defaultFood = FoodHelper.getDefaultFoodValues(hoveredStack);
-		IFood modifiedFood = FoodHelper.getModifiedFoodValues(hoveredStack, mc.player);
+		FoodValues defaultFood = FoodHelper.getDefaultFoodValues(hoveredStack);
+		FoodValues modifiedFood = FoodHelper.getModifiedFoodValues(hoveredStack, mc.player);
+
+		FoodValuesEvent foodValuesEvent = new FoodValuesEvent(mc.player, hoveredStack, defaultFood, modifiedFood);
+		MinecraftForge.EVENT_BUS.post(foodValuesEvent);
+		defaultFood = foodValuesEvent.defaultFoodValues;
+		modifiedFood = foodValuesEvent.modifiedFoodValues;
 
 		// Notify everyone that we should render tooltip overlay
 		TooltipOverlayEvent.Pre prerenderEvent = new TooltipOverlayEvent.Pre(hoveredStack, defaultFood, modifiedFood);
@@ -204,7 +213,7 @@ public class TooltipOverlayHandler
 			return;
 		}
 
-		FoodOverlay foodOverlay = new FoodOverlay(prerenderEvent.itemStack, prerenderEvent.defaultFood, prerenderEvent.modifiedFood, mc.player);
+		FoodOverlay foodOverlay = new FoodOverlay(prerenderEvent.itemStack, defaultFood, modifiedFood, mc.player);
 		if (foodOverlay.shouldRenderHungerBars()) {
 			tooltip.add(new FoodOverlayTextComponent(foodOverlay));
 		}
@@ -254,11 +263,11 @@ public class TooltipOverlayHandler
 
 		MatrixStack matrixStack = event.getMatrixStack();
 		ItemStack itemStack = foodOverlay.itemStack;
-		IFood defaultFood = foodOverlay.defaultFood;
-		IFood modifiedFood = foodOverlay.modifiedFood;
+		FoodValues defaultFood = foodOverlay.defaultFood;
+		FoodValues modifiedFood = foodOverlay.modifiedFood;
 
 		// Notify everyone that we should render tooltip overlay
-		TooltipOverlayEvent.Post renderEvent = new TooltipOverlayEvent.Post(itemStack, toolTipX, toolTipY, matrixStack, defaultFood, modifiedFood);
+		TooltipOverlayEvent.Render renderEvent = new TooltipOverlayEvent.Render(itemStack, toolTipX, toolTipY, matrixStack, defaultFood, modifiedFood);
 		MinecraftForge.EVENT_BUS.post(renderEvent);
 		if (renderEvent.isCanceled()) {
 			return;
@@ -266,11 +275,6 @@ public class TooltipOverlayHandler
 
 		toolTipX = renderEvent.x;
 		toolTipY = renderEvent.y;
-
-		defaultFood = renderEvent.defaultFood;
-		modifiedFood = renderEvent.modifiedFood;
-
-		itemStack = renderEvent.itemStack;
 		matrixStack = renderEvent.matrixStack;
 
 		RenderSystem.disableLighting();
@@ -282,8 +286,8 @@ public class TooltipOverlayHandler
 		int x = toolTipX;
 		int y = toolTipY + 2;
 
-		int defaultHunger = defaultFood.getHunger(itemStack, mc.player);
-		int modifiedHunger = modifiedFood.getHunger(itemStack, mc.player);
+		int defaultHunger = defaultFood.hunger;
+		int modifiedHunger = modifiedFood.hunger;
 
 		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
 		TextureOffsets offsets = FoodHelper.isRotten(hoveredStack) ? rottenBarTextureOffsets : normalBarTextureOffsets;
@@ -320,7 +324,7 @@ public class TooltipOverlayHandler
 		x = toolTipX;
 		y += 10;
 
-		float modifiedSaturationIncrement = modifiedFood.getSaturationIncrement(itemStack, mc.player);
+		float modifiedSaturationIncrement = modifiedFood.getSaturationIncrement();
 		float absModifiedSaturationIncrement = Math.abs(modifiedSaturationIncrement);
 
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
