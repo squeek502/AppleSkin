@@ -7,15 +7,15 @@ Minecraft mod that adds various food-related HUD improvements formerly provided 
 
 * Adds food value information to tooltips:
 
-![](https://i.imgur.com/furoAAi.png)
+![](https://i.imgur.com/YksBaUx.png)
 
 * Adds a visualization of saturation and exhaustion to the HUD:
 
-![](https://zippy.gfycat.com/ShimmeringYearlyCicada.gif)
+![](https://i.imgur.com/tmImVqo.gif)
 
 * Adds a visualization of potential hunger/saturation restored while holding food:
 
-![](https://zippy.gfycat.com/PowerfulDeafeningHarvestmen.gif)
+![](https://i.imgur.com/aHf1QxQ.gif)
 
 * Adds hunger/saturation/exhaustion info to the debug overlay (F3)
 * Syncs the value of saturation and exhaustion to the client.
