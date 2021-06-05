@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextVisitFactory;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -184,7 +185,7 @@ public class TooltipOverlayHandler
 		}
 	}
 
-	public static void onItemTooltip(ItemStack hoveredStack, List tooltip)
+	public static void onItemTooltip(ItemStack hoveredStack, PlayerEntity player, TooltipContext context, List tooltip)
 	{
 		// When hoveredStack or tooltip is null an unknown exception occurs.
 		if (hoveredStack == null || tooltip == null)
@@ -196,11 +197,10 @@ public class TooltipOverlayHandler
 			return;
 		}
 
-		MinecraftClient mc = MinecraftClient.getInstance();
 		FoodValues defaultFood = FoodHelper.getDefaultFoodValues(hoveredStack);
-		FoodValues modifiedFood = FoodHelper.getModifiedFoodValues(hoveredStack, mc.player);
+		FoodValues modifiedFood = FoodHelper.getModifiedFoodValues(hoveredStack, player);
 
-		FoodValuesEvent foodValuesEvent = new FoodValuesEvent(mc.player, hoveredStack, defaultFood, modifiedFood);
+		FoodValuesEvent foodValuesEvent = new FoodValuesEvent(player, hoveredStack, defaultFood, modifiedFood);
 		FoodValuesEvent.EVENT.invoker().interact(foodValuesEvent);
 		defaultFood = foodValuesEvent.defaultFoodValues;
 		modifiedFood = foodValuesEvent.modifiedFoodValues;
@@ -213,7 +213,7 @@ public class TooltipOverlayHandler
 			return;
 		}
 
-		FoodOverlay foodOverlay = new FoodOverlay(prerenderEvent.itemStack, defaultFood, modifiedFood, mc.player);
+		FoodOverlay foodOverlay = new FoodOverlay(prerenderEvent.itemStack, defaultFood, modifiedFood, player);
 		if (foodOverlay.shouldRenderHungerBars())
 		{
 			tooltip.add(new FoodOverlayTextComponent(foodOverlay));
@@ -286,9 +286,6 @@ public class TooltipOverlayHandler
 		RenderSystem.enableDepthTest();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
-
-		matrixStack.push();
-		matrixStack.translate(0.0D, 0.0D, 500D); // zLevel must higher than of the background.
 
 		// Render from right to left so that the icons 'face' the right way
 		x += (foodOverlay.hungerBars - 1) * 9;
@@ -367,8 +364,6 @@ public class TooltipOverlayHandler
 			mc.textRenderer.drawWithShadow(matrixStack, foodOverlay.saturationBarsText, 2, 1, 0xFFDDDDDD);
 			matrixStack.pop();
 		}
-
-		matrixStack.pop();
 
 		RenderSystem.disableBlend();
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);

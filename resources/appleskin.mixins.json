@@ -10,7 +10,8 @@
   "client": [
     "GuiMixin",
     "InGameHudMixin",
-    "MinecraftClientMixin"
+    "MinecraftClientMixin",
+    "ItemStackMixin"
   ],
   "injectors": {
     "defaultRequire": 1,

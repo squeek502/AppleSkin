@@ -16,12 +16,6 @@ import java.util.List;
 @Mixin(Screen.class)
 public class GuiMixin
 {
-	@Inject(at = @At("RETURN"), method = "getTooltipFromItem(Lnet/minecraft/item/ItemStack;)Ljava/util/List;")
-	private void getTooltipFromItem(ItemStack itemStack, CallbackInfoReturnable<List> info)
-	{
-		TooltipOverlayHandler.onItemTooltip(itemStack, info.getReturnValue());
-	}
-
 	// captured before the tooltip is rendered and stored here temporarily
 	private static int x;
 	private static int y;
