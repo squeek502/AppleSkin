@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -47,7 +48,6 @@ public class HUDOverlayHandler
 			drawExhaustionOverlay(renderEvent, 1f, mc);
 		}
 	}
-
 	public static void onRender(MatrixStack matrixStack)
 	{
 		if (!ModConfig.INSTANCE.showFoodValuesHudOverlay && !ModConfig.INSTANCE.showSaturationHudOverlay)
@@ -86,6 +86,15 @@ public class HUDOverlayHandler
 		if (ModConfig.INSTANCE.showFoodValuesHudOverlayWhenOffhand && !FoodHelper.isFood(heldItem))
 		{
 			heldItem = player.getOffHandStack();
+		}
+
+		if (shouldShowEstimatedHealth(heldItem))
+		{
+			float foodHealthIncrement = FoodHelper.getEstimatedHealthIncrement(heldItem, player);
+			float modifiedHealth = Math.min(player.getHealth() + foodHealthIncrement, player.getMaxHealth());
+			int left2 = mc.getWindow().getScaledWidth() / 2 - 91;
+			int top2 = mc.getWindow().getScaledHeight() - foodIconsOffset;
+			drawHealthOverlay(matrixStack, player.getHealth(), modifiedHealth, mc, left2, top2, flashAlpha);
 		}
 
 		if (!ModConfig.INSTANCE.showFoodValuesHudOverlay || heldItem.isEmpty() || !FoodHelper.isFood(heldItem))
@@ -172,16 +181,14 @@ public class HUDOverlayHandler
 		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_TEXTURE);
 
 		enableAlpha(alpha);
-		for (int i = startBar; i < startBar + barsNeeded; ++i)
-		{
+		for (int i = startBar; i < startBar + barsNeeded; ++i) {
 			int idx = i * 2 + 1;
 			int x = left - i * 8 - 9;
 			int y = top;
 			int icon = 16;
 			int background = 1;
 
-			if (useRottenTextures)
-			{
+			if (useRottenTextures) {
 				icon += 36;
 				background = 13;
 			}
@@ -217,8 +224,48 @@ public class HUDOverlayHandler
 		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_TEXTURE);
 	}
 
-	private static void enableAlpha(float alpha)
+	public static void drawHealthOverlay(MatrixStack matrixStack, float health, float modifiedHealth, MinecraftClient mc, int left, int top, float alpha)
 	{
+		if (modifiedHealth <= health)
+			return;
+
+		float startBar = (float)Math.floor(Math.ceil(health) / 2f);
+		float endBar = (float)Math.ceil(modifiedHealth) / 2f;
+
+		int iconStartOffset = 16;
+		int iconSize = 9;
+
+		enableAlpha(alpha);
+		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_TEXTURE);
+		for (float i = startBar; i < endBar; ++i) {
+			int x = left + (int)i * 8;
+			int y = top;
+			// location to full heart by default
+			int v = 0 * iconSize;
+			int u = iconStartOffset + 4 * iconSize;
+
+			// relocation to half heart
+			if ((endBar - i) < 1) {
+				u = iconStartOffset + 5 * iconSize;
+			}
+
+			//// apply the status effects of the player
+			//if (player.hasStatusEffect(StatusEffects.POISON)) {
+			//	u += 4 * iconSize;
+			//} else if (player.hasStatusEffect(StatusEffects.WITHER)) {
+			//	u += 8 * iconSize;
+			//}
+
+			// very faint background
+			RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha * 0.1f);
+			mc.inGameHud.drawTexture(matrixStack, x, y, iconStartOffset + 1 * iconSize, 0 * iconSize, iconSize, iconSize);
+			RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha);
+
+			mc.inGameHud.drawTexture(matrixStack, x, y, u, v, iconSize, iconSize);
+		}
+		disableAlpha(alpha);
+	}
+	private static void enableAlpha(float alpha) {
 		RenderSystem.enableBlend();
 
 		if (alpha == 1f)
@@ -272,5 +319,29 @@ public class HUDOverlayHandler
 	private static void drawHungerOverlay(HUDOverlayEvent.HungerRestored event, int hunger, float alpha, boolean useRottenTextures, MinecraftClient mc)
 	{
 		drawHungerOverlay(event.matrixStack, hunger, event.currentFoodLevel, mc, event.x, event.y, alpha, useRottenTextures);
+	}
+
+	private static boolean shouldShowEstimatedHealth(ItemStack hoveredStack)
+	{
+		MinecraftClient mc = MinecraftClient.getInstance();
+		PlayerEntity player = mc.player;
+		HungerManager stats = player.getHungerManager();
+
+		// when player is now naturally regeneration, player will confused how much of restored healths
+		if (stats.getFoodLevel() >= 18) {
+			return false;
+		}
+
+		if (player.hasStatusEffect(StatusEffects.POISON)) {
+			return false;
+		}
+		if (player.hasStatusEffect(StatusEffects.WITHER)) {
+			return false;
+		}
+		if (player.hasStatusEffect(StatusEffects.REGENERATION)) {
+			return false;
+		}
+
+		return true;
 	}
 }
