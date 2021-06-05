@@ -2,6 +2,7 @@ package squeek.appleskin.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextVisitFactory;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.util.math.MatrixStack;
@@ -12,8 +13,8 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import squeek.appleskin.duck.ITooltipGetOrderedText;
 import squeek.appleskin.helpers.FoodHelper;
+import squeek.appleskin.mixin.OrderedTextTooltipComponentAccessor;
 
 import java.util.List;
 
@@ -61,34 +62,26 @@ public class TooltipOverlayHandler {
 	}
 
 	// Bind to text line, because food overlay must apply line offset of all case.
-	public static class FoodOverlayTooltipComponent extends LiteralText {
+	public static class FoodOverlayTextComponent extends LiteralText implements OrderedText {
 
 		private final FoodOverlay foodOverlay;
-		FoodOverlayTooltipComponent(FoodOverlay foodOverlay) {
+		FoodOverlayTextComponent(FoodOverlay foodOverlay) {
 			super(foodOverlay.getTooltip());
 			this.foodOverlay = foodOverlay;
 		}
 
-		public FoodOverlay getFoodOverlay() {
-			return foodOverlay;
-		}
-
 		@Override
 		public OrderedText asOrderedText() {
-			return new FoodOverlayOrderedText(this.foodOverlay);
+			return this;
 		}
 
-		public FoodOverlayTooltipComponent copy() {
-			return new FoodOverlayTooltipComponent(foodOverlay);
+		public FoodOverlayTextComponent copy() {
+			return new FoodOverlayTextComponent(foodOverlay);
 		}
-	}
-
-	record FoodOverlayOrderedText(
-			FoodOverlay foodOverlay) implements OrderedText {
 
 		@Override
 		public boolean accept(CharacterVisitor visitor) {
-			return true;
+			return TextVisitFactory.visitFormatted(this, getStyle(), visitor);
 		}
 	}
 
@@ -160,14 +153,6 @@ public class TooltipOverlayHandler {
 		boolean shouldRenderSaturationBars() {
 			return saturationBars > 0;
 		}
-
-		public int getHungerBars() {
-			return hungerBars;
-		}
-
-		public int getSaturationBars() {
-			return saturationBars;
-		}
 	}
 
 
@@ -184,10 +169,10 @@ public class TooltipOverlayHandler {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		FoodOverlay foodOverlay = new FoodOverlay(hoveredStack, mc.player);
 		if (foodOverlay.shouldRenderHungerBars()) {
-			tooltip.add(new FoodOverlayTooltipComponent(foodOverlay));
+			tooltip.add(new FoodOverlayTextComponent(foodOverlay));
 		}
 		if (foodOverlay.shouldRenderSaturationBars()) {
-			tooltip.add(new FoodOverlayTooltipComponent(foodOverlay));
+			tooltip.add(new FoodOverlayTextComponent(foodOverlay));
 		}
 	}
 
@@ -207,9 +192,9 @@ public class TooltipOverlayHandler {
 		// Find food overlay of text lines.
 		FoodOverlay foodOverlay = null;
 		for (int i = 0; i < tooltip.size(); ++i) {
-			if (((ITooltipGetOrderedText)tooltip.get(i)).getText() instanceof FoodOverlayOrderedText) {
+			if (((OrderedTextTooltipComponentAccessor)tooltip.get(i)).getText() instanceof FoodOverlayTextComponent) {
 				toolTipY += i * 10;
-				foodOverlay = ((FoodOverlayOrderedText)((ITooltipGetOrderedText)tooltip.get(i)).getText()).foodOverlay();
+				foodOverlay = ((FoodOverlayTextComponent)((OrderedTextTooltipComponentAccessor)tooltip.get(i)).getText()).foodOverlay;
 				break;
 			}
 		}

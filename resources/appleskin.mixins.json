@@ -11,7 +11,7 @@
     "GuiMixin",
     "InGameHudMixin",
     "MinecraftClientMixin",
-    "OrderedTextTooltipComponentMixin"
+    "OrderedTextTooltipComponentAccessor"
   ],
   "injectors": {
     "defaultRequire": 1,

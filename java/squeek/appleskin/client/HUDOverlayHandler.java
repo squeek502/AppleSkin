@@ -12,6 +12,7 @@ import net.minecraft.util.Identifier;
 import squeek.appleskin.helpers.FoodHelper;
 import squeek.appleskin.helpers.HungerHelper;
 
+@SuppressWarnings("UnnecessaryLocalVariable")
 public class HUDOverlayHandler {
 	private static float flashAlpha = 0f;
 	private static byte alphaDir = 1;
@@ -25,6 +26,7 @@ public class HUDOverlayHandler {
 
 		MinecraftClient mc = MinecraftClient.getInstance();
 		PlayerEntity player = mc.player;
+		assert player != null;
 
 		int left = mc.getWindow().getScaledWidth() / 2 + 91;
 		int top = mc.getWindow().getScaledHeight() - foodIconsOffset;
@@ -35,6 +37,7 @@ public class HUDOverlayHandler {
 	public static void onRender(MatrixStack matrixStack) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		PlayerEntity player = mc.player;
+		assert player != null;
 		ItemStack heldItem = player.getMainHandStack();
 		if (!FoodHelper.isFood(heldItem))
 			heldItem = player.getOffHandStack();
@@ -123,6 +126,7 @@ public class HUDOverlayHandler {
 		disableAlpha(alpha);
 	}
 
+	@SuppressWarnings("unused")
 	public static void drawExhaustionOverlay(MatrixStack matrixStack, float exhaustion, MinecraftClient mc, int left, int top, float alpha) {
 		RenderSystem.setShaderTexture(0, modIcons);
 
