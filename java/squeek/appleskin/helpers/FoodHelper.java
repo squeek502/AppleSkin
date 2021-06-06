@@ -120,7 +120,10 @@ public class FoodHelper
 		while (foodLevel >= 18) {
 			if (exhaustionLevel > exhaustionForConsumed) {
 				exhaustionLevel -= exhaustionForConsumed;
-				foodLevel -= 1;
+				if (saturationLevel > 0)
+					saturationLevel = Math.max(saturationLevel - 1f, 0f);
+				else
+					foodLevel -= 1;
 			}
 			++foodStarvationTimer;
 			if (foodStarvationTimer < 80) {
