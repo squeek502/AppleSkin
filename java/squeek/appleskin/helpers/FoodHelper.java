@@ -100,38 +100,27 @@ public class FoodHelper
 		float exhaustionForRegen = 6.0F;
 		float exhaustionForConsumed = 4.0F;
 
-		// using timer is still used to avoid some boundary problems
-		int foodStarvationTimer = 0;
 		while (foodLevel >= 20 && saturationLevel > 0) {
 			while (exhaustionLevel > exhaustionForConsumed) {
 				exhaustionLevel -= exhaustionForConsumed;
 				saturationLevel = Math.max(saturationLevel - 1, 0);
 			}
-			++foodStarvationTimer;
-			if (foodStarvationTimer < 10) {
-				continue;
-			}
 			float limitedSaturationLevel = Math.min(saturationLevel, exhaustionForRegen);
 			health += limitedSaturationLevel / exhaustionForRegen;
 			exhaustionLevel += limitedSaturationLevel;
-			foodStarvationTimer = 0;
 		}
 
 		while (foodLevel >= 18) {
-			if (exhaustionLevel > exhaustionForConsumed) {
+			while (exhaustionLevel > exhaustionForConsumed) {
 				exhaustionLevel -= exhaustionForConsumed;
-				if (saturationLevel > 0)
-					saturationLevel = Math.max(saturationLevel - 1f, 0f);
-				else
+				if (saturationLevel > 0) {
+					saturationLevel = Math.max(saturationLevel - 1, 0);
+				} else {
 					foodLevel -= 1;
-			}
-			++foodStarvationTimer;
-			if (foodStarvationTimer < 80) {
-				continue;
+				}
 			}
 			health += 1;
 			exhaustionLevel += exhaustionForRegen;
-			foodStarvationTimer = 0;
 		}
 
 		return health;
