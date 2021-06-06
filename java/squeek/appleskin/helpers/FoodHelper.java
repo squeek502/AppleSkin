@@ -103,7 +103,7 @@ public class FoodHelper
 		// using timer is still used to avoid some boundary problems
 		int foodStarvationTimer = 0;
 		while (foodLevel >= 20 && saturationLevel > 0) {
-			if (exhaustionLevel > exhaustionForConsumed) {
+			while (exhaustionLevel > exhaustionForConsumed) {
 				exhaustionLevel -= exhaustionForConsumed;
 				saturationLevel = Math.max(saturationLevel - 1, 0);
 			}
