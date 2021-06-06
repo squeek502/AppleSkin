@@ -8,10 +8,10 @@
     "HungerManagerMixin"
   ],
   "client": [
-    "GuiMixin",
     "InGameHudMixin",
     "MinecraftClientMixin",
-    "ItemStackMixin"
+    "ItemStackMixin",
+    "ScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1,

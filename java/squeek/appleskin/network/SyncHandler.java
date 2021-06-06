@@ -34,7 +34,7 @@ public class SyncHandler
 		{
 			float saturation = packetByteBuf.readFloat();
 			MinecraftClient.getInstance().execute(() -> {
-				packetContext.getPlayer().getHungerManager().setSaturationLevelClient(saturation);
+				packetContext.getPlayer().getHungerManager().setSaturationLevel(saturation);
 			});
 		});
 	}

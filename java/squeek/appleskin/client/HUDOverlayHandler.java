@@ -137,7 +137,7 @@ public class HUDOverlayHandler
 		int startBar = saturationGained != 0 ? Math.max(0, (int) saturationLevel / 2) : 0;
 		int endBar = (int) Math.ceil(Math.min(20, saturationLevel + saturationGained) / 2f);
 		int barsNeeded = endBar - startBar;
-		mc.getTextureManager().bindTexture(modIcons);
+		RenderSystem.setShaderTexture(0, modIcons);
 
 		enableAlpha(alpha);
 		for (int i = startBar; i < startBar + barsNeeded; ++i)
@@ -158,7 +158,7 @@ public class HUDOverlayHandler
 		disableAlpha(alpha);
 
 		// rebind default icons
-		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_TEXTURE);
+		RenderSystem.setShaderTexture(0, Screen.GUI_ICONS_TEXTURE);
 	}
 
 	public static void drawHungerOverlay(MatrixStack matrixStack, int hungerRestored, int foodLevel, MinecraftClient mc, int left, int top, float alpha, boolean useRottenTextures)
@@ -169,7 +169,7 @@ public class HUDOverlayHandler
 		int startBar = foodLevel / 2;
 		int endBar = (int) Math.ceil(Math.min(20, foodLevel + hungerRestored) / 2f);
 		int barsNeeded = endBar - startBar;
-		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_TEXTURE);
+		RenderSystem.setShaderTexture(0, Screen.GUI_ICONS_TEXTURE);
 
 		enableAlpha(alpha);
 		for (int i = startBar; i < startBar + barsNeeded; ++i)
@@ -187,9 +187,9 @@ public class HUDOverlayHandler
 			}
 
 			// very faint background
-			RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha * 0.1f);
+			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha * 0.1f);
 			mc.inGameHud.drawTexture(matrixStack, x, y, 16 + background * 9, 27, 9, 9);
-			RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha);
+			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
 
 			if (idx < foodLevel + hungerRestored)
 				mc.inGameHud.drawTexture(matrixStack, x, y, icon + 36, 27, 9, 9);
@@ -201,7 +201,7 @@ public class HUDOverlayHandler
 
 	public static void drawExhaustionOverlay(MatrixStack matrixStack, float exhaustion, MinecraftClient mc, int left, int top, float alpha)
 	{
-		mc.getTextureManager().bindTexture(modIcons);
+		RenderSystem.setShaderTexture(0, modIcons);
 
 		float maxExhaustion = HungerHelper.getMaxExhaustion(mc.player);
 		// clamp between 0 and 1
@@ -214,7 +214,7 @@ public class HUDOverlayHandler
 		disableAlpha(.75f);
 
 		// rebind default icons
-		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_TEXTURE);
+		RenderSystem.setShaderTexture(0, Screen.GUI_ICONS_TEXTURE);
 	}
 
 	private static void enableAlpha(float alpha)
@@ -224,7 +224,7 @@ public class HUDOverlayHandler
 		if (alpha == 1f)
 			return;
 
-		RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
 		RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
 	}
 
@@ -235,7 +235,7 @@ public class HUDOverlayHandler
 		if (alpha == 1f)
 			return;
 
-		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 	}
 
 	public static void onClientTick()
