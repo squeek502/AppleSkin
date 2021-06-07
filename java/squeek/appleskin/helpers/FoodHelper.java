@@ -100,25 +100,25 @@ public class FoodHelper
 		float exhaustionForRegen = 6.0F;
 		float exhaustionForConsumed = 4.0F;
 
-		while (foodLevel >= 18) {
-			while (exhaustionLevel > exhaustionForConsumed) {
+		while (foodLevel >= 18)
+		{
+			while (exhaustionLevel > exhaustionForConsumed)
+			{
 				exhaustionLevel -= exhaustionForConsumed;
-				if (saturationLevel > 0) {
+				if (saturationLevel > 0)
 					saturationLevel = Math.max(saturationLevel - 1, 0);
-				} else {
+				else
 					foodLevel -= 1;
-				}
 			}
-			// accumulated exhaustion is too high, can't regen health
-			if (foodLevel < 18) {
-				break;
-			}
-			if (saturationLevel > 0) {
+			if (foodLevel >= 20 && saturationLevel > 0)
+			{
 				// fast regen health
 				float limitedSaturationLevel = Math.min(saturationLevel, exhaustionForRegen);
 				health += limitedSaturationLevel / exhaustionForRegen;
 				exhaustionLevel += limitedSaturationLevel;
-			} else {
+			}
+			else if (foodLevel >= 18)
+			{
 				// slow regen health
 				health += 1;
 				exhaustionLevel += exhaustionForRegen;
