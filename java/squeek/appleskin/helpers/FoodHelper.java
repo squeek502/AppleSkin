@@ -44,47 +44,49 @@ public class FoodHelper
 		if (!isFood(itemStack))
 			return false;
 
-		for (Pair<StatusEffectInstance, Float> effect : itemStack.getItem().getFoodComponent().getStatusEffects()) {
-			if (effect.getFirst() != null && effect.getFirst().getEffectType() != null && effect.getFirst().getEffectType().getType() == StatusEffectType.HARMFUL) {
+		for (Pair<StatusEffectInstance, Float> effect : itemStack.getItem().getFoodComponent().getStatusEffects())
+		{
+			if (effect.getFirst() != null && effect.getFirst().getEffectType() != null && effect.getFirst().getEffectType().getType() == StatusEffectType.HARMFUL)
 				return true;
-			}
 		}
 		return false;
 	}
 
-	public static float getEstimatedHealthIncrement(ItemStack itemStack, PlayerEntity player)
+	public static float getEstimatedHealthIncrement(ItemStack itemStack, FoodValues modifiedFoodValues, PlayerEntity player)
 	{
 		if (!isFood(itemStack))
 			return 0;
 
-		if (!player.canFoodHeal()) {
+		if (!player.canFoodHeal())
 			return 0;
-		}
 
 		HungerManager stats = player.getHungerManager();
 		World world = player.getEntityWorld();
 
-		FoodValues foodValues = getModifiedFoodValues(itemStack, player);
-
-		int foodLevel = Math.min(stats.getFoodLevel() + foodValues.hunger, 20);
+		int foodLevel = Math.min(stats.getFoodLevel() + modifiedFoodValues.hunger, 20);
 		float healthIncrement = 0;
 
 		// health for natural regen
-		if (foodLevel >= 18.0F && world != null && world.getGameRules().getBoolean(GameRules.NATURAL_REGENERATION)) {
-			float saturationLevel = Math.min(stats.getSaturationLevel() + foodValues.getSaturationIncrement(), (float)foodLevel);
+		if (foodLevel >= 18.0F && world != null && world.getGameRules().getBoolean(GameRules.NATURAL_REGENERATION))
+		{
+			float saturationLevel = Math.min(stats.getSaturationLevel() + modifiedFoodValues.getSaturationIncrement(), (float)foodLevel);
 			float exhaustionLevel = HungerHelper.getExhaustion(player);
 			healthIncrement = getEstimatedHealthIncrement(foodLevel, saturationLevel, exhaustionLevel);
 		}
 
 		// health for regeneration effect
-		for (Pair<StatusEffectInstance, Float> effect : itemStack.getItem().getFoodComponent().getStatusEffects()) {
+		for (Pair<StatusEffectInstance, Float> effect : itemStack.getItem().getFoodComponent().getStatusEffects())
+		{
 			StatusEffectInstance effectInstance = effect.getFirst();
-			if (effectInstance != null && effectInstance.getEffectType() == StatusEffects.REGENERATION) {
+			if (effectInstance != null && effectInstance.getEffectType() == StatusEffects.REGENERATION)
+			{
 				int amplifier = effectInstance.getAmplifier();
 				int duration = effectInstance.getDuration();
-				if (effectInstance.isPermanent()) {
+
+				// when is a permanent status effect, just have to make a big duration
+				if (effectInstance.isPermanent())
 					duration = Integer.MAX_VALUE;
-				}
+
 				healthIncrement += (float)Math.floor(duration / (50 >> amplifier));
 				break;
 			}
@@ -95,7 +97,6 @@ public class FoodHelper
 
 	public static float getEstimatedHealthIncrement(int foodLevel, float saturationLevel, float exhaustionLevel)
 	{
-
 		float health = 0;
 		float exhaustionForRegen = 6.0F;
 		float exhaustionForConsumed = 4.0F;
