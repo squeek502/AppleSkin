@@ -71,6 +71,18 @@ public class ModConfig
 	private static final String SHOW_FOOD_DEBUG_INFO_COMMENT =
 		"If true, adds a line that shows your hunger, saturation, and exhaustion level in the F3 debug overlay";
 
+	public static final ForgeConfigSpec.BooleanValue SHOW_FOOD_HEALTH_HUD_OVERLAY;
+	public static boolean SHOW_FOOD_HEALTH_HUD_OVERLAY_DEFAULT = true;
+	private static final String SHOW_FOOD_HEALTH_HUD_OVERLAY_NAME = "showFoodHealthHudOverlay";
+	private static final String SHOW_FOOD_HEALTH_HUD_OVERLAY_COMMENT =
+			"If true, shows estimated health by food on the health bars";
+
+	public static final ForgeConfigSpec.BooleanValue SHOW_VANILLA_ANIMATION_OVERLAY;
+	public static boolean SHOW_VANILLA_ANIMATION_OVERLAY_DEFAULT = true;
+	private static final String SHOW_VANILLA_ANIMATION_OVERLAY_NAME = "showVanillaAnimationsOverlay";
+	private static final String SHOW_VANILLA_ANIMATION_OVERLAY_COMMENT =
+			"If true, shows vanilla heartbeat/hunger animation in Hud";
+
 	static
 	{
 		BUILDER.push(CATEGORY_CLIENT);
@@ -95,6 +107,12 @@ public class ModConfig
 		SHOW_FOOD_DEBUG_INFO = BUILDER
 			.comment(SHOW_FOOD_DEBUG_INFO_COMMENT)
 			.define(SHOW_FOOD_DEBUG_INFO_NAME, SHOW_FOOD_DEBUG_INFO_DEFAULT);
+		SHOW_FOOD_HEALTH_HUD_OVERLAY = BUILDER
+			.comment(SHOW_FOOD_HEALTH_HUD_OVERLAY_COMMENT)
+			.define(SHOW_FOOD_HEALTH_HUD_OVERLAY_NAME, SHOW_FOOD_HEALTH_HUD_OVERLAY_DEFAULT);
+		SHOW_VANILLA_ANIMATION_OVERLAY = BUILDER
+			.comment(SHOW_VANILLA_ANIMATION_OVERLAY_COMMENT)
+			.define(SHOW_VANILLA_ANIMATION_OVERLAY_NAME, SHOW_VANILLA_ANIMATION_OVERLAY_DEFAULT);
 		BUILDER.pop();
 	}
 
