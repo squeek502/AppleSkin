@@ -38,6 +38,12 @@ public class ModConfig implements ConfigData
 
 	@Comment("If true, shows your food exhaustion as a progress bar behind the hunger bars")
 	public boolean showFoodExhaustionHudUnderlay = true;
+
+	@Comment("If true, shows estimated health by food on the health bars")
+	public boolean showFoodHealthHudOverlay = true;
+
+	@Comment("If true, shows vanilla heartbeat/hunger animation in Hud")
+	public boolean showVanillaAnimationsOverlay = true;
 }
 
 

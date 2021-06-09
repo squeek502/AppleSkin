@@ -208,9 +208,7 @@ public class TooltipOverlayHandler
 		TooltipOverlayEvent.Pre prerenderEvent = new TooltipOverlayEvent.Pre(hoveredStack, defaultFood, modifiedFood);
 		TooltipOverlayEvent.Pre.EVENT.invoker().interact(prerenderEvent);
 		if (prerenderEvent.isCanceled)
-		{
 			return;
-		}
 
 		FoodOverlay foodOverlay = new FoodOverlay(prerenderEvent.itemStack, defaultFood, modifiedFood, player);
 		if (foodOverlay.shouldRenderHungerBars() || foodOverlay.shouldRenderSaturationBars())
@@ -223,15 +221,11 @@ public class TooltipOverlayHandler
 	{
 		// When matrixStack or tooltip is null an unknown exception occurs.
 		if (matrixStack == null)
-		{
 			return;
-		}
 
 		// Not found overlay text lines, maybe some mods removed it.
 		if (foodOverlay == null)
-		{
 			return;
-		}
 
 		ItemStack itemStack = foodOverlay.itemStack;
 
@@ -245,9 +239,7 @@ public class TooltipOverlayHandler
 		TooltipOverlayEvent.Render renderEvent = new TooltipOverlayEvent.Render(itemStack, x, y, matrixStack, defaultFood, modifiedFood);
 		TooltipOverlayEvent.Render.EVENT.invoker().interact(renderEvent);
 		if (renderEvent.isCanceled)
-		{
 			return;
-		}
 
 		x = renderEvent.x;
 		y = renderEvent.y;
