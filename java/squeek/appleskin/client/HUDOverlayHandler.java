@@ -5,7 +5,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
@@ -91,7 +90,7 @@ public class HUDOverlayHandler
 
 		// draw saturation overlay
 		if (!saturationRenderEvent.isCanceled)
-			drawSaturationOverlay(saturationRenderEvent, mc, 0, 1f);
+			drawSaturationOverlay(saturationRenderEvent, mc, 0, 1F);
 
 		// try to get the item stack in the player hand
 		ItemStack heldItem = player.getMainHandStack();
@@ -440,11 +439,11 @@ public class HUDOverlayHandler
 		final int preferHealthBars = 10;
 		final int preferFoodBars = 10;
 
-		final float maxHealth = (float)player.getAttributeValue(EntityAttributes.GENERIC_MAX_HEALTH);
+		final float maxHealth = player.getMaxHealth();
 		final float absorptionHealth = (float)Math.ceil(player.getAbsorptionAmount());
 
 		int healthBars = (int)Math.ceil((maxHealth + absorptionHealth) / 2.0F);
-		int healthRows = (int)Math.ceil((float)healthBars / 10.0F);
+		int healthRows = (int)Math.ceil((float)healthBars / (float)preferHealthBars);
 
 		int healthRowHeight = Math.max(10 - (healthRows - 2), 3);
 
