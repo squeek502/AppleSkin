@@ -3,8 +3,7 @@ package squeek.appleskin.network;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
-import net.minecraft.client.MinecraftClient;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -23,18 +22,16 @@ public class SyncHandler
 	@Environment(EnvType.CLIENT)
 	public static void init()
 	{
-		ClientSidePacketRegistry.INSTANCE.register(EXHAUSTION_SYNC, (packetContext, packetByteBuf) ->
-		{
-			float exhaustion = packetByteBuf.readFloat();
-			MinecraftClient.getInstance().execute(() -> {
-				HungerHelper.setExhaustion(packetContext.getPlayer(), exhaustion);
-			});
+		ClientPlayNetworking.registerGlobalReceiver(EXHAUSTION_SYNC, (client, handler, buf, responseSender) -> {
+			float exhaustion = buf.readFloat();
+		 	client.execute(() -> {
+				HungerHelper.setExhaustion(client.player, exhaustion);
+		 	});
 		});
-		ClientSidePacketRegistry.INSTANCE.register(SATURATION_SYNC, (packetContext, packetByteBuf) ->
-		{
-			float saturation = packetByteBuf.readFloat();
-			MinecraftClient.getInstance().execute(() -> {
-				packetContext.getPlayer().getHungerManager().setSaturationLevel(saturation);
+		ClientPlayNetworking.registerGlobalReceiver(SATURATION_SYNC, (client, handler, buf, responseSender) -> {
+			float saturation = buf.readFloat();
+			client.execute(() -> {
+				client.player.getHungerManager().setSaturationLevel(saturation);
 			});
 		});
 	}
