@@ -60,6 +60,26 @@ public class HUDOverlayEvent
 		public static Event<EventHandler<HungerRestored>> EVENT = EventHandler.createArrayBacked();
 	}
 
+	/**
+	 * If cancelled, will stop all rendering of the estimated health overlay.
+	 */
+	public static class HealthRestored extends HUDOverlayEvent
+	{
+		public HealthRestored(float modifiedHealth, ItemStack itemStack, FoodValues foodValues, int x, int y, MatrixStack matrixStack)
+		{
+			super(x, y, matrixStack);
+			this.modifiedHealth = modifiedHealth;
+			this.itemStack = itemStack;
+			this.foodValues = foodValues;
+		}
+
+		public final FoodValues foodValues;
+		public final ItemStack itemStack;
+		public final float modifiedHealth;
+
+		public static Event<EventHandler<HealthRestored>> EVENT = EventHandler.createArrayBacked();
+	}
+
 	private HUDOverlayEvent(int x, int y, MatrixStack matrixStack)
 	{
 		this.x = x;
