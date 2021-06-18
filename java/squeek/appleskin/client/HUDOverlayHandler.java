@@ -24,6 +24,7 @@ import java.util.Vector;
 
 public class HUDOverlayHandler
 {
+	private static float unclampedFlashAlpha = 0f;
 	private static float flashAlpha = 0f;
 	private static byte alphaDir = 1;
 	private static int foodIconsOffset;
@@ -251,7 +252,7 @@ public class HUDOverlayHandler
 				u += 1 * iconSize;
 
 			// very faint background
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha * 0.1F);
+			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha * 0.25F);
 			mc.inGameHud.drawTexture(matrixStack, x, y, ub, v, iconSize, iconSize);
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
 
@@ -309,7 +310,7 @@ public class HUDOverlayHandler
 			//}
 
 			// very faint background
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha * 0.1F);
+			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha * 0.25F);
 			mc.inGameHud.drawTexture(matrixStack, x, y, ub, v, iconSize, iconSize);
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
 
@@ -362,10 +363,6 @@ public class HUDOverlayHandler
 	private static void enableAlpha(float alpha)
 	{
 		RenderSystem.enableBlend();
-
-		if (alpha == 1F)
-			return;
-
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
 		RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
 	}
@@ -373,32 +370,27 @@ public class HUDOverlayHandler
 	private static void disableAlpha(float alpha)
 	{
 		RenderSystem.disableBlend();
-
-		if (alpha == 1F)
-			return;
-
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 	}
 
 
 	public static void onClientTick()
 	{
-		flashAlpha += alphaDir * 0.125F;
-		if (flashAlpha >= 1.5F)
+		unclampedFlashAlpha += alphaDir * 0.125F;
+		if (unclampedFlashAlpha >= 1.5F)
 		{
-			flashAlpha = 1F;
 			alphaDir = -1;
 		}
-		else if (flashAlpha <= -0.5F)
+		else if (unclampedFlashAlpha <= -0.5F)
 		{
-			flashAlpha = 0F;
 			alphaDir = 1;
 		}
+		flashAlpha = Math.max(0F, Math.min(1F, unclampedFlashAlpha)) * Math.max(0F, Math.min(1F, ModConfig.INSTANCE.maxHudOverlayFlashAlpha));
 	}
 
 	public static void resetFlash()
 	{
-		flashAlpha = 0;
+		unclampedFlashAlpha = flashAlpha = 0;
 		alphaDir = 1;
 	}
 
