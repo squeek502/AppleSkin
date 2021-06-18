@@ -33,16 +33,16 @@ public class ModConfig implements ConfigData
 	@Comment("If true, shows the hunger (and saturation if showSaturationHudOverlay is true) that would be restored by food you are currently holding")
 	public boolean showFoodValuesHudOverlay = true;
 
-	@Comment("If true, shows the hunger (and saturation if showSaturationHudOverlay is true) that would be restored by food you are offhand holding")
+	@Comment("If true, enables the hunger/saturation/health overlays for food in your off-hand")
 	public boolean showFoodValuesHudOverlayWhenOffhand = true;
 
-	@Comment("If true, shows your food exhaustion as a progress bar behind the hunger bars")
+	@Comment("If true, shows your food exhaustion as a progress bar behind the hunger bar")
 	public boolean showFoodExhaustionHudUnderlay = true;
 
-	@Comment("If true, shows estimated health by food on the health bars")
+	@Comment("If true, shows estimated health restored by food on the health bar")
 	public boolean showFoodHealthHudOverlay = true;
 
-	@Comment("If true, shows vanilla heartbeat/hunger animation in Hud")
+	@Comment("If true, health/hunger overlay will shake to match Minecraft's icon animations")
 	public boolean showVanillaAnimationsOverlay = true;
 }
 
