@@ -57,7 +57,7 @@ public class ModConfig
 	public static boolean SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND_DEFAULT = true;
 	private static final String SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND_NAME = "showFoodValuesHudOverlayWhenOffhand";
 	private static final String SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND_COMMENT =
-		"If true, shows the hunger (and saturation if " + SHOW_SATURATION_OVERLAY_NAME + " is true) that would be restored by food you are offhand holding";
+		"If true, enables the hunger/saturation/health overlays for food in your off-hand";
 
 	public static final ForgeConfigSpec.BooleanValue SHOW_FOOD_EXHAUSTION_UNDERLAY;
 	public static boolean SHOW_FOOD_EXHAUSTION_UNDERLAY_DEFAULT = true;
@@ -75,13 +75,13 @@ public class ModConfig
 	public static boolean SHOW_FOOD_HEALTH_HUD_OVERLAY_DEFAULT = true;
 	private static final String SHOW_FOOD_HEALTH_HUD_OVERLAY_NAME = "showFoodHealthHudOverlay";
 	private static final String SHOW_FOOD_HEALTH_HUD_OVERLAY_COMMENT =
-			"If true, shows estimated health by food on the health bars";
+			"If true, shows estimated health restored by food on the health bar";
 
 	public static final ForgeConfigSpec.BooleanValue SHOW_VANILLA_ANIMATION_OVERLAY;
 	public static boolean SHOW_VANILLA_ANIMATION_OVERLAY_DEFAULT = true;
 	private static final String SHOW_VANILLA_ANIMATION_OVERLAY_NAME = "showVanillaAnimationsOverlay";
 	private static final String SHOW_VANILLA_ANIMATION_OVERLAY_COMMENT =
-			"If true, shows vanilla heartbeat/hunger animation in Hud";
+			"If true, health/hunger overlay will shake to match Minecraft's icon animations";
 
 	static
 	{
