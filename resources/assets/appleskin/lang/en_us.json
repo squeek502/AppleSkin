@@ -2,8 +2,10 @@
   "text.autoconfig.appleskin.title": "AppleSkin",
   "text.autoconfig.appleskin.option.showFoodValuesInTooltip": "Show food values in tooltip",
   "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways": "Always show food values in tooltip",
-  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay": "Show hunger restored when holding food",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay": "Show hunger restored from held food",
   "text.autoconfig.appleskin.option.showFoodValuesHudOverlayWhenOffhand": "Show hunger restored from food in off-hand",
+  "text.autoconfig.appleskin.option.showFoodHealthHudOverlay": "Show estimated health overlay",
   "text.autoconfig.appleskin.option.showFoodExhaustionHudUnderlay": "Show exhaustion underlay",
-  "text.autoconfig.appleskin.option.showSaturationHudOverlay": "Show saturation overlay"
+  "text.autoconfig.appleskin.option.showSaturationHudOverlay": "Show saturation overlay",
+  "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay": "Animate HUD icons to match Minecraft"
 }
