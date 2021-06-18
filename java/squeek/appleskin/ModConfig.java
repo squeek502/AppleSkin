@@ -44,6 +44,9 @@ public class ModConfig implements ConfigData
 
 	@Comment("If true, health/hunger overlay will shake to match Minecraft's icon animations")
 	public boolean showVanillaAnimationsOverlay = true;
+
+	@Comment("Alpha value of the flashing icons at their most visible point (1.0 = fully opaque, 0.0 = fully transparent)")
+	public float maxHudOverlayFlashAlpha = 0.65f;
 }
 
 
