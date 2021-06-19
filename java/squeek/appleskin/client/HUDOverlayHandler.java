@@ -37,6 +37,7 @@ import java.util.Vector;
 @OnlyIn(Dist.CLIENT)
 public class HUDOverlayHandler
 {
+	private float unclampedFlashAlpha = 0f;
 	private float flashAlpha = 0f;
 	private byte alphaDir = 1;
 	protected int foodIconsOffset;
@@ -278,7 +279,7 @@ public class HUDOverlayHandler
 				u += 1 * iconSize;
 
 			// very faint background
-			RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha * 0.1F);
+			RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha * 0.25F);
 			mc.ingameGUI.blit(matrixStack, x, y, ub, v, iconSize, iconSize);
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha);
 
@@ -336,7 +337,7 @@ public class HUDOverlayHandler
 			//}
 
 			// very faint background
-			RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha * 0.1F);
+			RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha * 0.25F);
 			mc.ingameGUI.blit(matrixStack, x, y, ub, v, iconSize, iconSize);
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha);
 
@@ -368,10 +369,6 @@ public class HUDOverlayHandler
 	public static void enableAlpha(float alpha)
 	{
 		RenderSystem.enableBlend();
-
-		if (alpha == 1f)
-			return;
-
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha);
 		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 	}
@@ -379,10 +376,6 @@ public class HUDOverlayHandler
 	public static void disableAlpha(float alpha)
 	{
 		RenderSystem.disableBlend();
-
-		if (alpha == 1f)
-			return;
-
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 	}
 
@@ -392,22 +385,21 @@ public class HUDOverlayHandler
 		if (event.phase != TickEvent.Phase.END)
 			return;
 
-		flashAlpha += alphaDir * 0.125f;
-		if (flashAlpha >= 1.5f)
+		unclampedFlashAlpha += alphaDir * 0.125f;
+		if (unclampedFlashAlpha >= 1.5f)
 		{
-			flashAlpha = 1f;
 			alphaDir = -1;
 		}
-		else if (flashAlpha <= -0.5f)
+		else if (unclampedFlashAlpha <= -0.5f)
 		{
-			flashAlpha = 0f;
 			alphaDir = 1;
 		}
+		flashAlpha = Math.max(0F, Math.min(1F, unclampedFlashAlpha)) * Math.max(0F, Math.min(1F, ModConfig.MAX_HUD_OVERLAY_FLASH_ALPHA.get().floatValue()));
 	}
 
 	public void resetFlash()
 	{
-		flashAlpha = 0f;
+		unclampedFlashAlpha = flashAlpha = 0f;
 		alphaDir = 1;
 	}
 

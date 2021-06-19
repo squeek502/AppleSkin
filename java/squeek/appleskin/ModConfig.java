@@ -83,6 +83,12 @@ public class ModConfig
 	private static final String SHOW_VANILLA_ANIMATION_OVERLAY_COMMENT =
 			"If true, health/hunger overlay will shake to match Minecraft's icon animations";
 
+	public static final ForgeConfigSpec.DoubleValue MAX_HUD_OVERLAY_FLASH_ALPHA;
+	public static double MAX_HUD_OVERLAY_FLASH_ALPHA_DEFAULT = 0.65D;
+	private static final String MAX_HUD_OVERLAY_FLASH_ALPHA_NAME = "maxHudOverlayFlashAlpha";
+	private static final String MAX_HUD_OVERLAY_FLASH_ALPHA_COMMENT =
+		"Alpha value of the flashing icons at their most visible point (1.0 = fully opaque, 0.0 = fully transparent)";
+
 	static
 	{
 		BUILDER.push(CATEGORY_CLIENT);
@@ -113,6 +119,9 @@ public class ModConfig
 		SHOW_VANILLA_ANIMATION_OVERLAY = BUILDER
 			.comment(SHOW_VANILLA_ANIMATION_OVERLAY_COMMENT)
 			.define(SHOW_VANILLA_ANIMATION_OVERLAY_NAME, SHOW_VANILLA_ANIMATION_OVERLAY_DEFAULT);
+		MAX_HUD_OVERLAY_FLASH_ALPHA = BUILDER
+			.comment(MAX_HUD_OVERLAY_FLASH_ALPHA_COMMENT)
+			.defineInRange(MAX_HUD_OVERLAY_FLASH_ALPHA_NAME, MAX_HUD_OVERLAY_FLASH_ALPHA_DEFAULT, 0D, 1D);
 		BUILDER.pop();
 	}
 
