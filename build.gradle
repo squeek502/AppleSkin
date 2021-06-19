@@ -9,9 +9,6 @@ targetCompatibility = JavaVersion.VERSION_16
 archivesBaseName = project.archives_base_name
 group = project.maven_group
 
-minecraft {
-}
-
 sourceSets.main.java.srcDirs += 'java'
 sourceSets.main.resources.srcDirs += 'resources'
 
@@ -45,15 +42,13 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
-	def targetVersion = 8
-	if (JavaVersion.current().isJava9Compatible()) {
-		it.options.release = targetVersion
-	}
+	it.options.release = 16
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-	classifier = "sources"
-	from sourceSets.main.allSource
+java {
+	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+	// if it is present.
+	withSourcesJar()
 }
 
 task apiJar(type: Jar, dependsOn: classes) {
@@ -63,7 +58,9 @@ task apiJar(type: Jar, dependsOn: classes) {
 }
 
 jar {
-	from "LICENSE"
+	from("LICENSE") {
+		rename { "${it}_${project.archivesBaseName}"}
+	}
 }
 
 artifacts {
@@ -76,7 +73,7 @@ publishing {
 	publications {
 		mavenJava(MavenPublication) {
 			// add all the jars that should be included when publishing to maven
-			artifact(jar.archivePath) {
+			artifact(remapJar) {
 				builtBy remapJar
 			}
 			artifact(sourcesJar) {
@@ -85,9 +82,11 @@ publishing {
 		}
 	}
 
-	// select the repositories you want to publish to
+	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
 	repositories {
-		// uncomment to publish to the local maven
-		// mavenLocal()
+		// Add repositories to publish to here.
+		// Notice: This block does NOT have the same function as the block in the top level.
+		// The repositories here will be used for publishing your artifact, not for
+		// retrieving dependencies.
 	}
 }
