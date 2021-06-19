@@ -1,9 +1,6 @@
 package squeek.appleskin.network;
 
 import io.netty.buffer.Unpooled;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -16,25 +13,8 @@ import java.util.UUID;
 
 public class SyncHandler
 {
-	private static final Identifier EXHAUSTION_SYNC = new Identifier("appleskin", "exhaustion_sync");
-	private static final Identifier SATURATION_SYNC = new Identifier("appleskin", "saturation_sync");
-
-	@Environment(EnvType.CLIENT)
-	public static void init()
-	{
-		ClientPlayNetworking.registerGlobalReceiver(EXHAUSTION_SYNC, (client, handler, buf, responseSender) -> {
-			float exhaustion = buf.readFloat();
-		 	client.execute(() -> {
-				HungerHelper.setExhaustion(client.player, exhaustion);
-		 	});
-		});
-		ClientPlayNetworking.registerGlobalReceiver(SATURATION_SYNC, (client, handler, buf, responseSender) -> {
-			float saturation = buf.readFloat();
-			client.execute(() -> {
-				client.player.getHungerManager().setSaturationLevel(saturation);
-			});
-		});
-	}
+	public static final Identifier EXHAUSTION_SYNC = new Identifier("appleskin", "exhaustion_sync");
+	public static final Identifier SATURATION_SYNC = new Identifier("appleskin", "saturation_sync");
 
 	private static CustomPayloadS2CPacket makeSyncPacket(Identifier identifier, float val)
 	{
