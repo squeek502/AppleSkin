@@ -30,6 +30,7 @@ dependencies {
 	modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
+	include "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}"
 }
 
 processResources {
