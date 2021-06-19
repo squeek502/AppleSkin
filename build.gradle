@@ -40,9 +40,9 @@ minecraft {
 	}
 }
 
-group = project.projectDir.name.toLowerCase()
-def modId = project.projectDir.name
-archivesBaseName = modId + "-mc" + minecraft_version
+group = project.maven_group
+archivesBaseName = project.archives_base_name
+version = "mc" + project.minecraft_version + "-" + project.mod_version
 
 sourceSets.main.java.srcDirs += 'java'
 sourceSets.main.java.srcDirs += 'apis'
