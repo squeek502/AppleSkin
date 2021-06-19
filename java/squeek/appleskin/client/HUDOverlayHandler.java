@@ -16,7 +16,6 @@ import squeek.appleskin.api.event.FoodValuesEvent;
 import squeek.appleskin.api.event.HUDOverlayEvent;
 import squeek.appleskin.api.food.FoodValues;
 import squeek.appleskin.helpers.FoodHelper;
-import squeek.appleskin.helpers.HungerHelper;
 import squeek.appleskin.util.IntPoint;
 
 import java.util.Random;
@@ -50,7 +49,7 @@ public class HUDOverlayHandler
 
 		int right = mc.getWindow().getScaledWidth() / 2 + 91;
 		int top = mc.getWindow().getScaledHeight() - foodIconsOffset;
-		float exhaustion = HungerHelper.getExhaustion(player);
+		float exhaustion = player.getHungerManager().getExhaustion();
 
 		// Notify everyone that we should render exhaustion hud overlay
 		HUDOverlayEvent.Exhaustion renderEvent = new HUDOverlayEvent.Exhaustion(exhaustion, right, top, matrixStack);
@@ -324,7 +323,7 @@ public class HUDOverlayHandler
 	{
 		RenderSystem.setShaderTexture(0, modIcons);
 
-		float maxExhaustion = HungerHelper.getMaxExhaustion(mc.player);
+		float maxExhaustion = FoodHelper.MAX_EXHAUSTION;
 		// clamp between 0 and 1
 		float ratio = Math.min(1, Math.max(0, exhaustion / maxExhaustion));
 		int width = (int) (ratio * 81);

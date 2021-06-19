@@ -4,8 +4,7 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "ServerPlayerEntityMixin",
-    "PlayerManagerMixin",
-    "HungerManagerMixin"
+    "PlayerManagerMixin"
   ],
   "client": [
     "InGameHudMixin",

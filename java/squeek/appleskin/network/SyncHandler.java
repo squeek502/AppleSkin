@@ -5,7 +5,6 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-import squeek.appleskin.helpers.HungerHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +41,7 @@ public class SyncHandler
 			lastSaturationLevels.put(player.getUuid(), saturation);
 		}
 
-		float exhaustionLevel = HungerHelper.getExhaustion(player);
+		float exhaustionLevel = player.getHungerManager().getExhaustion();
 		if (lastExhaustionLevel == null || Math.abs(lastExhaustionLevel - exhaustionLevel) >= 0.01f)
 		{
 			player.networkHandler.sendPacket(makeSyncPacket(EXHAUSTION_SYNC, exhaustionLevel));
