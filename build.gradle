@@ -15,8 +15,7 @@ sourceSets.main.resources.srcDirs += 'resources'
 
 repositories {
     maven { url "https://maven.shedaniel.me/" }
-	mavenLocal()
-    mavenCentral()
+	maven { url "https://maven.terraformersmc.com/" }
 }
 
 dependencies {
@@ -26,8 +25,7 @@ dependencies {
 
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	// TODO: change to modImplementation once modmenu has an updated version on Maven
-	modCompileOnly "io.github.prospector:modmenu:${project.modmenu_version}"
+	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 	modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
