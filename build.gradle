@@ -58,9 +58,10 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 }
 
 task apiJar(type: Jar, dependsOn: classes) {
-	classifier = "api"
- 	from sourceSets.main.output
- 	include "squeek/appleskin/api/**"
+	archiveClassifier.set "api"
+
+	from sourceSets.main.output
+	include "squeek/appleskin/api/**"
 }
 
 jar {
@@ -76,6 +77,9 @@ artifacts {
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
+			groupId = group
+			artifactId = archivesBaseName
+
 			// add all the jars that should be included when publishing to maven
 			artifact(jar.archivePath) {
 				builtBy remapJar
@@ -83,12 +87,17 @@ publishing {
 			artifact(sourcesJar) {
 				builtBy remapSourcesJar
 			}
+			artifact(apiJar)
 		}
 	}
 
-	// select the repositories you want to publish to
 	repositories {
-		// uncomment to publish to the local maven
-		// mavenLocal()
+		maven {
+			url = project.findProperty("maven.url") ?: System.getenv("MAVEN_URL")
+			credentials {
+				username=project.findProperty("maven.user") ?: System.getenv("MAVEN_USER")
+				password=project.findProperty("maven.password") ?: System.getenv("MAVEN_PASSWORD")
+			}
+		}
 	}
 }
