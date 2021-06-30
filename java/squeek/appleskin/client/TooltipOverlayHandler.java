@@ -188,14 +188,12 @@ public class TooltipOverlayHandler
 	public static void onItemTooltip(ItemStack hoveredStack, PlayerEntity player, TooltipContext context, List tooltip)
 	{
 		// When hoveredStack or tooltip is null an unknown exception occurs.
-		if (hoveredStack == null || tooltip == null)
-		{
+		// If ModConfig.INSTANCE is null then we're probably still in the init phase
+		if (hoveredStack == null || tooltip == null || ModConfig.INSTANCE == null)
 			return;
-		}
+
 		if (!shouldShowTooltip(hoveredStack))
-		{
 			return;
-		}
 
 		FoodValues defaultFood = FoodHelper.getDefaultFoodValues(hoveredStack);
 		FoodValues modifiedFood = FoodHelper.getModifiedFoodValues(hoveredStack, player);
@@ -209,9 +207,7 @@ public class TooltipOverlayHandler
 		TooltipOverlayEvent.Pre prerenderEvent = new TooltipOverlayEvent.Pre(hoveredStack, defaultFood, modifiedFood);
 		TooltipOverlayEvent.Pre.EVENT.invoker().interact(prerenderEvent);
 		if (prerenderEvent.isCanceled)
-		{
 			return;
-		}
 
 		FoodOverlay foodOverlay = new FoodOverlay(prerenderEvent.itemStack, defaultFood, modifiedFood, player);
 		if (foodOverlay.shouldRenderHungerBars())
@@ -227,17 +223,14 @@ public class TooltipOverlayHandler
 	public static void onRenderTooltip(MatrixStack matrixStack, List<? extends OrderedText> tooltip, int toolTipX, int toolTipY, int toolTipW, int toolTipH)
 	{
 		// When matrixStack or tooltip is null an unknown exception occurs.
-		if (matrixStack == null || tooltip == null)
-		{
+		// If ModConfig.INSTANCE is null then we're probably still in the init phase
+		if (matrixStack == null || tooltip == null || ModConfig.INSTANCE == null)
 			return;
-		}
 
 		MinecraftClient mc = MinecraftClient.getInstance();
 		Screen gui = mc.currentScreen;
 		if (gui == null)
-		{
 			return;
-		}
 
 		// Find food overlay of text lines.
 		FoodOverlay foodOverlay = null;
@@ -253,9 +246,7 @@ public class TooltipOverlayHandler
 
 		// Not found overlay text lines, maybe some mods removed it.
 		if (foodOverlay == null)
-		{
 			return;
-		}
 
 		ItemStack itemStack = foodOverlay.itemStack;
 
@@ -269,9 +260,7 @@ public class TooltipOverlayHandler
 		TooltipOverlayEvent.Render renderEvent = new TooltipOverlayEvent.Render(itemStack, x, y, matrixStack, defaultFood, modifiedFood);
 		TooltipOverlayEvent.Render.EVENT.invoker().interact(renderEvent);
 		if (renderEvent.isCanceled)
-		{
 			return;
-		}
 
 		x = renderEvent.x;
 		y = renderEvent.y;

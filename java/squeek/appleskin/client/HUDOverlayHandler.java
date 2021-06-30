@@ -42,6 +42,11 @@ public class HUDOverlayHandler
 	{
 		foodIconsOffset = FOOD_BAR_HEIGHT;
 
+		// If ModConfig.INSTANCE is null then we're probably still in the init phase
+		if (ModConfig.INSTANCE == null)
+			return;
+
+
 		if (!ModConfig.INSTANCE.showFoodExhaustionHudUnderlay)
 			return;
 
@@ -63,6 +68,10 @@ public class HUDOverlayHandler
 
 	public static void onRender(MatrixStack matrixStack)
 	{
+		// If ModConfig.INSTANCE is null then we're probably still in the init phase
+		if (ModConfig.INSTANCE == null)
+			return;
+
 		if (!ModConfig.INSTANCE.showFoodValuesHudOverlay && !ModConfig.INSTANCE.showSaturationHudOverlay)
 			return;
 
