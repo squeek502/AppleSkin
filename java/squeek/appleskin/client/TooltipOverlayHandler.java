@@ -284,7 +284,7 @@ public class TooltipOverlayHandler
 		{
 			x += 18;
 			matrixStack.push();
-			matrixStack.translate(x, y, 0);
+			matrixStack.translate(x, y, tooltipZ);
 			matrixStack.scale(0.75f, 0.75f, 0.75f);
 			textRenderer.drawWithShadow(matrixStack, foodOverlay.hungerBarsText, 2, 2, 0xFFDDDDDD);
 			matrixStack.pop();
@@ -320,7 +320,7 @@ public class TooltipOverlayHandler
 		{
 			x += 14;
 			matrixStack.push();
-			matrixStack.translate(x, y, 0);
+			matrixStack.translate(x, y, tooltipZ);
 			matrixStack.scale(0.75f, 0.75f, 0.75f);
 			textRenderer.drawWithShadow(matrixStack, foodOverlay.saturationBarsText, 2, 1, 0xFFDDDDDD);
 			matrixStack.pop();
