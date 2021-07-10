@@ -311,7 +311,7 @@ public class TooltipOverlayHandler
 			matrixStack.push();
 			matrixStack.translate(x, y, 0);
 			matrixStack.scale(0.75f, 0.75f, 0.75f);
-			mc.textRenderer.drawWithShadow(matrixStack, foodOverlay.hungerBarsText, 2, 2, 0xFFDDDDDD);
+			mc.textRenderer.drawWithShadow(matrixStack, foodOverlay.hungerBarsText, 2, 2, 0xFFAAAAAA);
 			matrixStack.pop();
 		}
 
@@ -347,7 +347,7 @@ public class TooltipOverlayHandler
 			matrixStack.push();
 			matrixStack.translate(x, y, 0);
 			matrixStack.scale(0.75f, 0.75f, 0.75f);
-			mc.textRenderer.drawWithShadow(matrixStack, foodOverlay.saturationBarsText, 2, 1, 0xFFDDDDDD);
+			mc.textRenderer.drawWithShadow(matrixStack, foodOverlay.saturationBarsText, 2, 1, 0xFFAAAAAA);
 			matrixStack.pop();
 		}
 
