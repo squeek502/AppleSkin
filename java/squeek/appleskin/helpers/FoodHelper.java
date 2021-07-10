@@ -19,6 +19,19 @@ public class FoodHelper
 		return itemStack.getItem().getFood() != null;
 	}
 
+	public static boolean canConsume(ItemStack itemStack, PlayerEntity player)
+	{
+		// item is not a food that can be consume
+		if (!isFood(itemStack))
+			return false;
+
+		Food itemFood = itemStack.getItem().getFood();
+		if (itemFood == null)
+			return false;
+
+		return player.canEat(itemFood.canEatWhenFull());
+	}
+
 	public static FoodValues getDefaultFoodValues(ItemStack itemStack)
 	{
 		Food itemFood = itemStack.getItem().getFood();
