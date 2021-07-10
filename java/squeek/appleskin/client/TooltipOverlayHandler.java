@@ -135,8 +135,8 @@ public class TooltipOverlayHandler
 				hungerBars = 1;
 			}
 
-			saturationBars = (int) Math.max(1, Math.ceil(Math.abs(biggestSaturationIncrement) / 2f));
-			if (saturationBars > 10)
+			saturationBars = (int) Math.ceil(Math.abs(biggestSaturationIncrement) / 2f);
+			if (saturationBars > 10 || saturationBars == 0)
 			{
 				saturationBarsText = "x" + ((biggestSaturationIncrement < 0 ? -1 : 1) * saturationBars);
 				saturationBars = 1;
@@ -178,11 +178,6 @@ public class TooltipOverlayHandler
 		boolean shouldRenderHungerBars()
 		{
 			return hungerBars > 0;
-		}
-
-		boolean shouldRenderSaturationBars()
-		{
-			return saturationBars > 0;
 		}
 	}
 
@@ -227,9 +222,6 @@ public class TooltipOverlayHandler
 		if (foodOverlay.shouldRenderHungerBars())
 		{
 			tooltip.add(new FoodOverlayTextComponent(foodOverlay));
-		}
-		if (foodOverlay.shouldRenderSaturationBars())
-		{
 			tooltip.add(new FoodOverlayTextComponent(foodOverlay));
 		}
 	}
