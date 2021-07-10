@@ -52,9 +52,10 @@ java {
 }
 
 task apiJar(type: Jar, dependsOn: classes) {
-	classifier = "api"
- 	from sourceSets.main.output
- 	include "squeek/appleskin/api/**"
+	archiveClassifier.set "api"
+
+	from sourceSets.main.output
+	include "squeek/appleskin/api/**"
 }
 
 jar {
@@ -72,6 +73,9 @@ artifacts {
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
+			groupId = group
+			artifactId = archivesBaseName
+
 			// add all the jars that should be included when publishing to maven
 			artifact(remapJar) {
 				builtBy remapJar
@@ -79,14 +83,17 @@ publishing {
 			artifact(sourcesJar) {
 				builtBy remapSourcesJar
 			}
+			artifact(apiJar)
 		}
 	}
 
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
 	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
+		maven {
+			url = project.findProperty("maven.url") ?: System.getenv("MAVEN_URL")
+			credentials {
+				username=project.findProperty("maven.user") ?: System.getenv("MAVEN_USER")
+				password=project.findProperty("maven.password") ?: System.getenv("MAVEN_PASSWORD")
+			}
+		}
 	}
 }

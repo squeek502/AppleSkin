@@ -41,6 +41,11 @@ public class HUDOverlayHandler
 	{
 		foodIconsOffset = FOOD_BAR_HEIGHT;
 
+		// If ModConfig.INSTANCE is null then we're probably still in the init phase
+		if (ModConfig.INSTANCE == null)
+			return;
+
+
 		if (!ModConfig.INSTANCE.showFoodExhaustionHudUnderlay)
 			return;
 
@@ -62,6 +67,10 @@ public class HUDOverlayHandler
 
 	public static void onRender(MatrixStack matrixStack)
 	{
+		// If ModConfig.INSTANCE is null then we're probably still in the init phase
+		if (ModConfig.INSTANCE == null)
+			return;
+
 		if (!ModConfig.INSTANCE.showFoodValuesHudOverlay && !ModConfig.INSTANCE.showSaturationHudOverlay)
 			return;
 
@@ -94,11 +103,11 @@ public class HUDOverlayHandler
 
 		// try to get the item stack in the player hand
 		ItemStack heldItem = player.getMainHandStack();
-		if (ModConfig.INSTANCE.showFoodValuesHudOverlayWhenOffhand && !FoodHelper.isFood(heldItem))
+		if (ModConfig.INSTANCE.showFoodValuesHudOverlayWhenOffhand && !FoodHelper.canConsume(heldItem, player))
 			heldItem = player.getOffHandStack();
 
 		// showFoodValuesHudOverlay will control all overlays based on food item
-		if (!ModConfig.INSTANCE.showFoodValuesHudOverlay || heldItem.isEmpty() || !FoodHelper.isFood(heldItem))
+		if (!ModConfig.INSTANCE.showFoodValuesHudOverlay || heldItem.isEmpty() || !FoodHelper.canConsume(heldItem, player))
 		{
 			resetFlash();
 			return;

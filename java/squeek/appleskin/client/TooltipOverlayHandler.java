@@ -137,8 +137,8 @@ public class TooltipOverlayHandler
 				hungerBars = 1;
 			}
 
-			saturationBars = (int) Math.max(1, Math.ceil(Math.abs(biggestSaturationIncrement) / 2f));
-			if (saturationBars > 10)
+			saturationBars = (int) Math.ceil(Math.abs(biggestSaturationIncrement) / 2f);
+			if (saturationBars > 10 || saturationBars == 0)
 			{
 				saturationBarsText = "x" + ((biggestSaturationIncrement < 0 ? -1 : 1) * saturationBars);
 				saturationBars = 1;
@@ -148,11 +148,6 @@ public class TooltipOverlayHandler
 		boolean shouldRenderHungerBars()
 		{
 			return hungerBars > 0;
-		}
-
-		boolean shouldRenderSaturationBars()
-		{
-			return saturationBars > 0;
 		}
 
 		@Override
@@ -187,14 +182,12 @@ public class TooltipOverlayHandler
 	public static void onItemTooltip(ItemStack hoveredStack, PlayerEntity player, TooltipContext context, List tooltip)
 	{
 		// When hoveredStack or tooltip is null an unknown exception occurs.
-		if (hoveredStack == null || tooltip == null)
-		{
+		// If ModConfig.INSTANCE is null then we're probably still in the init phase
+		if (hoveredStack == null || tooltip == null || ModConfig.INSTANCE == null)
 			return;
-		}
+
 		if (!shouldShowTooltip(hoveredStack))
-		{
 			return;
-		}
 
 		FoodValues defaultFood = FoodHelper.getDefaultFoodValues(hoveredStack);
 		FoodValues modifiedFood = FoodHelper.getModifiedFoodValues(hoveredStack, player);
@@ -208,12 +201,10 @@ public class TooltipOverlayHandler
 		TooltipOverlayEvent.Pre prerenderEvent = new TooltipOverlayEvent.Pre(hoveredStack, defaultFood, modifiedFood);
 		TooltipOverlayEvent.Pre.EVENT.invoker().interact(prerenderEvent);
 		if (prerenderEvent.isCanceled)
-		{
 			return;
-		}
 
 		FoodOverlay foodOverlay = new FoodOverlay(prerenderEvent.itemStack, defaultFood, modifiedFood, player);
-		if (foodOverlay.shouldRenderHungerBars() || foodOverlay.shouldRenderSaturationBars())
+		if (foodOverlay.shouldRenderHungerBars())
 		{
 			tooltip.add(new FoodOverlayTextComponent(foodOverlay));
 		}
@@ -222,16 +213,13 @@ public class TooltipOverlayHandler
 	public static void onRenderTooltip(MatrixStack matrixStack, FoodOverlay foodOverlay, int toolTipX, int toolTipY, int tooltipZ, TextRenderer textRenderer)
 	{
 		// When matrixStack or tooltip is null an unknown exception occurs.
-		if (matrixStack == null)
-		{
+		// If ModConfig.INSTANCE is null then we're probably still in the init phase
+		if (matrixStack == null || ModConfig.INSTANCE == null)
 			return;
-		}
 
 		// Not found overlay text lines, maybe some mods removed it.
 		if (foodOverlay == null)
-		{
 			return;
-		}
 
 		ItemStack itemStack = foodOverlay.itemStack;
 
@@ -245,9 +233,7 @@ public class TooltipOverlayHandler
 		TooltipOverlayEvent.Render renderEvent = new TooltipOverlayEvent.Render(itemStack, x, y, matrixStack, defaultFood, modifiedFood);
 		TooltipOverlayEvent.Render.EVENT.invoker().interact(renderEvent);
 		if (renderEvent.isCanceled)
-		{
 			return;
-		}
 
 		x = renderEvent.x;
 		y = renderEvent.y;
