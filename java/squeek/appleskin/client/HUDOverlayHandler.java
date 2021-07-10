@@ -104,11 +104,11 @@ public class HUDOverlayHandler
 
 		// try to get the item stack in the player hand
 		ItemStack heldItem = player.getMainHandStack();
-		if (ModConfig.INSTANCE.showFoodValuesHudOverlayWhenOffhand && !FoodHelper.isFood(heldItem))
+		if (ModConfig.INSTANCE.showFoodValuesHudOverlayWhenOffhand && !FoodHelper.canConsume(heldItem, player))
 			heldItem = player.getOffHandStack();
 
 		// showFoodValuesHudOverlay will control all overlays based on food item
-		if (!ModConfig.INSTANCE.showFoodValuesHudOverlay || heldItem.isEmpty() || !FoodHelper.isFood(heldItem))
+		if (!ModConfig.INSTANCE.showFoodValuesHudOverlay || heldItem.isEmpty() || !FoodHelper.canConsume(heldItem, player))
 		{
 			resetFlash();
 			return;
