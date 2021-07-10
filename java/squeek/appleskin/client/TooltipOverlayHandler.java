@@ -163,11 +163,11 @@ public class TooltipOverlayHandler
 		{
 			int hungerBarLength = hungerBars * 9;
 			if (hungerBarsText != null) {
-				hungerBarLength += hungerBarsText.length();
+				hungerBarLength += textRenderer.getWidth(hungerBarsText);
 			}
 			int saturationBarLength = saturationBars * 7;
 			if (saturationBarsText != null) {
-				saturationBarLength += saturationBarsText.length();
+				saturationBarLength += textRenderer.getWidth(saturationBarsText);
 			}
 			return Math.max(hungerBarLength, saturationBarLength);
 		}
