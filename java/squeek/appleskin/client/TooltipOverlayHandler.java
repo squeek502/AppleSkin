@@ -340,7 +340,7 @@ public class TooltipOverlayHandler
 			matrixStack.push();
 			matrixStack.translate(x, y, 0);
 			matrixStack.scale(0.75f, 0.75f, 0.75f);
-			mc.fontRenderer.func_238406_a_(matrixStack, foodOverlay.hungerBarsText, 2, 2, 0xFFDDDDDD, false);
+			mc.fontRenderer.func_238406_a_(matrixStack, foodOverlay.hungerBarsText, 2, 2, 0xFFAAAAAA, false);
 			matrixStack.pop();
 		}
 
@@ -376,7 +376,7 @@ public class TooltipOverlayHandler
 			matrixStack.push();
 			matrixStack.translate(x, y, 0);
 			matrixStack.scale(0.75f, 0.75f, 0.75f);
-			mc.fontRenderer.func_238406_a_(matrixStack, foodOverlay.saturationBarsText, 2, 1, 0xFFDDDDDD, false);
+			mc.fontRenderer.func_238406_a_(matrixStack, foodOverlay.saturationBarsText, 2, 1, 0xFFAAAAAA, false);
 			matrixStack.pop();
 		}
 
