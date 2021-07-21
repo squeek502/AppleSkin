@@ -413,6 +413,10 @@ public class HUDOverlayHandler
 		if (!ModConfig.INSTANCE.showFoodHealthHudOverlay)
 			return false;
 
+		// Offsets size is set to zero intentionally to disable rendering when health is infinite.
+		if (healthBarOffsets.size() == 0)
+			return false;
+
 		MinecraftClient mc = MinecraftClient.getInstance();
 		PlayerEntity player = mc.player;
 		HungerManager stats = player.getHungerManager();
@@ -471,6 +475,11 @@ public class HUDOverlayHandler
 
 		// hard code in `InGameHUD`
 		random.setSeed((long)(ticks * 312871));
+
+		// Special case for infinite/NaN. Infinite absorption has been seen in the wild.
+		// This will effectively disable rendering while health is infinite.
+		if (!Float.isFinite(maxHealth + absorptionHealth))
+			healthBars = 0;
 
 		// adjust the size
 		if (healthBarOffsets.size() != healthBars)
