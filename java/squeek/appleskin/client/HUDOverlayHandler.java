@@ -2,11 +2,8 @@ package squeek.appleskin.client;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effects;
@@ -209,11 +206,11 @@ public class HUDOverlayHandler
 		float modifiedSaturation = Math.min(saturationLevel + saturationGained, 20);
 
 		int startSaturationBar = 0;
-		int endSaturationBar = (int)Math.ceil(modifiedSaturation / 2.0F);
+		int endSaturationBar = (int) Math.ceil(modifiedSaturation / 2.0F);
 
 		// when require rendering the gained saturation, start should relocation to current saturation tail.
 		if (saturationGained != 0)
-			startSaturationBar = (int)Math.max(saturationLevel / 2.0F, 0);
+			startSaturationBar = (int) Math.max(saturationLevel / 2.0F, 0);
 
 		int iconSize = 9;
 
@@ -258,7 +255,7 @@ public class HUDOverlayHandler
 		int modifiedFood = Math.min(20, foodLevel + hungerRestored);
 
 		int startFoodBars = foodLevel / 2;
-		int endFoodBars = (int)Math.ceil(modifiedFood / 2.0F);
+		int endFoodBars = (int) Math.ceil(modifiedFood / 2.0F);
 
 		int iconStartOffset = 16;
 		int iconSize = 9;
@@ -308,11 +305,11 @@ public class HUDOverlayHandler
 		enableAlpha(alpha);
 		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
 
-		int fixedModifiedHealth = (int)Math.ceil(modifiedHealth);
+		int fixedModifiedHealth = (int) Math.ceil(modifiedHealth);
 		boolean isHardcore = mc.player.world != null && mc.player.world.getWorldInfo().isHardcore();
 
-		int startHealthBars = (int)(Math.ceil(health) / 2.0F);
-		int endHealthBars = (int)Math.ceil(modifiedHealth / 2.0F);
+		int startHealthBars = (int) (Math.ceil(health) / 2.0F);
+		int endHealthBars = (int) Math.ceil(modifiedHealth / 2.0F);
 
 		int iconStartOffset = 16;
 		int iconSize = 9;
@@ -416,7 +413,7 @@ public class HUDOverlayHandler
 
 	private void drawSaturationOverlay(HUDOverlayEvent.Saturation event, Minecraft mc, float saturationGained, float alpha)
 	{
-		drawSaturationOverlay(saturationGained, event.saturationLevel, mc, event.matrixStack,  event.x, event.y, alpha);
+		drawSaturationOverlay(saturationGained, event.saturationLevel, mc, event.matrixStack, event.x, event.y, alpha);
 	}
 
 	private void drawHungerOverlay(HUDOverlayEvent.HungerRestored event, Minecraft mc, int hunger, float alpha, boolean useRottenTextures)
@@ -473,12 +470,11 @@ public class HUDOverlayHandler
 	private void generateHealthBarOffsets(int top, int left, int right, int ticks, PlayerEntity player)
 	{
 		// hard code in `InGameHUD`
-		random.setSeed((long)(ticks * 312871L));
-
+		random.setSeed((long) (ticks * 312871L));
 
 		final int preferHealthBars = 10;
 		final float maxHealth = player.getMaxHealth();
-		final float absorptionHealth = (float)Math.ceil(player.getAbsorptionAmount());
+		final float absorptionHealth = (float) Math.ceil(player.getAbsorptionAmount());
 
 		// Special case for infinite/NaN. Infinite absorption has been seen in the wild.
 		// This will effectively disable rendering while health is infinite.
@@ -488,8 +484,8 @@ public class HUDOverlayHandler
 			return;
 		}
 
-		int healthBars = (int)Math.ceil((maxHealth + absorptionHealth) / 2.0F);
-		int healthRows = (int)Math.ceil((float)healthBars / 10.0F);
+		int healthBars = (int) Math.ceil((maxHealth + absorptionHealth) / 2.0F);
+		int healthRows = (int) Math.ceil((float) healthBars / 10.0F);
 
 		int healthRowHeight = Math.max(10 - (healthRows - 2), 3);
 
@@ -510,7 +506,7 @@ public class HUDOverlayHandler
 		// left alignment, multiple rows, reverse
 		for (int i = healthBars - 1; i >= 0; --i)
 		{
-			int row = (int)Math.ceil((float)(i + 1) / (float)preferHealthBars) - 1;
+			int row = (int) Math.ceil((float) (i + 1) / (float) preferHealthBars) - 1;
 			int x = left + i % preferHealthBars * 8;
 			int y = top - row * healthRowHeight;
 			// apply the animated offset
@@ -551,7 +547,7 @@ public class HUDOverlayHandler
 			foodBarOffsets.setSize(preferFoodBars);
 
 		// right alignment, single row
-		for(int i = 0; i < preferFoodBars; ++i)
+		for (int i = 0; i < preferFoodBars; ++i)
 		{
 			int x = right - i * 8 - 9;
 			int y = top;
