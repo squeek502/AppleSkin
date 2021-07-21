@@ -147,6 +147,10 @@ public class HUDOverlayHandler
 
 		if (event.getType() == RenderGameOverlayEvent.ElementType.HEALTH)
 		{
+			// Offsets size is set to zero intentionally to disable rendering when health is infinite.
+			if (healthBarOffsets.size() == 0)
+				return;
+
 			if (!shouldShowEstimatedHealth(heldItem, modifiedFoodValues))
 				return;
 
@@ -475,6 +479,14 @@ public class HUDOverlayHandler
 		final int preferHealthBars = 10;
 		final float maxHealth = player.getMaxHealth();
 		final float absorptionHealth = (float)Math.ceil(player.getAbsorptionAmount());
+
+		// Special case for infinite/NaN. Infinite absorption has been seen in the wild.
+		// This will effectively disable rendering while health is infinite.
+		if (!Float.isFinite(maxHealth + absorptionHealth))
+		{
+			healthBarOffsets.setSize(0);
+			return;
+		}
 
 		int healthBars = (int)Math.ceil((maxHealth + absorptionHealth) / 2.0F);
 		int healthRows = (int)Math.ceil((float)healthBars / 10.0F);
