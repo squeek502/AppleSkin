@@ -169,6 +169,9 @@ public class HUDOverlayHandler
 		}
 		else if (event.getType() == RenderGameOverlayEvent.ElementType.FOOD)
 		{
+			if (!ModConfig.SHOW_FOOD_VALUES_OVERLAY.get())
+				return;
+
 			// notify everyone that we should render hunger hud overlay
 			HUDOverlayEvent.HungerRestored renderRenderEvent = new HUDOverlayEvent.HungerRestored(stats.getFoodLevel(), heldItem, modifiedFoodValues, right, top, matrixStack);
 			MinecraftForge.EVENT_BUS.post(renderRenderEvent);
