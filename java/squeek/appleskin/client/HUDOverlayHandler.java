@@ -70,6 +70,7 @@ public class HUDOverlayHandler
 
 		Minecraft mc = Minecraft.getInstance();
 		PlayerEntity player = mc.player;
+		assert player != null;
 
 		int right = mc.getMainWindow().getScaledWidth() / 2 + 91;
 		int top = mc.getMainWindow().getScaledHeight() - foodIconsOffset;
@@ -85,17 +86,18 @@ public class HUDOverlayHandler
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public void onRender(RenderGameOverlayEvent.Post event)
 	{
-		if (event.getType() != RenderGameOverlayEvent.ElementType.FOOD)
+		if (event.getType() != RenderGameOverlayEvent.ElementType.FOOD && event.getType() != RenderGameOverlayEvent.ElementType.HEALTH)
 			return;
 
 		if (event.isCanceled())
 			return;
 
-		if (!ModConfig.SHOW_FOOD_VALUES_OVERLAY.get() && !ModConfig.SHOW_SATURATION_OVERLAY.get())
+		if (!shouldRenderAnyOverlays())
 			return;
 
 		Minecraft mc = Minecraft.getInstance();
 		PlayerEntity player = mc.player;
+		assert player != null;
 		FoodStats stats = player.getFoodStats();
 		MatrixStack matrixStack = event.getMatrixStack();
 
@@ -103,46 +105,51 @@ public class HUDOverlayHandler
 		int left = mc.getMainWindow().getScaledWidth() / 2 - 91; // left of health bar
 		int right = mc.getMainWindow().getScaledWidth() / 2 + 91; // right of food bar
 
-		// generate at the beginning to avoid ArrayIndexOutOfBoundsException
-		generateBarOffsets(top, left, right, mc.ingameGUI.getTicks(), player);
+		if (event.getType() == RenderGameOverlayEvent.ElementType.HEALTH)
+			generateHealthBarOffsets(top, left, right, mc.ingameGUI.getTicks(), player);
+		if (event.getType() == RenderGameOverlayEvent.ElementType.FOOD)
+			generateHungerBarOffsets(top, left, right, mc.ingameGUI.getTicks(), player);
 
-		float saturationLevel = stats.getSaturationLevel();
-		HUDOverlayEvent.Saturation saturationRenderEvent = new HUDOverlayEvent.Saturation(saturationLevel, right, top, matrixStack);
+		HUDOverlayEvent.Saturation saturationRenderEvent = null;
+		if (event.getType() == RenderGameOverlayEvent.ElementType.FOOD)
+		{
+			saturationRenderEvent = new HUDOverlayEvent.Saturation(stats.getSaturationLevel(), right, top, matrixStack);
 
-		// cancel render overlay event when configuration disabled.
-		if (!ModConfig.SHOW_SATURATION_OVERLAY.get())
-			saturationRenderEvent.setCanceled(true);
+			// cancel render overlay event when configuration disabled.
+			if (!ModConfig.SHOW_SATURATION_OVERLAY.get())
+				saturationRenderEvent.setCanceled(true);
 
-		// notify everyone that we should render saturation hud overlay
-		if (!saturationRenderEvent.isCanceled())
-			MinecraftForge.EVENT_BUS.post(saturationRenderEvent);
+			// notify everyone that we should render saturation hud overlay
+			if (!saturationRenderEvent.isCanceled())
+				MinecraftForge.EVENT_BUS.post(saturationRenderEvent);
 
-		// the render saturation event maybe cancelled by other mods
-		if (!saturationRenderEvent.isCanceled())
-			drawSaturationOverlay(saturationRenderEvent, mc, 0, 1f);
+			// the render saturation event maybe cancelled by other mods
+			if (!saturationRenderEvent.isCanceled())
+				drawSaturationOverlay(saturationRenderEvent, mc, 0, 1f);
+		}
 
 		// try to get the item stack in the player hand
 		ItemStack heldItem = player.getHeldItemMainhand();
 		if (ModConfig.SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND.get() && !FoodHelper.canConsume(heldItem, player))
 			heldItem = player.getHeldItemOffhand();
 
-		// showFoodValuesHudOverlay will control all overlays based on food item
-		if (!ModConfig.SHOW_FOOD_VALUES_OVERLAY.get() || heldItem.isEmpty() || !FoodHelper.canConsume(heldItem, player))
+		boolean shouldRenderHeldItemValues = !heldItem.isEmpty() && FoodHelper.canConsume(heldItem, player);
+		if (!shouldRenderHeldItemValues)
 		{
 			resetFlash();
 			return;
 		}
 
-		int foodLevel = stats.getFoodLevel();
 		FoodValues modifiedFoodValues = FoodHelper.getModifiedFoodValues(heldItem, player);
-
 		FoodValuesEvent foodValuesEvent = new FoodValuesEvent(player, heldItem, FoodHelper.getDefaultFoodValues(heldItem), modifiedFoodValues);
 		MinecraftForge.EVENT_BUS.post(foodValuesEvent);
 		modifiedFoodValues = foodValuesEvent.modifiedFoodValues;
 
-		// draw health overlay if needed
-		if (shouldShowEstimatedHealth(heldItem, modifiedFoodValues))
+		if (event.getType() == RenderGameOverlayEvent.ElementType.HEALTH)
 		{
+			if (!shouldShowEstimatedHealth(heldItem, modifiedFoodValues))
+				return;
+
 			float foodHealthIncrement = FoodHelper.getEstimatedHealthIncrement(heldItem, modifiedFoodValues, player);
 			float currentHealth = player.getHealth();
 			float modifiedHealth = Math.min(currentHealth + foodHealthIncrement, player.getMaxHealth());
@@ -159,31 +166,31 @@ public class HUDOverlayHandler
 			if (healthRenderEvent != null && !healthRenderEvent.isCanceled())
 				drawHealthOverlay(healthRenderEvent, mc, flashAlpha);
 		}
-
-		// notify everyone that we should render hunger hud overlay
-		HUDOverlayEvent.HungerRestored renderRenderEvent = new HUDOverlayEvent.HungerRestored(foodLevel, heldItem, modifiedFoodValues, right, top, matrixStack);
-		MinecraftForge.EVENT_BUS.post(renderRenderEvent);
-		if (renderRenderEvent.isCanceled())
+		else if (event.getType() == RenderGameOverlayEvent.ElementType.FOOD)
 		{
-			resetFlash();
-			return;
-		}
+			// notify everyone that we should render hunger hud overlay
+			HUDOverlayEvent.HungerRestored renderRenderEvent = new HUDOverlayEvent.HungerRestored(stats.getFoodLevel(), heldItem, modifiedFoodValues, right, top, matrixStack);
+			MinecraftForge.EVENT_BUS.post(renderRenderEvent);
+			if (renderRenderEvent.isCanceled())
+				return;
 
-		// calculate the final hunger and saturation
-		int foodHunger = modifiedFoodValues.hunger;
-		float foodSaturationIncrement = modifiedFoodValues.getSaturationIncrement();
+			// calculate the final hunger and saturation
+			int foodHunger = modifiedFoodValues.hunger;
+			float foodSaturationIncrement = modifiedFoodValues.getSaturationIncrement();
 
-		// restored hunger/saturation overlay while holding food
-		drawHungerOverlay(renderRenderEvent, mc, foodHunger, flashAlpha, FoodHelper.isRotten(heldItem));
+			// restored hunger/saturation overlay while holding food
+			drawHungerOverlay(renderRenderEvent, mc, foodHunger, flashAlpha, FoodHelper.isRotten(heldItem));
 
-		// The render saturation overlay event maybe cancelled by other mods
-		if (!saturationRenderEvent.isCanceled())
-		{
-			int newFoodValue = stats.getFoodLevel() + foodHunger;
-			float newSaturationValue = saturationLevel + foodSaturationIncrement;
-			float saturationGained = newSaturationValue > newFoodValue ? newFoodValue - saturationLevel : foodSaturationIncrement;
-			// Redraw saturation overlay for gained
-			drawSaturationOverlay(saturationRenderEvent, mc, saturationGained, flashAlpha);
+			// The render saturation overlay event maybe cancelled by other mods
+			assert saturationRenderEvent != null;
+			if (!saturationRenderEvent.isCanceled())
+			{
+				int newFoodValue = stats.getFoodLevel() + foodHunger;
+				float newSaturationValue = stats.getSaturationLevel() + foodSaturationIncrement;
+				float saturationGained = newSaturationValue > newFoodValue ? newFoodValue - stats.getSaturationLevel() : foodSaturationIncrement;
+				// Redraw saturation overlay for gained
+				drawSaturationOverlay(saturationRenderEvent, mc, saturationGained, flashAlpha);
+			}
 		}
 	}
 
@@ -423,6 +430,10 @@ public class HUDOverlayHandler
 		drawExhaustionOverlay(event.exhaustion, mc, event.matrixStack, event.x, event.y, alpha);
 	}
 
+	private boolean shouldRenderAnyOverlays()
+	{
+		return ModConfig.SHOW_FOOD_VALUES_OVERLAY.get() || ModConfig.SHOW_SATURATION_OVERLAY.get() || ModConfig.SHOW_FOOD_HEALTH_HUD_OVERLAY.get();
+	}
 
 	private boolean shouldShowEstimatedHealth(ItemStack hoveredStack, FoodValues modifiedFoodValues)
 	{
@@ -455,11 +466,13 @@ public class HUDOverlayHandler
 		return true;
 	}
 
-	private void generateBarOffsets(int top, int left, int right, int ticks, PlayerEntity player)
+	private void generateHealthBarOffsets(int top, int left, int right, int ticks, PlayerEntity player)
 	{
-		final int preferHealthBars = 10;
-		final int preferFoodBars = 10;
+		// hard code in `InGameHUD`
+		random.setSeed((long)(ticks * 312871L));
 
+
+		final int preferHealthBars = 10;
 		final float maxHealth = player.getMaxHealth();
 		final float absorptionHealth = (float)Math.ceil(player.getAbsorptionAmount());
 
@@ -469,32 +482,18 @@ public class HUDOverlayHandler
 		int healthRowHeight = Math.max(10 - (healthRows - 2), 3);
 
 		boolean shouldAnimatedHealth = false;
-		boolean shouldAnimatedFood = false;
 
 		// when some mods using custom render, we need to least provide an option to cancel animation
 		if (ModConfig.SHOW_VANILLA_ANIMATION_OVERLAY.get())
 		{
-			FoodStats stats = player.getFoodStats();
-
-			// in vanilla saturation level is zero will show hunger animation
-			float saturationLevel = stats.getSaturationLevel();
-			int foodLevel = stats.getFoodLevel();
-			shouldAnimatedFood = saturationLevel <= 0.0F && ticks % (foodLevel * 3 + 1) == 0;
-
 			// in vanilla health is too low (below 5) will show heartbeat animation
 			// when regeneration will also show heartbeat animation, but we don't need now
 			shouldAnimatedHealth = Math.ceil(player.getHealth()) <= 4;
 		}
 
-		// hard code in `InGameHUD`
-		random.setSeed((long)(ticks * 312871));
-
 		// adjust the size
 		if (healthBarOffsets.size() != healthBars)
 			healthBarOffsets.setSize(healthBars);
-
-		if (foodBarOffsets.size() != preferFoodBars)
-			foodBarOffsets.setSize(preferFoodBars);
 
 		// left alignment, multiple rows, reverse
 		for (int i = healthBars - 1; i >= 0; --i)
@@ -517,6 +516,27 @@ public class HUDOverlayHandler
 			point.x = x - left;
 			point.y = y - top;
 		}
+	}
+
+	private void generateHungerBarOffsets(int top, int left, int right, int ticks, PlayerEntity player)
+	{
+		final int preferFoodBars = 10;
+
+		boolean shouldAnimatedFood = false;
+
+		// when some mods using custom render, we need to least provide an option to cancel animation
+		if (ModConfig.SHOW_VANILLA_ANIMATION_OVERLAY.get())
+		{
+			FoodStats stats = player.getFoodStats();
+
+			// in vanilla saturation level is zero will show hunger animation
+			float saturationLevel = stats.getSaturationLevel();
+			int foodLevel = stats.getFoodLevel();
+			shouldAnimatedFood = saturationLevel <= 0.0F && ticks % (foodLevel * 3 + 1) == 0;
+		}
+
+		if (foodBarOffsets.size() != preferFoodBars)
+			foodBarOffsets.setSize(preferFoodBars);
 
 		// right alignment, single row
 		for(int i = 0; i < preferFoodBars; ++i)
