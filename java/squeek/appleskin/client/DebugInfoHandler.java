@@ -1,7 +1,7 @@
 package squeek.appleskin.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.FoodStats;
+import net.minecraft.world.food.FoodData;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -34,10 +34,10 @@ public class DebugInfoHandler
 			return;
 
 		Minecraft mc = Minecraft.getInstance();
-		if (mc.gameSettings.showDebugInfo)
+		if (mc.options.renderDebug)
 		{
-			FoodStats stats = mc.player.getFoodStats();
-			float curExhaustion = HungerHelper.getExhaustion(mc.player);
+			FoodData stats = mc.player.getFoodData();
+			float curExhaustion = stats.getExhaustionLevel();
 			float maxExhaustion = HungerHelper.getMaxExhaustion(mc.player);
 			textEvent.getLeft().add("hunger: " + stats.getFoodLevel() + ", sat: " + saturationDF.format(stats.getSaturationLevel()) + ", exh: " + exhaustionValDF.format(curExhaustion) + "/" + exhaustionMaxDF.format(maxExhaustion));
 		}

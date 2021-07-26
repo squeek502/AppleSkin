@@ -1,8 +1,7 @@
 package squeek.appleskin.network;
 
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
-import squeek.appleskin.helpers.HungerHelper;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -15,12 +14,12 @@ public class MessageExhaustionSync
 		this.exhaustionLevel = exhaustionLevel;
 	}
 
-	public static void encode(MessageExhaustionSync pkt, PacketBuffer buf)
+	public static void encode(MessageExhaustionSync pkt, FriendlyByteBuf buf)
 	{
 		buf.writeFloat(pkt.exhaustionLevel);
 	}
 
-	public static MessageExhaustionSync decode(PacketBuffer buf)
+	public static MessageExhaustionSync decode(FriendlyByteBuf buf)
 	{
 		return new MessageExhaustionSync(buf.readFloat());
 	}
@@ -28,7 +27,7 @@ public class MessageExhaustionSync
 	public static void handle(final MessageExhaustionSync message, Supplier<NetworkEvent.Context> ctx)
 	{
 		ctx.get().enqueueWork(() -> {
-			HungerHelper.setExhaustion(NetworkHelper.getSidedPlayer(ctx.get()), message.exhaustionLevel);
+			NetworkHelper.getSidedPlayer(ctx.get()).getFoodData().setExhaustion(message.exhaustionLevel);
 		});
 		ctx.get().setPacketHandled(true);
 	}

@@ -1,7 +1,7 @@
 package squeek.appleskin.api.event;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.item.ItemStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import squeek.appleskin.api.food.FoodValues;
@@ -14,7 +14,7 @@ public class HUDOverlayEvent extends Event
 	 */
 	public static class Exhaustion extends HUDOverlayEvent
 	{
-		public Exhaustion(float exhaustion, int x, int y, MatrixStack matrixStack)
+		public Exhaustion(float exhaustion, int x, int y, PoseStack matrixStack)
 		{
 			super(x, y, matrixStack);
 			this.exhaustion = exhaustion;
@@ -28,7 +28,7 @@ public class HUDOverlayEvent extends Event
 	 */
 	public static class Saturation extends HUDOverlayEvent
 	{
-		public Saturation(float saturationLevel, int x, int y, MatrixStack matrixStack)
+		public Saturation(float saturationLevel, int x, int y, PoseStack matrixStack)
 		{
 			super(x, y, matrixStack);
 			this.saturationLevel = saturationLevel;
@@ -42,7 +42,7 @@ public class HUDOverlayEvent extends Event
 	 */
 	public static class HungerRestored extends HUDOverlayEvent
 	{
-		public HungerRestored(int foodLevel, ItemStack itemStack, FoodValues foodValues, int x, int y, MatrixStack matrixStack)
+		public HungerRestored(int foodLevel, ItemStack itemStack, FoodValues foodValues, int x, int y, PoseStack matrixStack)
 		{
 			super(x, y, matrixStack);
 			this.currentFoodLevel = foodLevel;
@@ -60,7 +60,7 @@ public class HUDOverlayEvent extends Event
 	 */
 	public static class HealthRestored extends HUDOverlayEvent
 	{
-		public HealthRestored(float modifiedHealth, ItemStack itemStack, FoodValues foodValues, int x, int y, MatrixStack matrixStack)
+		public HealthRestored(float modifiedHealth, ItemStack itemStack, FoodValues foodValues, int x, int y, PoseStack matrixStack)
 		{
 			super(x, y, matrixStack);
 			this.modifiedHealth = modifiedHealth;
@@ -73,7 +73,7 @@ public class HUDOverlayEvent extends Event
 		public final float modifiedHealth;
 	}
 
-	private HUDOverlayEvent(int x, int y, MatrixStack matrixStack)
+	private HUDOverlayEvent(int x, int y, PoseStack matrixStack)
 	{
 		this.x = x;
 		this.y = y;
@@ -82,7 +82,7 @@ public class HUDOverlayEvent extends Event
 
 	public int x;
 	public int y;
-	public MatrixStack matrixStack;
+	public PoseStack matrixStack;
 
 	@Override
 	public boolean isCancelable()

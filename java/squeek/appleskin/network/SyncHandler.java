@@ -1,16 +1,15 @@
 package squeek.appleskin.network;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.fmllegacy.network.NetworkDirection;
+import net.minecraftforge.fmllegacy.network.NetworkRegistry;
+import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 import squeek.appleskin.ModInfo;
-import squeek.appleskin.helpers.HungerHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,36 +43,36 @@ public class SyncHandler
 	@SubscribeEvent
 	public void onLivingUpdateEvent(LivingUpdateEvent event)
 	{
-		if (!(event.getEntity() instanceof ServerPlayerEntity))
+		if (!(event.getEntity() instanceof ServerPlayer))
 			return;
 
-		ServerPlayerEntity player = (ServerPlayerEntity) event.getEntity();
-		Float lastSaturationLevel = lastSaturationLevels.get(player.getUniqueID());
-		Float lastExhaustionLevel = lastExhaustionLevels.get(player.getUniqueID());
+		ServerPlayer player = (ServerPlayer) event.getEntity();
+		Float lastSaturationLevel = lastSaturationLevels.get(player.getUUID());
+		Float lastExhaustionLevel = lastExhaustionLevels.get(player.getUUID());
 
-		if (lastSaturationLevel == null || lastSaturationLevel != player.getFoodStats().getSaturationLevel())
+		if (lastSaturationLevel == null || lastSaturationLevel != player.getFoodData().getSaturationLevel())
 		{
-			Object msg = new MessageSaturationSync(player.getFoodStats().getSaturationLevel());
-			CHANNEL.sendTo(msg, player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
-			lastSaturationLevels.put(player.getUniqueID(), player.getFoodStats().getSaturationLevel());
+			Object msg = new MessageSaturationSync(player.getFoodData().getSaturationLevel());
+			CHANNEL.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+			lastSaturationLevels.put(player.getUUID(), player.getFoodData().getSaturationLevel());
 		}
 
-		float exhaustionLevel = HungerHelper.getExhaustion(player);
+		float exhaustionLevel = player.getFoodData().getExhaustionLevel();
 		if (lastExhaustionLevel == null || Math.abs(lastExhaustionLevel - exhaustionLevel) >= 0.01f)
 		{
 			Object msg = new MessageExhaustionSync(exhaustionLevel);
-			CHANNEL.sendTo(msg, player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
-			lastExhaustionLevels.put(player.getUniqueID(), exhaustionLevel);
+			CHANNEL.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+			lastExhaustionLevels.put(player.getUUID(), exhaustionLevel);
 		}
 	}
 
 	@SubscribeEvent
 	public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
 	{
-		if (!(event.getPlayer() instanceof ServerPlayerEntity))
+		if (!(event.getPlayer() instanceof ServerPlayer))
 			return;
 
-		lastSaturationLevels.remove(event.getPlayer().getUniqueID());
-		lastExhaustionLevels.remove(event.getPlayer().getUniqueID());
+		lastSaturationLevels.remove(event.getPlayer().getUUID());
+		lastExhaustionLevels.remove(event.getPlayer().getUUID());
 	}
 }

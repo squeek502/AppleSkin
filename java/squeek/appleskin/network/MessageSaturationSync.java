@@ -1,7 +1,7 @@
 package squeek.appleskin.network;
 
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -14,12 +14,12 @@ public class MessageSaturationSync
 		this.saturationLevel = saturationLevel;
 	}
 
-	public static void encode(MessageSaturationSync pkt, PacketBuffer buf)
+	public static void encode(MessageSaturationSync pkt, FriendlyByteBuf buf)
 	{
 		buf.writeFloat(pkt.saturationLevel);
 	}
 
-	public static MessageSaturationSync decode(PacketBuffer buf)
+	public static MessageSaturationSync decode(FriendlyByteBuf buf)
 	{
 		return new MessageSaturationSync(buf.readFloat());
 	}
@@ -27,7 +27,7 @@ public class MessageSaturationSync
 	public static void handle(final MessageSaturationSync message, Supplier<NetworkEvent.Context> ctx)
 	{
 		ctx.get().enqueueWork(() -> {
-			NetworkHelper.getSidedPlayer(ctx.get()).getFoodStats().setFoodSaturationLevel(message.saturationLevel);
+			NetworkHelper.getSidedPlayer(ctx.get()).getFoodData().setSaturation(message.saturationLevel);
 		});
 		ctx.get().setPacketHandled(true);
 	}

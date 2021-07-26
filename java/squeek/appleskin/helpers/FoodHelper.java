@@ -1,47 +1,47 @@
 package squeek.appleskin.helpers;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Food;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.EffectType;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.FoodStats;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodData;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
 import squeek.appleskin.api.food.FoodValues;
 
 public class FoodHelper
 {
 	public static boolean isFood(ItemStack itemStack)
 	{
-		return itemStack.getItem().getFood() != null;
+		return itemStack.getItem().getFoodProperties() != null;
 	}
 
-	public static boolean canConsume(ItemStack itemStack, PlayerEntity player)
+	public static boolean canConsume(ItemStack itemStack, Player player)
 	{
 		// item is not a food that can be consume
 		if (!isFood(itemStack))
 			return false;
 
-		Food itemFood = itemStack.getItem().getFood();
+		FoodProperties itemFood = itemStack.getItem().getFoodProperties();
 		if (itemFood == null)
 			return false;
 
-		return player.canEat(itemFood.canEatWhenFull());
+		return player.canEat(itemFood.canAlwaysEat());
 	}
 
 	public static FoodValues getDefaultFoodValues(ItemStack itemStack)
 	{
-		Food itemFood = itemStack.getItem().getFood();
-		int hunger = itemFood != null ? itemFood.getHealing() : 0;
-		float saturationModifier = itemFood != null ? itemFood.getSaturation() : 0;
+		FoodProperties itemFood = itemStack.getItem().getFoodProperties();
+		int hunger = itemFood != null ? itemFood.getNutrition() : 0;
+		float saturationModifier = itemFood != null ? itemFood.getSaturationModifier() : 0;
 
 		return new FoodValues(hunger, saturationModifier);
 	}
 
-	public static FoodValues getModifiedFoodValues(ItemStack itemStack, PlayerEntity player)
+	public static FoodValues getModifiedFoodValues(ItemStack itemStack, Player player)
 	{
 		// Previously, this would use AppleCore to get the modified values, but since AppleCore doesn't
 		// exist on this MC version and https://github.com/MinecraftForge/MinecraftForge/pull/7266
@@ -54,9 +54,9 @@ public class FoodHelper
 		if (!isFood(itemStack))
 			return false;
 
-		for (Pair<EffectInstance, Float> effect : itemStack.getItem().getFood().getEffects())
+		for (Pair<MobEffectInstance, Float> effect : itemStack.getItem().getFoodProperties().getEffects())
 		{
-			if (effect.getFirst() != null && effect.getFirst().getPotion() != null && effect.getFirst().getPotion().getEffectType() == EffectType.HARMFUL)
+			if (effect.getFirst() != null && effect.getFirst().getEffect() != null && effect.getFirst().getEffect().getCategory() == MobEffectCategory.HARMFUL)
 			{
 				return true;
 			}
@@ -65,38 +65,38 @@ public class FoodHelper
 	}
 
 
-	public static float getEstimatedHealthIncrement(ItemStack itemStack, FoodValues modifiedFoodValues, PlayerEntity player)
+	public static float getEstimatedHealthIncrement(ItemStack itemStack, FoodValues modifiedFoodValues, Player player)
 	{
 		if (!isFood(itemStack))
 			return 0;
 
-		if (!player.shouldHeal())
+		if (!player.isHurt())
 			return 0;
 
-		FoodStats stats = player.getFoodStats();
-		World world = player.getEntityWorld();
+		FoodData stats = player.getFoodData();
+		Level world = player.getCommandSenderWorld();
 
 		int foodLevel = Math.min(stats.getFoodLevel() + modifiedFoodValues.hunger, 20);
 		float healthIncrement = 0;
 
 		// health for natural regen
-		if (foodLevel >= 18.0F && world != null && world.getGameRules().getBoolean(GameRules.NATURAL_REGENERATION))
+		if (foodLevel >= 18.0F && world != null && world.getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION))
 		{
-			float saturationLevel = Math.min(stats.getSaturationLevel() + modifiedFoodValues.getSaturationIncrement(), (float)foodLevel);
-			float exhaustionLevel = HungerHelper.getExhaustion(player);
+			float saturationLevel = Math.min(stats.getSaturationLevel() + modifiedFoodValues.getSaturationIncrement(), (float) foodLevel);
+			float exhaustionLevel = stats.getExhaustionLevel();
 			healthIncrement = getEstimatedHealthIncrement(foodLevel, saturationLevel, exhaustionLevel);
 		}
 
 		// health for regeneration effect
-		for (Pair<EffectInstance, Float> effect : itemStack.getItem().getFood().getEffects())
+		for (Pair<MobEffectInstance, Float> effect : itemStack.getItem().getFoodProperties().getEffects())
 		{
-			EffectInstance effectInstance = effect.getFirst();
-			if (effectInstance != null && effectInstance.getPotion() == Effects.REGENERATION)
+			MobEffectInstance effectInstance = effect.getFirst();
+			if (effectInstance != null && effectInstance.getEffect() == MobEffects.REGENERATION)
 			{
 				int amplifier = effectInstance.getAmplifier();
 				int duration = effectInstance.getDuration();
 
-				healthIncrement += (float)Math.floor(duration / (50 >> amplifier));
+				healthIncrement += (float) Math.floor(duration / (50 >> amplifier));
 				break;
 			}
 		}
