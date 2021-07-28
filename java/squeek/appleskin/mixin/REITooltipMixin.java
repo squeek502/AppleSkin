@@ -24,7 +24,7 @@ public class REITooltipMixin
 
 	@Inject(
 		at = @At(value = "INVOKE", target = "Lme/shedaniel/rei/impl/client/gui/ScreenOverlayImpl;renderTooltipInner", ordinal = 0),
-		method = "renderTooltip(Lnet/minecraft/client/util/math/MatrixStack;Lme/shedaniel/rei/api/client/gui/widgets/Tooltip;)V",
+		method = "renderTooltip",
 		locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void onRenderTooltip(MatrixStack matrices, Tooltip tooltip, CallbackInfo info, List<TooltipComponent> componentList)
