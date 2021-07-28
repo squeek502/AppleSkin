@@ -83,7 +83,9 @@ public class TooltipOverlayHandler
 
 		FoodOverlayTextComponent(FoodOverlay foodOverlay)
 		{
-			super("");
+			// This is a non-empty string to avoid the line getting omitted by REI
+			// when it does its custom Text -> TooltipComponent conversion.
+			super(" ");
 			this.foodOverlay = foodOverlay;
 		}
 

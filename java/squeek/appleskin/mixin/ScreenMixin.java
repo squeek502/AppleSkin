@@ -35,9 +35,9 @@ public class ScreenMixin
 	// even though that's another place that calls TooltipComponent::of.
 	// As far as I can tell, it's not possible to Mixin Screen.renderOrderedTooltip
 	// in a way that would allow us to manipulate the TooltipComponent list
-	// (since it only lives on the stack). This shouldn't be a problem, though,
-	// since that method is not intended for ItemStack tooltips--it's only used
-	// internally for text-only tooltips and never for ItemStack tooltips.
+	// (since it only lives on the stack). This *is* a problem, since renderOrderedTooltip
+	// is called via RecipeBookWidget for item tooltips, but there's nothing we can do about that
+	// until we can mixin TooltipComponent::of
 
 	@Inject(
 		// For some reason the local was failing to capture if INVOKE_ASSIGN was used
