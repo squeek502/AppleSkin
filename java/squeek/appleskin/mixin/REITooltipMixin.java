@@ -1,7 +1,8 @@
 package squeek.appleskin.mixin;
 
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
-import me.shedaniel.rei.impl.client.gui.ScreenOverlayImpl;
+import me.shedaniel.rei.impl.client.gui.fabric.ScreenOverlayImplImpl;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,7 +15,7 @@ import squeek.appleskin.client.TooltipOverlayHandler;
 import java.util.List;
 import java.util.ListIterator;
 
-@Mixin(value = ScreenOverlayImpl.class, remap = false)
+@Mixin(value = ScreenOverlayImplImpl.class, remap = false)
 public class REITooltipMixin
 {
 	// See the comment in ScreenMixin for a complete explanation.
@@ -23,11 +24,11 @@ public class REITooltipMixin
 	// (i.e. once https://github.com/FabricMC/Mixin/pull/51 makes it into a Fabric build)
 
 	@Inject(
-		at = @At(value = "INVOKE", target = "Lme/shedaniel/rei/impl/client/gui/ScreenOverlayImpl;renderTooltipInner", ordinal = 0),
-		method = "renderTooltip",
+		at = @At(value = "INVOKE", target = "Lme/shedaniel/rei/impl/client/gui/fabric/ScreenOverlayImplImpl;renderTooltipInner", ordinal = 0),
+		method = "renderTooltipInner",
 		locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void onRenderTooltip(MatrixStack matrices, Tooltip tooltip, CallbackInfo info, List<TooltipComponent> componentList)
+	private static void onRenderTooltip(Screen screen, MatrixStack matrices, Tooltip tooltip, int mouseX, int mouseY, CallbackInfo info, List<TooltipComponent> componentList)
 	{
 		for (final ListIterator<Tooltip.Entry> it = tooltip.entries().listIterator(); it.hasNext(); )
 		{
