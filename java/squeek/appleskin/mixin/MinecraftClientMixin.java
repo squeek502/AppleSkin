@@ -13,6 +13,7 @@ public class MinecraftClientMixin
 	@Inject(at = @At("HEAD"), method = "tick")
 	void onTick(CallbackInfo info)
 	{
-		HUDOverlayHandler.onClientTick();
+		if (HUDOverlayHandler.INSTANCE != null)
+			HUDOverlayHandler.INSTANCE.onClientTick();
 	}
 }

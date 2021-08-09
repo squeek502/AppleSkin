@@ -28,6 +28,8 @@ import java.util.List;
 
 public class TooltipOverlayHandler
 {
+	public static TooltipOverlayHandler INSTANCE;
+
 	private static Identifier modIcons = new Identifier("appleskin", "textures/icons.png");
 	public static final int TOOLTIP_REAL_HEIGHT_OFFSET_BOTTOM = 3;
 	public static final int TOOLTIP_REAL_HEIGHT_OFFSET_TOP = -3;
@@ -177,11 +179,17 @@ public class TooltipOverlayHandler
 		@Override
 		public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z, TextureManager textureManager)
 		{
-			TooltipOverlayHandler.onRenderTooltip(matrices, this, x, y, z, textRenderer);
+			if (TooltipOverlayHandler.INSTANCE != null)
+				TooltipOverlayHandler.INSTANCE.onRenderTooltip(matrices, this, x, y, z, textRenderer);
 		}
 	}
 
-	public static void onItemTooltip(ItemStack hoveredStack, PlayerEntity player, TooltipContext context, List tooltip)
+	public static void init()
+	{
+		INSTANCE = new TooltipOverlayHandler();
+	}
+
+	public void onItemTooltip(ItemStack hoveredStack, PlayerEntity player, TooltipContext context, List tooltip)
 	{
 		// When hoveredStack or tooltip is null an unknown exception occurs.
 		// If ModConfig.INSTANCE is null then we're probably still in the init phase
@@ -212,7 +220,7 @@ public class TooltipOverlayHandler
 		}
 	}
 
-	public static void onRenderTooltip(MatrixStack matrixStack, FoodOverlay foodOverlay, int toolTipX, int toolTipY, int tooltipZ, TextRenderer textRenderer)
+	public void onRenderTooltip(MatrixStack matrixStack, FoodOverlay foodOverlay, int toolTipX, int toolTipY, int tooltipZ, TextRenderer textRenderer)
 	{
 		// When matrixStack or tooltip is null an unknown exception occurs.
 		// If ModConfig.INSTANCE is null then we're probably still in the init phase
@@ -335,7 +343,7 @@ public class TooltipOverlayHandler
 		RenderSystem.disableDepthTest();
 	}
 
-	private static boolean shouldShowTooltip(ItemStack hoveredStack)
+	private boolean shouldShowTooltip(ItemStack hoveredStack)
 	{
 		if (hoveredStack.isEmpty())
 		{
