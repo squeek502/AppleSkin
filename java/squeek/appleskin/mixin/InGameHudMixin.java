@@ -15,12 +15,14 @@ public class InGameHudMixin
 	@Inject(at = @At(value = "CONSTANT", args = "stringValue=food", shift = At.Shift.BY, by = 2), method = "renderStatusBars(Lnet/minecraft/client/util/math/MatrixStack;)V")
 	private void renderFoodPre(MatrixStack stack, CallbackInfo info)
 	{
-		HUDOverlayHandler.onPreRender(stack);
+		if (HUDOverlayHandler.INSTANCE != null)
+			HUDOverlayHandler.INSTANCE.onPreRender(stack);
 	}
 
 	@Inject(slice = @Slice(from = @At(value = "CONSTANT", args = "stringValue=food")), at = @At(value = "APPLESKIN_IINC", args = "intValue=-10", ordinal = 0), method = "renderStatusBars(Lnet/minecraft/client/util/math/MatrixStack;)V")
 	private void renderFoodPost(MatrixStack stack, CallbackInfo info)
 	{
-		HUDOverlayHandler.onRender(stack);
+		if (HUDOverlayHandler.INSTANCE != null)
+			HUDOverlayHandler.INSTANCE.onRender(stack);
 	}
 }

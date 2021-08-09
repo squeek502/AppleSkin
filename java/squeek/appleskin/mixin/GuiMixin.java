@@ -34,6 +34,7 @@ public class GuiMixin
 	@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V", ordinal = 0), method = "renderOrderedTooltip(Lnet/minecraft/client/util/math/MatrixStack;Ljava/util/List;II)V")
 	private void renderTooltip(MatrixStack matrixStack, List tooltip, int mouseX, int mouseY, CallbackInfo info)
 	{
-		TooltipOverlayHandler.onRenderTooltip(matrixStack, tooltip, x, y, w, h);
+		if (TooltipOverlayHandler.INSTANCE != null)
+			TooltipOverlayHandler.INSTANCE.onRenderTooltip(matrixStack, tooltip, x, y, w, h);
 	}
 }

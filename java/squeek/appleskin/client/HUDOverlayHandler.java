@@ -24,28 +24,33 @@ import java.util.Vector;
 
 public class HUDOverlayHandler
 {
-	private static float unclampedFlashAlpha = 0f;
-	private static float flashAlpha = 0f;
-	private static byte alphaDir = 1;
-	private static int foodIconsOffset;
+	public static HUDOverlayHandler INSTANCE;
 
-	public static int FOOD_BAR_HEIGHT = 39;
+	private float unclampedFlashAlpha = 0f;
+	private float flashAlpha = 0f;
+	private byte alphaDir = 1;
+	private int foodIconsOffset;
 
-	public static final Vector<IntPoint> healthBarOffsets = new Vector<>();
-	public static final Vector<IntPoint> foodBarOffsets = new Vector<>();
+	public int FOOD_BAR_HEIGHT = 39;
 
-	private static final Random random = new Random();
-	private static final Identifier modIcons = new Identifier("appleskin", "textures/icons.png");
+	public final Vector<IntPoint> healthBarOffsets = new Vector<>();
+	public final Vector<IntPoint> foodBarOffsets = new Vector<>();
 
+	private final Random random = new Random();
+	private final Identifier modIcons = new Identifier("appleskin", "textures/icons.png");
 
-	public static void onPreRender(MatrixStack matrixStack)
+	public static void init()
+	{
+		INSTANCE = new HUDOverlayHandler();
+	}
+
+	public void onPreRender(MatrixStack matrixStack)
 	{
 		foodIconsOffset = FOOD_BAR_HEIGHT;
 
 		// If ModConfig.INSTANCE is null then we're probably still in the init phase
 		if (ModConfig.INSTANCE == null)
 			return;
-
 
 		if (!ModConfig.INSTANCE.showFoodExhaustionHudUnderlay)
 			return;
@@ -67,7 +72,7 @@ public class HUDOverlayHandler
 		}
 	}
 
-	public static void onRender(MatrixStack matrixStack)
+	public void onRender(MatrixStack matrixStack)
 	{
 		// If ModConfig.INSTANCE is null then we're probably still in the init phase
 		if (ModConfig.INSTANCE == null)
@@ -168,7 +173,7 @@ public class HUDOverlayHandler
 		}
 	}
 
-	public static void drawSaturationOverlay(MatrixStack matrixStack, float saturationGained, float saturationLevel, MinecraftClient mc, int right, int top, float alpha)
+	public void drawSaturationOverlay(MatrixStack matrixStack, float saturationGained, float saturationLevel, MinecraftClient mc, int right, int top, float alpha)
 	{
 		if (saturationLevel + saturationGained < 0)
 			return;
@@ -217,7 +222,7 @@ public class HUDOverlayHandler
 		disableAlpha(alpha);
 	}
 
-	public static void drawHungerOverlay(MatrixStack matrixStack, int hungerRestored, int foodLevel, MinecraftClient mc, int right, int top, float alpha, boolean useRottenTextures)
+	public void drawHungerOverlay(MatrixStack matrixStack, int hungerRestored, int foodLevel, MinecraftClient mc, int right, int top, float alpha, boolean useRottenTextures)
 	{
 		if (hungerRestored == 0)
 			return;
@@ -270,7 +275,7 @@ public class HUDOverlayHandler
 		disableAlpha(alpha);
 	}
 
-	public static void drawHealthOverlay(MatrixStack matrixStack, float health, float modifiedHealth, MinecraftClient mc, int right, int top, float alpha)
+	public void drawHealthOverlay(MatrixStack matrixStack, float health, float modifiedHealth, MinecraftClient mc, int right, int top, float alpha)
 	{
 		if (modifiedHealth <= health)
 			return;
@@ -328,7 +333,7 @@ public class HUDOverlayHandler
 		disableAlpha(alpha);
 	}
 
-	public static void drawExhaustionOverlay(MatrixStack matrixStack, float exhaustion, MinecraftClient mc, int right, int top, float alpha)
+	public void drawExhaustionOverlay(MatrixStack matrixStack, float exhaustion, MinecraftClient mc, int right, int top, float alpha)
 	{
 		mc.getTextureManager().bindTexture(modIcons);
 
@@ -347,46 +352,46 @@ public class HUDOverlayHandler
 	}
 
 
-	private static void drawSaturationOverlay(HUDOverlayEvent.Saturation event, MinecraftClient mc, float saturationGained, float alpha)
+	private void drawSaturationOverlay(HUDOverlayEvent.Saturation event, MinecraftClient mc, float saturationGained, float alpha)
 	{
 		drawSaturationOverlay(event.matrixStack, saturationGained, event.saturationLevel, mc, event.x, event.y, alpha);
 	}
 
-	private static void drawHungerOverlay(HUDOverlayEvent.HungerRestored event, MinecraftClient mc, int hunger, float alpha, boolean useRottenTextures)
+	private void drawHungerOverlay(HUDOverlayEvent.HungerRestored event, MinecraftClient mc, int hunger, float alpha, boolean useRottenTextures)
 	{
 		drawHungerOverlay(event.matrixStack, hunger, event.currentFoodLevel, mc, event.x, event.y, alpha, useRottenTextures);
 	}
 
-	private static void drawHealthOverlay(HUDOverlayEvent.HealthRestored event, MinecraftClient mc, float alpha)
+	private void drawHealthOverlay(HUDOverlayEvent.HealthRestored event, MinecraftClient mc, float alpha)
 	{
 		drawHealthOverlay(event.matrixStack, mc.player.getHealth(), event.modifiedHealth, mc, event.x, event.y, alpha);
 	}
 
-	private static void drawExhaustionOverlay(HUDOverlayEvent.Exhaustion event, MinecraftClient mc, float alpha)
+	private void drawExhaustionOverlay(HUDOverlayEvent.Exhaustion event, MinecraftClient mc, float alpha)
 	{
 		drawExhaustionOverlay(event.matrixStack, event.exhaustion, mc, event.x, event.y, alpha);
 	}
 
-	private static boolean shouldRenderAnyOverlays()
+	private boolean shouldRenderAnyOverlays()
 	{
 		return ModConfig.INSTANCE.showFoodValuesHudOverlay || ModConfig.INSTANCE.showSaturationHudOverlay || ModConfig.INSTANCE.showFoodHealthHudOverlay;
 	}
 
-	private static void enableAlpha(float alpha)
+	private void enableAlpha(float alpha)
 	{
 		RenderSystem.enableBlend();
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha);
 		RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
 	}
 
-	private static void disableAlpha(float alpha)
+	private void disableAlpha(float alpha)
 	{
 		RenderSystem.disableBlend();
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 	}
 
 
-	public static void onClientTick()
+	public void onClientTick()
 	{
 		unclampedFlashAlpha += alphaDir * 0.125F;
 		if (unclampedFlashAlpha >= 1.5F)
@@ -400,14 +405,14 @@ public class HUDOverlayHandler
 		flashAlpha = Math.max(0F, Math.min(1F, unclampedFlashAlpha)) * Math.max(0F, Math.min(1F, ModConfig.INSTANCE.maxHudOverlayFlashAlpha));
 	}
 
-	public static void resetFlash()
+	public void resetFlash()
 	{
 		unclampedFlashAlpha = flashAlpha = 0;
 		alphaDir = 1;
 	}
 
 
-	private static boolean shouldShowEstimatedHealth(ItemStack hoveredStack, FoodValues modifiedFoodValues)
+	private boolean shouldShowEstimatedHealth(ItemStack hoveredStack, FoodValues modifiedFoodValues)
 	{
 		// then configuration cancel the render event
 		if (!ModConfig.INSTANCE.showFoodHealthHudOverlay)
@@ -442,7 +447,7 @@ public class HUDOverlayHandler
 		return true;
 	}
 
-	private static void generateBarOffsets(int top, int left, int right, int ticks, PlayerEntity player)
+	private void generateBarOffsets(int top, int left, int right, int ticks, PlayerEntity player)
 	{
 		final int preferHealthBars = 10;
 		final int preferFoodBars = 10;
