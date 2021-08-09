@@ -8,7 +8,7 @@ targetCompatibility = JavaVersion.VERSION_16
 
 group = project.maven_group
 archivesBaseName = project.archives_base_name
-version = "mc" + project.minecraft_version + "-" + project.mod_version
+version = project.mod_version + "+mc" + project.minecraft_version
 
 sourceSets.main.java.srcDirs += 'java'
 sourceSets.main.resources.srcDirs += 'resources'
