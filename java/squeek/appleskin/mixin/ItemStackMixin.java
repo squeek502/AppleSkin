@@ -17,6 +17,7 @@ public class ItemStackMixin
 	@Inject(at = @At("RETURN"), method = "getTooltip(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/client/item/TooltipContext;)Ljava/util/List;")
 	private void getTooltipFromItem(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List> info)
 	{
-		TooltipOverlayHandler.onItemTooltip((ItemStack) (Object) this, player, context, info.getReturnValue());
+		if (TooltipOverlayHandler.INSTANCE != null)
+			TooltipOverlayHandler.INSTANCE.onItemTooltip((ItemStack) (Object) this, player, context, info.getReturnValue());
 	}
 }
