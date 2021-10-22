@@ -14,7 +14,7 @@ import org.spongepowered.asm.util.Annotations;
 import java.util.Collection;
 import java.util.ListIterator;
 
-@InjectionPoint.AtCode("APPLESKIN_IINC")
+@InjectionPoint.AtCode(namespace = "appleskin", value = "APPLESKIN_IINC")
 public class BeforeInc extends InjectionPoint
 {
 	private final int ordinal;

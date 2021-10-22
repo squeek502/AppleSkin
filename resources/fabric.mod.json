@@ -24,6 +24,9 @@
     ],
     "modmenu": [
       "squeek.appleskin.gui.ModMenuIntegration"
+    ],
+    "rei": [
+      "squeek.appleskin.client.REITooltipPlugin"
     ]
   },
   "mixins": [
@@ -31,7 +34,11 @@
   ],
 
   "depends": {
-    "fabricloader": ">=0.7.2",
+    "fabricloader": ">=0.12.0",
     "fabric": "*"
+  },
+
+  "breaks": {
+    "roughlyenoughitems": "<6.0.306-alpha"
   }
 }
