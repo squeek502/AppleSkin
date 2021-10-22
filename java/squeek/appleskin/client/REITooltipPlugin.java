@@ -26,6 +26,9 @@ public class REITooltipPlugin implements REIClientPlugin
 	public void registerEntryRenderers(EntryRendererRegistry registry)
 	{
 		registry.transformTooltip(VanillaEntryTypes.ITEM, (itemstack, mouse, tooltip) -> {
+			if (tooltip == null)
+				return null;
+			
 			List<Tooltip.Entry> foodComponents = new ArrayList<Tooltip.Entry>();
 			for (final Tooltip.Entry entry : tooltip.entries())
 			{
