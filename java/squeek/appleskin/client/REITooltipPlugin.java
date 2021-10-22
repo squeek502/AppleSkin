@@ -5,7 +5,8 @@ import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 
-import java.util.ListIterator;
+import java.util.ArrayList;
+import java.util.List;
 
 public class REITooltipPlugin implements REIClientPlugin
 {
@@ -25,16 +26,18 @@ public class REITooltipPlugin implements REIClientPlugin
 	public void registerEntryRenderers(EntryRendererRegistry registry)
 	{
 		registry.transformTooltip(VanillaEntryTypes.ITEM, (itemstack, mouse, tooltip) -> {
-			for (final ListIterator<Tooltip.Entry> it = tooltip.entries().listIterator(); it.hasNext(); )
+			List<Tooltip.Entry> foodComponents = new ArrayList<Tooltip.Entry>();
+			for (final Tooltip.Entry entry : tooltip.entries())
 			{
-				final Tooltip.Entry entry = it.next();
 				if (entry.isText() && entry.getAsText() instanceof TooltipOverlayHandler.FoodOverlayTextComponent)
-				{
-					// remove the text version
-					tooltip.entries().remove(entry);
-					// add the TooltipComponent version
-					tooltip.add(((TooltipOverlayHandler.FoodOverlayTextComponent) entry.getAsText()).foodOverlay);
-				}
+					foodComponents.add(entry);
+			}
+			for (Tooltip.Entry entry : foodComponents)
+			{
+				// remove the text version
+				tooltip.entries().remove(entry);
+				// add the TooltipComponent version
+				tooltip.add(((TooltipOverlayHandler.FoodOverlayTextComponent) entry.getAsText()).foodOverlay);
 			}
 			return tooltip;
 		});
