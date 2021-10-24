@@ -42,6 +42,9 @@ public class ModConfig implements ConfigData
 	@Comment("If true, shows estimated health restored by food on the health bar")
 	public boolean showFoodHealthHudOverlay = true;
 
+	@Comment("If true, shows your hunger, saturation, and exhaustion level in Debug Screen")
+	public boolean showFoodDebugInfo = true;
+
 	@Comment("If true, health/hunger overlay will shake to match Minecraft's icon animations")
 	public boolean showVanillaAnimationsOverlay = true;
 
