@@ -11,7 +11,8 @@
     "GuiMixin",
     "InGameHudMixin",
     "MinecraftClientMixin",
-    "ItemStackMixin"
+    "ItemStackMixin",
+    "DebugHudMixin"
   ],
   "injectors": {
     "defaultRequire": 1,

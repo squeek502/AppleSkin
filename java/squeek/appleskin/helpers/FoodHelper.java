@@ -108,17 +108,18 @@ public class FoodHelper
 		return healthIncrement;
 	}
 
+	public static float REGEN_EXHAUSTION_INCREMENT = 6.0F;
+	public static float MAX_EXHAUSTION = 4.0F;
+
 	public static float getEstimatedHealthIncrement(int foodLevel, float saturationLevel, float exhaustionLevel)
 	{
 		float health = 0;
-		float exhaustionForRegen = 6.0F;
-		float exhaustionForConsumed = 4.0F;
 
 		while (foodLevel >= 18)
 		{
-			while (exhaustionLevel > exhaustionForConsumed)
+			while (exhaustionLevel > MAX_EXHAUSTION)
 			{
-				exhaustionLevel -= exhaustionForConsumed;
+				exhaustionLevel -= MAX_EXHAUSTION;
 				if (saturationLevel > 0)
 					saturationLevel = Math.max(saturationLevel - 1, 0);
 				else
@@ -127,15 +128,15 @@ public class FoodHelper
 			if (foodLevel >= 20 && saturationLevel > 0)
 			{
 				// fast regen health
-				float limitedSaturationLevel = Math.min(saturationLevel, exhaustionForRegen);
-				health += limitedSaturationLevel / exhaustionForRegen;
+				float limitedSaturationLevel = Math.min(saturationLevel, REGEN_EXHAUSTION_INCREMENT);
+				health += limitedSaturationLevel / REGEN_EXHAUSTION_INCREMENT;
 				exhaustionLevel += limitedSaturationLevel;
 			}
 			else if (foodLevel >= 18)
 			{
 				// slow regen health
 				health += 1;
-				exhaustionLevel += exhaustionForRegen;
+				exhaustionLevel += REGEN_EXHAUSTION_INCREMENT;
 			}
 		}
 

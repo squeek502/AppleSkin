@@ -18,6 +18,7 @@ sourceSets.main.resources.srcDirs += 'resources'
 
 repositories {
     maven { url "https://maven.shedaniel.me/" }
+	maven { url "https://maven.terraformersmc.com/" }
 	mavenLocal()
     mavenCentral()
 }
