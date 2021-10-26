@@ -9,10 +9,18 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import squeek.appleskin.api.AppleSkinApi;
+import squeek.appleskin.api.AppleSkinPlugin;
 import squeek.appleskin.client.DebugInfoHandler;
 import squeek.appleskin.client.HUDOverlayHandler;
 import squeek.appleskin.client.TooltipOverlayHandler;
+import squeek.appleskin.helpers.AnnotatedInstanceHelper;
 import squeek.appleskin.network.SyncHandler;
+
+
+import net.minecraftforge.fml.ModList;
+
+import java.util.List;
 
 @Mod(ModInfo.MODID)
 public class AppleSkin
@@ -43,5 +51,14 @@ public class AppleSkin
 		DebugInfoHandler.init();
 		HUDOverlayHandler.init();
 		TooltipOverlayHandler.init();
+		initAPI();
+	}
+
+	private void initAPI()
+	{
+		for (AppleSkinApi appleSkinApi : AnnotatedInstanceHelper.getModPlugins())
+		{
+			appleSkinApi.registerEvents();
+		}
 	}
 }
