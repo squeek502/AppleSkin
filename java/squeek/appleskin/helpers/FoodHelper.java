@@ -100,7 +100,9 @@ public class FoodHelper
 				if (effectInstance.isPermanent())
 					duration = Integer.MAX_VALUE;
 
-				healthIncrement += (float)Math.floor(duration / (50 >> amplifier));
+				// Refer: https://minecraft.fandom.com/wiki/Regeneration
+				// Refer: net.minecraft.world.effect.MobEffect.isDurationEffectTick
+				healthIncrement += (float) Math.floor(duration / Math.max(50 >> amplifier, 1));
 				break;
 			}
 		}
