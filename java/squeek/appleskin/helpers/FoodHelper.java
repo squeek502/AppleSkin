@@ -112,6 +112,9 @@ public class FoodHelper
 		float exhaustionForRegen = 6.0F;
 		float exhaustionForConsumed = 4.0F;
 
+		if (!Float.isFinite(exhaustionLevel) || !Float.isFinite(exhaustionLevel))
+			return 0;
+
 		while (foodLevel >= 18)
 		{
 			while (exhaustionLevel > exhaustionForConsumed)
