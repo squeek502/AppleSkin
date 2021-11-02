@@ -75,13 +75,13 @@ public class ModConfig
 	public static boolean SHOW_FOOD_HEALTH_HUD_OVERLAY_DEFAULT = true;
 	private static final String SHOW_FOOD_HEALTH_HUD_OVERLAY_NAME = "showFoodHealthHudOverlay";
 	private static final String SHOW_FOOD_HEALTH_HUD_OVERLAY_COMMENT =
-			"If true, shows estimated health restored by food on the health bar";
+		"If true, shows estimated health restored by food on the health bar";
 
 	public static final ForgeConfigSpec.BooleanValue SHOW_VANILLA_ANIMATION_OVERLAY;
 	public static boolean SHOW_VANILLA_ANIMATION_OVERLAY_DEFAULT = true;
 	private static final String SHOW_VANILLA_ANIMATION_OVERLAY_NAME = "showVanillaAnimationsOverlay";
 	private static final String SHOW_VANILLA_ANIMATION_OVERLAY_COMMENT =
-			"If true, health/hunger overlay will shake to match Minecraft's icon animations";
+		"If true, health/hunger overlay will shake to match Minecraft's icon animations";
 
 	public static final ForgeConfigSpec.DoubleValue MAX_HUD_OVERLAY_FLASH_ALPHA;
 	public static double MAX_HUD_OVERLAY_FLASH_ALPHA_DEFAULT = 0.65D;
