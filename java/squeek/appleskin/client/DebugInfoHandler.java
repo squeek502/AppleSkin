@@ -1,7 +1,6 @@
 package squeek.appleskin.client;
 
 
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.HungerManager;
 import squeek.appleskin.ModConfig;

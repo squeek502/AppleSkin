@@ -1,7 +1,6 @@
 package squeek.appleskin.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.font.TextVisitFactory;
 import net.minecraft.client.gui.DrawableHelper;
@@ -164,11 +163,13 @@ public class TooltipOverlayHandler
 		public int getWidth(TextRenderer textRenderer)
 		{
 			int hungerBarLength = hungerBars * 9;
-			if (hungerBarsText != null) {
+			if (hungerBarsText != null)
+			{
 				hungerBarLength += textRenderer.getWidth(hungerBarsText);
 			}
 			int saturationBarLength = saturationBars * 7;
-			if (saturationBarsText != null) {
+			if (saturationBarsText != null)
+			{
 				saturationBarLength += textRenderer.getWidth(saturationBarsText);
 			}
 			return Math.max(hungerBarLength, saturationBarLength);
