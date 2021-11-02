@@ -183,11 +183,11 @@ public class HUDOverlayHandler
 		float modifiedSaturation = Math.min(saturationLevel + saturationGained, 20);
 
 		int startSaturationBar = 0;
-		int endSaturationBar = (int)Math.ceil(modifiedSaturation / 2.0F);
+		int endSaturationBar = (int) Math.ceil(modifiedSaturation / 2.0F);
 
 		// when require rendering the gained saturation, start should relocation to current saturation tail.
 		if (saturationGained != 0)
-			startSaturationBar = (int)Math.max(saturationLevel / 2.0F, 0);
+			startSaturationBar = (int) Math.max(saturationLevel / 2.0F, 0);
 
 		int iconSize = 9;
 
@@ -232,7 +232,7 @@ public class HUDOverlayHandler
 		int modifiedFood = Math.min(20, foodLevel + hungerRestored);
 
 		int startFoodBars = foodLevel / 2;
-		int endFoodBars = (int)Math.ceil(modifiedFood / 2.0F);
+		int endFoodBars = (int) Math.ceil(modifiedFood / 2.0F);
 
 		int iconStartOffset = 16;
 		int iconSize = 9;
@@ -282,11 +282,11 @@ public class HUDOverlayHandler
 		enableAlpha(alpha);
 		mc.getTextureManager().bindTexture(Screen.GUI_ICONS_TEXTURE);
 
-		int fixedModifiedHealth = (int)Math.ceil(modifiedHealth);
+		int fixedModifiedHealth = (int) Math.ceil(modifiedHealth);
 		boolean isHardcore = mc.player.world != null && mc.player.world.getLevelProperties().isHardcore();
 
-		int startHealthBars = (int)(Math.ceil(health) / 2.0F);
-		int endHealthBars = (int)Math.ceil(modifiedHealth / 2.0F);
+		int startHealthBars = (int) (Math.ceil(health) / 2.0F);
+		int endHealthBars = (int) Math.ceil(modifiedHealth / 2.0F);
 
 		int iconStartOffset = 16;
 		int iconSize = 9;
@@ -452,10 +452,10 @@ public class HUDOverlayHandler
 		final int preferFoodBars = 10;
 
 		final float maxHealth = player.getMaxHealth();
-		final float absorptionHealth = (float)Math.ceil(player.getAbsorptionAmount());
+		final float absorptionHealth = (float) Math.ceil(player.getAbsorptionAmount());
 
-		int healthBars = (int)Math.ceil((maxHealth + absorptionHealth) / 2.0F);
-		int healthRows = (int)Math.ceil((float)healthBars / (float)preferHealthBars);
+		int healthBars = (int) Math.ceil((maxHealth + absorptionHealth) / 2.0F);
+		int healthRows = (int) Math.ceil((float) healthBars / (float) preferHealthBars);
 
 		int healthRowHeight = Math.max(10 - (healthRows - 2), 3);
 
@@ -478,7 +478,7 @@ public class HUDOverlayHandler
 		}
 
 		// hard code in `InGameHUD`
-		random.setSeed((long)(ticks * 312871));
+		random.setSeed((long) (ticks * 312871));
 
 		// Special case for infinite/NaN. Infinite absorption has been seen in the wild.
 		// This will effectively disable rendering while health is infinite.
@@ -495,7 +495,7 @@ public class HUDOverlayHandler
 		// left alignment, multiple rows, reverse
 		for (int i = healthBars - 1; i >= 0; --i)
 		{
-			int row = (int)Math.ceil((float)(i + 1) / (float)preferHealthBars) - 1;
+			int row = (int) Math.ceil((float) (i + 1) / (float) preferHealthBars) - 1;
 			int x = left + i % preferHealthBars * 8;
 			int y = top - row * healthRowHeight;
 			// apply the animated offset
@@ -515,7 +515,7 @@ public class HUDOverlayHandler
 		}
 
 		// right alignment, single row
-		for(int i = 0; i < preferFoodBars; ++i)
+		for (int i = 0; i < preferFoodBars; ++i)
 		{
 			int x = right - i * 8 - 9;
 			int y = top;
