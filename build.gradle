@@ -17,10 +17,10 @@ sourceSets.main.java.srcDirs += 'java'
 sourceSets.main.resources.srcDirs += 'resources'
 
 repositories {
-    maven { url "https://maven.shedaniel.me/" }
+	maven { url "https://maven.shedaniel.me/" }
 	maven { url "https://maven.terraformersmc.com/" }
 	mavenLocal()
-    mavenCentral()
+	mavenCentral()
 }
 
 dependencies {
@@ -32,8 +32,8 @@ dependencies {
 
 	modImplementation "io.github.prospector:modmenu:${project.modmenu_version}"
 	modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}") {
-        exclude(group: "net.fabricmc.fabric-api")
-    }
+		exclude(group: "net.fabricmc.fabric-api")
+	}
 	include "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}"
 }
 
