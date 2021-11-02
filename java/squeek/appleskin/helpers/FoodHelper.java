@@ -117,6 +117,9 @@ public class FoodHelper
 	{
 		float health = 0;
 
+		if (!Float.isFinite(exhaustionLevel) || !Float.isFinite(exhaustionLevel))
+			return 0;
+
 		while (foodLevel >= 18)
 		{
 			while (exhaustionLevel > MAX_EXHAUSTION)
