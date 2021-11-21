@@ -234,12 +234,6 @@ public class TooltipOverlayHandler
 			return;
 		}
 
-		ItemStack hoveredStack = event.getStack();
-		if (!shouldShowTooltip(hoveredStack))
-		{
-			return;
-		}
-
 		Minecraft mc = Minecraft.getInstance();
 		Screen gui = mc.currentScreen;
 		if (gui == null)
@@ -306,7 +300,7 @@ public class TooltipOverlayHandler
 		x += (foodOverlay.hungerBars - 1) * 9;
 
 		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
-		TextureOffsets offsets = FoodHelper.isRotten(hoveredStack) ? rottenBarTextureOffsets : normalBarTextureOffsets;
+		TextureOffsets offsets = FoodHelper.isRotten(itemStack) ? rottenBarTextureOffsets : normalBarTextureOffsets;
 		for (int i = 0; i < foodOverlay.hungerBars * 2; i += 2)
 		{
 
