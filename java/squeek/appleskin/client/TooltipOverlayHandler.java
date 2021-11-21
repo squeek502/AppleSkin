@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.CharacterVisitor;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.OrderedText;
+import net.minecraft.text.Style;
 import net.minecraft.util.Identifier;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.api.event.FoodValuesEvent;
@@ -20,6 +21,7 @@ import squeek.appleskin.helpers.FoodHelper;
 import squeek.appleskin.helpers.KeyHelper;
 
 import java.util.List;
+import java.util.Optional;
 
 public class TooltipOverlayHandler
 {
@@ -73,32 +75,38 @@ public class TooltipOverlayHandler
 		int shankPartial;
 	}
 
-	// Bind to text line, because food overlay must apply line offset of all case.
-	static class FoodOverlayTextComponent extends LiteralText implements OrderedText
+	// We set a special font into placeholder text, so font will bind a food overlay,
+	// When the placeholder text is convert or truncation, user will restore the style.
+	static class FoodOverlayFont extends Identifier
 	{
 		private FoodOverlay foodOverlay;
 
-		FoodOverlayTextComponent(FoodOverlay foodOverlay)
+		FoodOverlayFont(FoodOverlay foodOverlay)
 		{
-			super(foodOverlay.getTooltip());
+			super(Style.DEFAULT_FONT_ID.getNamespace(), Style.DEFAULT_FONT_ID.getPath());
 			this.foodOverlay = foodOverlay;
 		}
 
-		public FoodOverlayTextComponent copy()
+		static Object getFontId(OrderedText line)
 		{
-			return new FoodOverlayTextComponent(foodOverlay);
+			// A slow path, only to check frist string.
+			final Object[] fontId = { Style.DEFAULT_FONT_ID };
+			line.accept(new CharacterVisitor() {
+				@Override
+				public boolean accept(int index, Style style, int codePoint) {
+					fontId[0] = style.getFont();
+					return false;
+				}
+			});
+			return fontId[0];
 		}
 
-		@Override
-		public OrderedText asOrderedText()
+		static FoodOverlay getFoodOverlay(OrderedText line)
 		{
-			return this;
-		}
-
-		@Override
-		public boolean accept(CharacterVisitor visitor)
-		{
-			return TextVisitFactory.visitFormatted(this, getStyle(), visitor);
+			Object fontId = getFontId(line);
+			if (fontId instanceof FoodOverlayFont)
+				return ((FoodOverlayFont) fontId).foodOverlay;
+			return null;
 		}
 	}
 
@@ -219,8 +227,10 @@ public class TooltipOverlayHandler
 		FoodOverlay foodOverlay = new FoodOverlay(prerenderEvent.itemStack, defaultFood, modifiedFood, player);
 		if (foodOverlay.shouldRenderHungerBars())
 		{
-			tooltip.add(new FoodOverlayTextComponent(foodOverlay));
-			tooltip.add(new FoodOverlayTextComponent(foodOverlay));
+			Style style = Style.EMPTY.withFont(new FoodOverlayFont(foodOverlay));
+			LiteralText placeholder = new LiteralText(foodOverlay.getTooltip());
+			tooltip.add(placeholder.setStyle(style));
+			tooltip.add(placeholder.setStyle(style));
 		}
 	}
 
@@ -240,10 +250,10 @@ public class TooltipOverlayHandler
 		FoodOverlay foodOverlay = null;
 		for (int i = 0; i < tooltip.size(); ++i)
 		{
-			if (tooltip.get(i) instanceof FoodOverlayTextComponent)
+			foodOverlay = FoodOverlayFont.getFoodOverlay(tooltip.get(i));
+			if (foodOverlay != null)
 			{
 				toolTipY += i * 10;
-				foodOverlay = ((FoodOverlayTextComponent) tooltip.get(i)).foodOverlay;
 				break;
 			}
 		}
