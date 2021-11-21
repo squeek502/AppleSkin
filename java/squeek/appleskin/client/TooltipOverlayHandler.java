@@ -87,7 +87,7 @@ public class TooltipOverlayHandler
 	}
 
 	// We set a special font into placeholder text, so font will bind a food overlay,
-	// When the placeholder text is convert or truncation the font will set again.
+	// When the placeholder text is convert or truncation, user will restore the style.
 	static class FoodOverlayFont extends ResourceLocation
 	{
 		private FoodOverlay foodOverlay;
@@ -99,11 +99,11 @@ public class TooltipOverlayHandler
 
 		static Object getFontId(ITextProperties line)
 		{
-			// A fast path, but not line object confirm to `ITextComponent`.
+			// A fast path, however not all lines conform `ITextComponent`.
 			if (line instanceof ITextComponent)
 				return ((ITextComponent)line).getStyle().getFontId();
 
-			// A slow path, we only need to check it once.
+			// A slow path, only to check frist string.
 			final Object[] fontId = { Style.DEFAULT_FONT };
 			line.getComponentWithStyle(new ITextProperties.IStyledTextAcceptor<ITextProperties>() {
 				public Optional<ITextProperties> accept(Style n, String s) {
