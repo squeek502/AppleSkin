@@ -9,7 +9,6 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -117,7 +116,7 @@ public class TooltipOverlayHandler
 		}
 
 		@Override
-		public void renderImage(Font font, int x, int y, PoseStack poseStack, ItemRenderer itemRenderer_, int zIndex, TextureManager textureManager)
+		public void renderImage(Font font, int x, int y, PoseStack poseStack, ItemRenderer itemRenderer_, int zIndex)
 		{
 			ItemStack itemStack = foodTooltip.itemStack;
 			if (!shouldShowTooltip(itemStack))
@@ -289,7 +288,7 @@ public class TooltipOverlayHandler
 		if (event.isCanceled())
 			return;
 
-		ItemStack hoveredStack = event.getStack();
+		ItemStack hoveredStack = event.getItemStack();
 		if (!shouldShowTooltip(hoveredStack))
 			return;
 
