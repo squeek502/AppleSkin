@@ -16,6 +16,9 @@ public class FoodHelper
 {
 	public static boolean isFood(ItemStack itemStack)
 	{
+		if (itemStack == null)
+			return false;
+
 		return itemStack.getItem().isFood();
 	}
 
