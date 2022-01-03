@@ -1,0 +1,14 @@
+{
+  "text.autoconfig.appleskin.title": "AppleSkin",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltip": "Bilgi çubuğunda besin değerlerini göster",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways": "Bilgi çubuğunda besin değerlerini her zaman göster",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay": "Eldeki yemekten düzeltilecek açlığı göster",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlayWhenOffhand": "Show overlays for food in off-hand",
+  "text.autoconfig.appleskin.option.showFoodHealthHudOverlay": "Tahmini can katmanını göster",
+  "text.autoconfig.appleskin.option.showFoodExhaustionHudUnderlay": "Yorgunluk alt katmanını göster",
+  "text.autoconfig.appleskin.option.showSaturationHudOverlay": "Doygunluk katmanını göster",
+  "text.autoconfig.appleskin.option.showFoodDebugInfo": "Hata Ayıklama Ekranı'nda besin değerlerini göster",
+  "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay": "Minecraft'a uyacak ekran simgelerini hareketlendir",
+  "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay": "Animate HUD icons to match Minecraft",
+  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "Yanıp sönen ekran simgelerinin mak. alfa değeri"
+}
