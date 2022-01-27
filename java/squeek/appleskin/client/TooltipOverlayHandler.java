@@ -12,6 +12,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderTooltipEvent;
@@ -27,6 +28,7 @@ import squeek.appleskin.helpers.FoodHelper;
 import squeek.appleskin.helpers.KeyHelper;
 
 import java.util.List;
+import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
 public class TooltipOverlayHandler
@@ -84,20 +86,40 @@ public class TooltipOverlayHandler
 		int shankPartial;
 	}
 
-	// Bind to text line, because food overlay must apply line offset of all case.
-	static class FoodOverlayTextComponent extends StringTextComponent
+	// We set a special font into placeholder text, so font will bind a food overlay,
+	// When the placeholder text is convert or truncation, user will restore the style.
+	static class FoodOverlayFont extends ResourceLocation
 	{
 		private FoodOverlay foodOverlay;
-
-		FoodOverlayTextComponent(FoodOverlay foodOverlay)
+		FoodOverlayFont(FoodOverlay foodOverlay)
 		{
-			super(foodOverlay.getTooltip());
+			super(Style.DEFAULT_FONT.getNamespace(), Style.DEFAULT_FONT.getPath());
 			this.foodOverlay = foodOverlay;
 		}
 
-		public FoodOverlayTextComponent copyRaw()
+		static Object getFontId(ITextProperties line)
 		{
-			return new FoodOverlayTextComponent(foodOverlay);
+			// A fast path, however not all lines conform `ITextComponent`.
+			if (line instanceof ITextComponent)
+				return ((ITextComponent)line).getStyle().getFontId();
+
+			// A slow path, only to check frist string.
+			final Object[] fontId = { Style.DEFAULT_FONT };
+			line.getComponentWithStyle(new ITextProperties.IStyledTextAcceptor<ITextProperties>() {
+				public Optional<ITextProperties> accept(Style n, String s) {
+					fontId[0] = n.getFontId();
+					return Optional.empty();
+				}
+			}, Style.EMPTY);
+			return fontId[0];
+		}
+
+		static FoodOverlay getFoodOverlay(ITextProperties line)
+		{
+			Object fontId = getFontId(line);
+			if (fontId instanceof FoodOverlayFont)
+				return ((FoodOverlayFont) fontId).foodOverlay;
+			return null;
 		}
 	}
 
@@ -185,21 +207,15 @@ public class TooltipOverlayHandler
 	public void onItemTooltip(ItemTooltipEvent event)
 	{
 		if (event.isCanceled())
-		{
 			return;
-		}
 
 		ItemStack hoveredStack = event.getItemStack();
 		if (!shouldShowTooltip(hoveredStack))
-		{
 			return;
-		}
 
 		List<ITextComponent> tooltip = event.getToolTip();
 		if (tooltip == null)
-		{
 			return;
-		}
 
 		Minecraft mc = Minecraft.getInstance();
 		FoodValues defaultFood = FoodHelper.getDefaultFoodValues(hoveredStack);
@@ -214,15 +230,15 @@ public class TooltipOverlayHandler
 		TooltipOverlayEvent.Pre prerenderEvent = new TooltipOverlayEvent.Pre(hoveredStack, defaultFood, modifiedFood);
 		MinecraftForge.EVENT_BUS.post(prerenderEvent);
 		if (prerenderEvent.isCanceled())
-		{
 			return;
-		}
 
 		FoodOverlay foodOverlay = new FoodOverlay(prerenderEvent.itemStack, defaultFood, modifiedFood, mc.player);
 		if (foodOverlay.shouldRenderHungerBars())
 		{
-			tooltip.add(new FoodOverlayTextComponent(foodOverlay));
-			tooltip.add(new FoodOverlayTextComponent(foodOverlay));
+			Style style = Style.EMPTY.setFontId(new FoodOverlayFont(foodOverlay));
+			StringTextComponent placeholder = new StringTextComponent(foodOverlay.getTooltip());
+			tooltip.add(placeholder.setStyle(style));
+			tooltip.add(placeholder.setStyle(style));
 		}
 	}
 
@@ -230,22 +246,12 @@ public class TooltipOverlayHandler
 	public void onRenderTooltip(RenderTooltipEvent.PostText event)
 	{
 		if (event.isCanceled())
-		{
 			return;
-		}
-
-		ItemStack hoveredStack = event.getStack();
-		if (!shouldShowTooltip(hoveredStack))
-		{
-			return;
-		}
 
 		Minecraft mc = Minecraft.getInstance();
 		Screen gui = mc.currentScreen;
 		if (gui == null)
-		{
 			return;
-		}
 
 		int toolTipY = event.getY();
 		int toolTipX = event.getX();
@@ -256,20 +262,17 @@ public class TooltipOverlayHandler
 		List<? extends ITextProperties> lines = event.getLines();
 		for (int i = 0; i < lines.size(); ++i)
 		{
-			ITextProperties line = lines.get(i);
-			if (line instanceof FoodOverlayTextComponent)
+			foodOverlay = FoodOverlayFont.getFoodOverlay(lines.get(i));
+			if (foodOverlay != null)
 			{
 				toolTipY += i * 10;
-				foodOverlay = ((FoodOverlayTextComponent) line).foodOverlay;
 				break;
 			}
 		}
 
 		// Not found overlay text lines, maybe some mods removed it.
 		if (foodOverlay == null)
-		{
 			return;
-		}
 
 		MatrixStack matrixStack = event.getMatrixStack();
 		ItemStack itemStack = foodOverlay.itemStack;
@@ -280,9 +283,7 @@ public class TooltipOverlayHandler
 		TooltipOverlayEvent.Render renderEvent = new TooltipOverlayEvent.Render(itemStack, toolTipX, toolTipY, matrixStack, defaultFood, modifiedFood);
 		MinecraftForge.EVENT_BUS.post(renderEvent);
 		if (renderEvent.isCanceled())
-		{
 			return;
-		}
 
 		toolTipX = renderEvent.x;
 		toolTipY = renderEvent.y;
@@ -306,7 +307,7 @@ public class TooltipOverlayHandler
 		x += (foodOverlay.hungerBars - 1) * 9;
 
 		mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
-		TextureOffsets offsets = FoodHelper.isRotten(hoveredStack) ? rottenBarTextureOffsets : normalBarTextureOffsets;
+		TextureOffsets offsets = FoodHelper.isRotten(itemStack) ? rottenBarTextureOffsets : normalBarTextureOffsets;
 		for (int i = 0; i < foodOverlay.hungerBars * 2; i += 2)
 		{
 
@@ -395,20 +396,14 @@ public class TooltipOverlayHandler
 	private boolean shouldShowTooltip(ItemStack hoveredStack)
 	{
 		if (hoveredStack.isEmpty())
-		{
 			return false;
-		}
 
 		boolean shouldShowTooltip = (ModConfig.SHOW_FOOD_VALUES_IN_TOOLTIP.get() && KeyHelper.isShiftKeyDown()) || ModConfig.ALWAYS_SHOW_FOOD_VALUES_TOOLTIP.get();
 		if (!shouldShowTooltip)
-		{
 			return false;
-		}
 
 		if (!FoodHelper.isFood(hoveredStack))
-		{
 			return false;
-		}
 
 		return true;
 	}
