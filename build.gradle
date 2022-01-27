@@ -43,6 +43,7 @@ minecraft {
 group = project.maven_group
 archivesBaseName = project.archives_base_name
 version = "mc" + project.minecraft_version + "-" + project.mod_version
+def semver_version = project.mod_version + "+mc" + project.minecraft_version
 
 sourceSets.main.java.srcDirs += 'java'
 sourceSets.main.java.srcDirs += 'apis'
@@ -53,10 +54,10 @@ dependencies {
 }
 
 processResources {
-	inputs.property "vars", project.version
+	inputs.property "vars", semver_version
 	from(sourceSets.main.resources.srcDirs) {
 		include '**/mods.toml'
-		expand 'version':project.version
+		expand 'version':semver_version
 	}
 	from(sourceSets.main.resources.srcDirs) {
 		exclude '**/mods.toml'
