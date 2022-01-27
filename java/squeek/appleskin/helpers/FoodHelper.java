@@ -120,7 +120,7 @@ public class FoodHelper
 	{
 		float health = 0;
 
-		if (!Float.isFinite(exhaustionLevel) || !Float.isFinite(exhaustionLevel))
+		if (!Float.isFinite(exhaustionLevel) || !Float.isFinite(saturationLevel))
 			return 0;
 
 		while (foodLevel >= 18)
