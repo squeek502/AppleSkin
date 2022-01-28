@@ -224,7 +224,7 @@ public class HUDOverlayHandler
 		enableAlpha(alpha);
 		RenderSystem.setShaderTexture(0, modIcons);
 
-		float modifiedSaturation = Math.min(saturationLevel + saturationGained, 20);
+		float modifiedSaturation = Math.max(0, Math.min(saturationLevel + saturationGained, 20));
 
 		int startSaturationBar = 0;
 		int endSaturationBar = (int) Math.ceil(modifiedSaturation / 2.0F);
@@ -267,15 +267,15 @@ public class HUDOverlayHandler
 
 	public static void drawHungerOverlay(int hungerRestored, int foodLevel, Minecraft mc, PoseStack poseStack, int right, int top, float alpha, boolean useRottenTextures)
 	{
-		if (hungerRestored == 0)
+		if (hungerRestored <= 0)
 			return;
 
 		enableAlpha(alpha);
 		RenderSystem.setShaderTexture(0, GuiComponent.GUI_ICONS_LOCATION);
 
-		int modifiedFood = Math.min(20, foodLevel + hungerRestored);
+		int modifiedFood = Math.max(0, Math.min(20, foodLevel + hungerRestored));
 
-		int startFoodBars = foodLevel / 2;
+		int startFoodBars = Math.max(0, foodLevel / 2);
 		int endFoodBars = (int) Math.ceil(modifiedFood / 2.0F);
 
 		int iconStartOffset = 16;
@@ -329,8 +329,8 @@ public class HUDOverlayHandler
 		int fixedModifiedHealth = (int) Math.ceil(modifiedHealth);
 		boolean isHardcore = mc.player.level != null && mc.player.level.getLevelData().isHardcore();
 
-		int startHealthBars = (int) (Math.ceil(health) / 2.0F);
-		int endHealthBars = (int) Math.ceil(modifiedHealth / 2.0F);
+		int startHealthBars = (int) Math.max(0, (Math.ceil(health) / 2.0F));
+		int endHealthBars = (int) Math.max(0, Math.ceil(modifiedHealth / 2.0F));
 
 		int iconStartOffset = 16;
 		int iconSize = 9;

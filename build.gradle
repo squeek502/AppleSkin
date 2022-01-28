@@ -42,6 +42,7 @@ minecraft {
 group = project.maven_group
 archivesBaseName = project.archives_base_name
 version = "mc" + project.minecraft_version + "-" + project.mod_version
+def semver_version = project.mod_version + "+mc" + project.minecraft_version
 
 sourceSets.main.java.srcDirs += 'java'
 sourceSets.main.java.srcDirs += 'apis'
@@ -58,7 +59,7 @@ jar {
 			"Specification-Vendor": "squeek",
 			"Specification-Version": "1",
 			"Implementation-Title": project.name,
-			"Implementation-Version": project.mod_version,
+			"Implementation-Version": semver_version,
 			"Implementation-Vendor" :"squeek",
 			"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
 		])
