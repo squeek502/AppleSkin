@@ -71,7 +71,7 @@ jar {
 			"Specification-Vendor": "squeek",
 			"Specification-Version": "1",
 			"Implementation-Title": project.name,
-			"Implementation-Version": "${version}",
+			"Implementation-Version": semver_version,
 			"Implementation-Vendor" :"squeek",
 			"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
 		])
