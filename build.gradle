@@ -9,6 +9,7 @@ targetCompatibility = JavaVersion.VERSION_16
 group = project.maven_group
 archivesBaseName = project.archives_base_name
 version = "mc" + project.minecraft_version + "-" + project.mod_version
+def semver_version = project.mod_version + "+mc" + project.minecraft_version
 
 sourceSets.main.java.srcDirs += 'java'
 sourceSets.main.resources.srcDirs += 'resources'
@@ -35,10 +36,10 @@ dependencies {
 }
 
 processResources {
-	inputs.property "version", project.version
+	inputs.property "version", semver_version
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand "version": semver_version
 	}
 }
 
