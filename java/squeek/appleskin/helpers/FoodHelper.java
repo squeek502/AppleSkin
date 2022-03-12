@@ -133,12 +133,40 @@ public class FoodHelper
 				else
 					foodLevel -= 1;
 			}
-			if (foodLevel >= 20 && saturationLevel > 0)
+			// Without this Float.compare, it's possible for this function to get stuck in an infinite loop
+			// if saturationLevel is small enough that exhaustionLevel does not actually change representation
+			// when it's incremented. This Float.compare makes it so we treat such close-to-zero values as zero.
+			if (foodLevel >= 20 && Float.compare(saturationLevel, Float.MIN_NORMAL) > 0)
 			{
 				// fast regen health
+				//
+				// Because only health and exhaustionLevel increase in this branch,
+				// we know that we will enter this branch again and again on each iteration
+				// if exhaustionLevel is not incremented above MAX_EXHAUSTION before the
+				// next iteration.
+				//
+				// So, instead of actually performing those iterations, we can calculate
+				// the number of iterations it would take to reach max exhaustion, and
+				// add all the health/exhaustion in one go. In practice, this takes the
+				// worst-case number of iterations performed in this function from the millions
+				// all the way down to around 18.
+				//
+				// Note: Due to how floating point works, the results of actually doing the
+				// iterations and 'simulating' them using multiplication will differ. That is, small increments
+				// in a loop can end up with a different (and higher) final result than multiplication
+				// due to floating point rounding. In degenerate cases, the difference can be fairly high
+				// (when testing, I found a case that had a difference of ~0.3), but this isn't a concern in
+				// this particular instance because the 'real' difference as seen by the player
+				// would likely take hundreds of thousands of ticks to materialize (since the
+				// `limitedSaturationLevel / REGEN_EXHAUSTION_INCREMENT` value must be very
+				// small for a difference to occur at all, and therefore numIterationsUntilAboveMax would
+				// be very large).
 				float limitedSaturationLevel = Math.min(saturationLevel, REGEN_EXHAUSTION_INCREMENT);
-				health += limitedSaturationLevel / REGEN_EXHAUSTION_INCREMENT;
-				exhaustionLevel += limitedSaturationLevel;
+				float exhaustionUntilAboveMax = Math.nextUp(MAX_EXHAUSTION) - exhaustionLevel;
+				int numIterationsUntilAboveMax = Math.max(1, (int)Math.ceil(exhaustionUntilAboveMax / limitedSaturationLevel));
+
+				health += (limitedSaturationLevel / REGEN_EXHAUSTION_INCREMENT) * numIterationsUntilAboveMax;
+				exhaustionLevel += limitedSaturationLevel * numIterationsUntilAboveMax;
 			}
 			else if (foodLevel >= 18)
 			{
