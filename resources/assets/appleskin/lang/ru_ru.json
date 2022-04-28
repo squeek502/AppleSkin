@@ -1,0 +1,13 @@
+{
+  "text.autoconfig.appleskin.title": "AppleSkin",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltip": "Показывать значения сытности в подсказках",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways": "Всегда показывать значения сытности в подсказках",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay": "Показывать востановление шкалы голода держа в руке еду",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlayWhenOffhand": "Показывать наложения для еды во второй руке",
+  "text.autoconfig.appleskin.option.showFoodHealthHudOverlay": "Показывать наложение восстановления здоровья",
+  "text.autoconfig.appleskin.option.showFoodExhaustionHudUnderlay": "Показывать полосу истощения",
+  "text.autoconfig.appleskin.option.showSaturationHudOverlay": "Показывать наложение насыщения",
+  "text.autoconfig.appleskin.option.showFoodDebugInfo": "Показывать значения насыщения на экране отладки",
+  "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay": "Анимировать иконки мода подобно Minecraft",
+  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "Максимальна непрозрачность при мерцании наложения"
+}
