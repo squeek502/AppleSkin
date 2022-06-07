@@ -15,9 +15,6 @@
   ],
   "injectors": {
     "defaultRequire": 1,
-    "maxShiftBy": 2,
-    "injectionPoints": [
-      "squeek.appleskin.mixin.util.BeforeInc"
-    ]
+    "maxShiftBy": 2
   }
 }

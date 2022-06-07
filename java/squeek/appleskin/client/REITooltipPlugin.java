@@ -25,6 +25,8 @@ public class REITooltipPlugin implements REIClientPlugin
 	@Override
 	public void registerEntryRenderers(EntryRendererRegistry registry)
 	{
+		// TODO: This has regressed, see https://github.com/shedaniel/RoughlyEnoughItems/issues/645#issuecomment-1149244635
+		/*
 		registry.transformTooltip(VanillaEntryTypes.ITEM, (itemstack, mouse, tooltip) -> {
 			if (tooltip == null)
 				return null;
@@ -44,5 +46,6 @@ public class REITooltipPlugin implements REIClientPlugin
 			}
 			return tooltip;
 		});
+		*/
 	}
 }

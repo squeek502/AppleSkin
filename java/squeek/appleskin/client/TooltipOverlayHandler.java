@@ -8,13 +8,10 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.CharacterVisitor;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.OrderedText;
+import net.minecraft.text.*;
 import net.minecraft.util.Identifier;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.api.event.FoodValuesEvent;
@@ -23,6 +20,7 @@ import squeek.appleskin.api.food.FoodValues;
 import squeek.appleskin.helpers.FoodHelper;
 import squeek.appleskin.helpers.KeyHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TooltipOverlayHandler
@@ -77,20 +75,37 @@ public class TooltipOverlayHandler
 		int shankPartial;
 	}
 
+	static abstract class EmptyText implements Text
+	{
+		@Override
+		public Style getStyle()
+		{
+			return Style.EMPTY;
+		}
+
+		@Override
+		public TextContent getContent()
+		{
+			return TextContent.EMPTY;
+		}
+
+		static List<Text> emptySiblings = new ArrayList<Text>();
+
+		@Override
+		public List<Text> getSiblings()
+		{
+			return emptySiblings;
+		}
+	}
+
 	// Bind to text line, because food overlay must apply line offset of all case.
-	public static class FoodOverlayTextComponent extends LiteralText implements OrderedText
+	public static class FoodOverlayTextComponent extends EmptyText implements OrderedText
 	{
 		public FoodOverlay foodOverlay;
 
 		FoodOverlayTextComponent(FoodOverlay foodOverlay)
 		{
-			super("");
 			this.foodOverlay = foodOverlay;
-		}
-
-		public FoodOverlayTextComponent copy()
-		{
-			return new FoodOverlayTextComponent(foodOverlay);
 		}
 
 		@Override

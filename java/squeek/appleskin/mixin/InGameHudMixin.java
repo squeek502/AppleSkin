@@ -19,7 +19,7 @@ public class InGameHudMixin
 			HUDOverlayHandler.INSTANCE.onPreRender(stack);
 	}
 
-	@Inject(slice = @Slice(from = @At(value = "CONSTANT", args = "stringValue=food")), at = @At(value = "appleskin:APPLESKIN_IINC", args = "intValue=-10", ordinal = 0), method = "renderStatusBars(Lnet/minecraft/client/util/math/MatrixStack;)V")
+	@Inject(slice = @Slice(from = @At(value = "CONSTANT", args = "stringValue=food")), at = @At(value = "squeek.appleskin.mixin.util.BeforeInc", args = "intValue=-10", ordinal = 0), method = "renderStatusBars(Lnet/minecraft/client/util/math/MatrixStack;)V")
 	private void renderFoodPost(MatrixStack stack, CallbackInfo info)
 	{
 		if (HUDOverlayHandler.INSTANCE != null)
