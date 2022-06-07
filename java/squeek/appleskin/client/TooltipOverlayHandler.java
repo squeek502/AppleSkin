@@ -7,6 +7,7 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
@@ -121,7 +122,7 @@ public class TooltipOverlayHandler
 		}
 	}
 
-	static class FoodOverlay implements TooltipComponent
+	public static class FoodOverlay implements TooltipComponent, TooltipData
 	{
 		private FoodValues defaultFood;
 		private FoodValues modifiedFood;

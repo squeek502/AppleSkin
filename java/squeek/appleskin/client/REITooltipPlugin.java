@@ -16,8 +16,9 @@ public class REITooltipPlugin implements REIClientPlugin
 	// is bypassed and our custom rendering doesn't happen.
 	// We need to do the conversion before that, so we register a
 	// tooltip transformer with REI, find our FoodOverlayTextComponent and
-	// convert it into AppleSkin's custom TooltipComponent implementation and add *that*
-	// directly to REI's tooltip, so that it doesn't get converted by REI afterwards.
+	// convert it into AppleSkin's custom TooltipData implementation and add *that*
+	// directly to REI's tooltip, so that when it gets converted to a TooltipComponent
+	// later, we can handle it ourselves (see our TooltipComponentMixin).
 	//
 	// This has the potential to mess with the ordering of the AppleSkin tooltip between
 	// vanilla tooltips and REI tooltips, but that seems fine.
@@ -25,8 +26,6 @@ public class REITooltipPlugin implements REIClientPlugin
 	@Override
 	public void registerEntryRenderers(EntryRendererRegistry registry)
 	{
-		// TODO: This has regressed, see https://github.com/shedaniel/RoughlyEnoughItems/issues/645#issuecomment-1149244635
-		/*
 		registry.transformTooltip(VanillaEntryTypes.ITEM, (itemstack, mouse, tooltip) -> {
 			if (tooltip == null)
 				return null;
@@ -46,6 +45,5 @@ public class REITooltipPlugin implements REIClientPlugin
 			}
 			return tooltip;
 		});
-		*/
 	}
 }
