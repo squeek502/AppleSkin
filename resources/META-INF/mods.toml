@@ -9,7 +9,7 @@ version="${file.jarVersion}"
 displayName="AppleSkin"
 #updateJSONURL=""
 displayURL="https://github.com/squeek502/AppleSkin"
-#logoFile="appleskin.png"
+logoFile="appleskin.png"
 authors="squeek"
 description="Adds various food-related HUD improvements"
 
