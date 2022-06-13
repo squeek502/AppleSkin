@@ -9,5 +9,8 @@
   "text.autoconfig.appleskin.option.showSaturationHudOverlay": "Montrer la saturation",
   "text.autoconfig.appleskin.option.showFoodDebugInfo": "Montrer la nourriture sur l'écran de déboguage",
   "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay": "Animer les icônes sur l'ATH",
-  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "Opacité des icônes clignotantes de l'ATH"
+  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "Opacité des icônes clignotantes de l'ATH",
+
+  "modmenu.summaryTranslation.appleskin": "Adds various food-related HUD improvements",
+  "modmenu.descriptionTranslation.appleskin": "Adds various food-related HUD improvements"
 }

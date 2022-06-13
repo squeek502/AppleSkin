@@ -9,5 +9,8 @@
   "text.autoconfig.appleskin.option.showSaturationHudOverlay": "Показывать наложение насыщения",
   "text.autoconfig.appleskin.option.showFoodDebugInfo": "Показывать значения насыщения на экране отладки",
   "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay": "Анимировать иконки мода подобно Minecraft",
-  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "Максимальна непрозрачность при мерцании наложения"
+  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "Максимальная непрозрачность при мерцании наложения",
+
+  "modmenu.summaryTranslation.appleskin": "Добавляет различные улучшения для интерфейса, связанного с едой",
+  "modmenu.descriptionTranslation.appleskin": "Добавляет различные улучшения для интерфейса, связанного с едой"
 }
