@@ -9,5 +9,8 @@
   "text.autoconfig.appleskin.option.showSaturationHudOverlay": "Show saturation overlay",
   "text.autoconfig.appleskin.option.showFoodDebugInfo": "Show food values in Debug Screen",
   "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay": "Animate HUD icons to match Minecraft",
-  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "Max alpha of flashing HUD icons"
+  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "Max alpha of flashing HUD icons",
+
+  "modmenu.summaryTranslation.appleskin": "Adds various food-related HUD improvements",
+  "modmenu.descriptionTranslation.appleskin": "Adds various food-related HUD improvements"
 }
