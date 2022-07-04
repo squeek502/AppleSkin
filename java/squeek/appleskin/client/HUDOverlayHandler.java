@@ -11,6 +11,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.Difficulty;
+import org.lwjgl.opengl.GL11;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.api.event.FoodValuesEvent;
 import squeek.appleskin.api.event.HUDOverlayEvent;
@@ -29,6 +30,7 @@ public class HUDOverlayHandler
 	private float flashAlpha = 0f;
 	private byte alphaDir = 1;
 	private int foodIconsOffset;
+	private boolean needDisableBlend = false;
 
 	public int FOOD_BAR_HEIGHT = 39;
 
@@ -378,6 +380,7 @@ public class HUDOverlayHandler
 
 	private void enableAlpha(float alpha)
 	{
+		needDisableBlend = !GL11.glIsEnabled(GL11.GL_BLEND);
 		RenderSystem.enableBlend();
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
 		RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
@@ -385,8 +388,9 @@ public class HUDOverlayHandler
 
 	private void disableAlpha(float alpha)
 	{
-		RenderSystem.disableBlend();
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		if (needDisableBlend)
+			RenderSystem.disableBlend();
 	}
 
 
