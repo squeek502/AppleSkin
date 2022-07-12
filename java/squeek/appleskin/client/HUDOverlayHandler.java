@@ -13,8 +13,9 @@ import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.ForgeIngameGui;
-import net.minecraftforge.client.gui.OverlayRegistry;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.GuiOverlayManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -49,37 +50,53 @@ public class HUDOverlayHandler
 	public static void init()
 	{
 		MinecraftForge.EVENT_BUS.register(new HUDOverlayHandler());
-
-		OverlayRegistry.registerOverlayBelow(ForgeIngameGui.FOOD_LEVEL_ELEMENT, "AppleSkin Exhaustion", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
-			Minecraft mc = Minecraft.getInstance();
-			boolean isMounted = mc.player.getVehicle() instanceof LivingEntity;
-			if (!isMounted && !mc.options.hideGui && gui.shouldDrawSurvivalElements())
-			{
-				renderExhaustion(gui, mStack, partialTicks, screenWidth, screenHeight);
-			}
-		});
-
-		OverlayRegistry.registerOverlayAbove(ForgeIngameGui.FOOD_LEVEL_ELEMENT, "AppleSkin Food Overlay", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
-			Minecraft mc = Minecraft.getInstance();
-			boolean isMounted = mc.player.getVehicle() instanceof LivingEntity;
-			if (!isMounted && !mc.options.hideGui && gui.shouldDrawSurvivalElements())
-			{
-				renderFoodOrHealthOverlay(gui, mStack, partialTicks, screenWidth, screenHeight, RenderOverlayType.FOOD);
-			}
-		});
-
-		OverlayRegistry.registerOverlayAbove(ForgeIngameGui.PLAYER_HEALTH_ELEMENT, "AppleSkin Health Overlay", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
-			Minecraft mc = Minecraft.getInstance();
-			if (!mc.options.hideGui && gui.shouldDrawSurvivalElements())
-			{
-				renderFoodOrHealthOverlay(gui, mStack, partialTicks, screenWidth, screenHeight, RenderOverlayType.HEALTH);
-			}
-		});
 	}
 
-	public static void renderExhaustion(ForgeIngameGui gui, PoseStack mStack, float partialTicks, int screenWidth, int screenHeight)
+	static ResourceLocation FOOD_LEVEL_ELEMENT = new ResourceLocation("minecraft", "food_level");
+	static ResourceLocation PLAYER_HEALTH_ELEMENT = new ResourceLocation("minecraft", "player_health");
+
+	@SubscribeEvent
+	public void onRenderGuiOverlayPre(RenderGuiOverlayEvent.Pre event)
 	{
-		foodIconsOffset = gui.right_height;
+		if (event.getOverlay() == GuiOverlayManager.findOverlay(FOOD_LEVEL_ELEMENT))
+		{
+			Minecraft mc = Minecraft.getInstance();
+			ForgeGui gui = (ForgeGui) mc.gui;
+			boolean isMounted = mc.player.getVehicle() instanceof LivingEntity;
+			if (!isMounted && !mc.options.hideGui && gui.shouldDrawSurvivalElements())
+			{
+				renderExhaustion(gui, event.getPoseStack(), event.getPartialTick(), event.getWindow().getScreenWidth(), event.getWindow().getScreenHeight());
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onRenderGuiOverlayPost(RenderGuiOverlayEvent.Post event)
+	{
+		if (event.getOverlay() == GuiOverlayManager.findOverlay(FOOD_LEVEL_ELEMENT))
+		{
+			Minecraft mc = Minecraft.getInstance();
+			ForgeGui gui = (ForgeGui) mc.gui;
+			boolean isMounted = mc.player.getVehicle() instanceof LivingEntity;
+			if (!isMounted && !mc.options.hideGui && gui.shouldDrawSurvivalElements())
+			{
+				renderFoodOrHealthOverlay(gui, event.getPoseStack(), event.getPartialTick(), event.getWindow().getScreenWidth(), event.getWindow().getScreenHeight(), RenderOverlayType.FOOD);
+			}
+		}
+		else if (event.getOverlay() == GuiOverlayManager.findOverlay(PLAYER_HEALTH_ELEMENT))
+		{
+			Minecraft mc = Minecraft.getInstance();
+			ForgeGui gui = (ForgeGui) mc.gui;
+			if (!mc.options.hideGui && gui.shouldDrawSurvivalElements())
+			{
+				renderFoodOrHealthOverlay(gui, event.getPoseStack(), event.getPartialTick(), event.getWindow().getScreenWidth(), event.getWindow().getScreenHeight(), RenderOverlayType.HEALTH);
+			}
+		}
+	}
+
+	public static void renderExhaustion(ForgeGui gui, PoseStack mStack, float partialTicks, int screenWidth, int screenHeight)
+	{
+		foodIconsOffset = gui.rightHeight;
 
 		if (!ModConfig.SHOW_FOOD_EXHAUSTION_UNDERLAY.get())
 			return;
@@ -105,7 +122,7 @@ public class HUDOverlayHandler
 		FOOD,
 	}
 
-	public static void renderFoodOrHealthOverlay(ForgeIngameGui gui, PoseStack mStack, float partialTicks, int screenWidth, int screenHeight, RenderOverlayType type)
+	public static void renderFoodOrHealthOverlay(ForgeGui gui, PoseStack mStack, float partialTicks, int screenWidth, int screenHeight, RenderOverlayType type)
 	{
 		if (!shouldRenderAnyOverlays())
 			return;
@@ -156,7 +173,7 @@ public class HUDOverlayHandler
 		}
 
 		FoodValues modifiedFoodValues = FoodHelper.getModifiedFoodValues(heldItem, player);
-		FoodValuesEvent foodValuesEvent = new FoodValuesEvent(player, heldItem, FoodHelper.getDefaultFoodValues(heldItem), modifiedFoodValues);
+		FoodValuesEvent foodValuesEvent = new FoodValuesEvent(player, heldItem, FoodHelper.getDefaultFoodValues(heldItem, player), modifiedFoodValues);
 		MinecraftForge.EVENT_BUS.post(foodValuesEvent);
 		modifiedFoodValues = foodValuesEvent.modifiedFoodValues;
 
@@ -201,7 +218,7 @@ public class HUDOverlayHandler
 			float foodSaturationIncrement = modifiedFoodValues.getSaturationIncrement();
 
 			// restored hunger/saturation overlay while holding food
-			drawHungerOverlay(renderRenderEvent, mc, foodHunger, flashAlpha, FoodHelper.isRotten(heldItem));
+			drawHungerOverlay(renderRenderEvent, mc, foodHunger, flashAlpha, FoodHelper.isRotten(heldItem, player));
 
 			// The render saturation overlay event maybe cancelled by other mods
 			assert saturationRenderEvent != null;

@@ -14,27 +14,27 @@ import squeek.appleskin.api.food.FoodValues;
 
 public class FoodHelper
 {
-	public static boolean isFood(ItemStack itemStack)
+	public static boolean isFood(ItemStack itemStack, Player player)
 	{
-		return itemStack.getItem().getFoodProperties() != null;
+		return itemStack.getItem().getFoodProperties(itemStack, player) != null;
 	}
 
 	public static boolean canConsume(ItemStack itemStack, Player player)
 	{
 		// item is not a food that can be consume
-		if (!isFood(itemStack))
+		if (!isFood(itemStack, player))
 			return false;
 
-		FoodProperties itemFood = itemStack.getItem().getFoodProperties();
+		FoodProperties itemFood = itemStack.getItem().getFoodProperties(itemStack, player);
 		if (itemFood == null)
 			return false;
 
 		return player.canEat(itemFood.canAlwaysEat());
 	}
 
-	public static FoodValues getDefaultFoodValues(ItemStack itemStack)
+	public static FoodValues getDefaultFoodValues(ItemStack itemStack, Player player)
 	{
-		FoodProperties itemFood = itemStack.getItem().getFoodProperties();
+		FoodProperties itemFood = itemStack.getItem().getFoodProperties(itemStack, player);
 		int hunger = itemFood != null ? itemFood.getNutrition() : 0;
 		float saturationModifier = itemFood != null ? itemFood.getSaturationModifier() : 0;
 
@@ -46,15 +46,15 @@ public class FoodHelper
 		// Previously, this would use AppleCore to get the modified values, but since AppleCore doesn't
 		// exist on this MC version and https://github.com/MinecraftForge/MinecraftForge/pull/7266
 		// hasn't been merged, we just return the defaults here.
-		return getDefaultFoodValues(itemStack);
+		return getDefaultFoodValues(itemStack, player);
 	}
 
-	public static boolean isRotten(ItemStack itemStack)
+	public static boolean isRotten(ItemStack itemStack, Player player)
 	{
-		if (!isFood(itemStack))
+		if (!isFood(itemStack, player))
 			return false;
 
-		for (Pair<MobEffectInstance, Float> effect : itemStack.getItem().getFoodProperties().getEffects())
+		for (Pair<MobEffectInstance, Float> effect : itemStack.getItem().getFoodProperties(itemStack, player).getEffects())
 		{
 			if (effect.getFirst() != null && effect.getFirst().getEffect() != null && effect.getFirst().getEffect().getCategory() == MobEffectCategory.HARMFUL)
 			{
@@ -66,7 +66,7 @@ public class FoodHelper
 
 	public static float getEstimatedHealthIncrement(ItemStack itemStack, FoodValues modifiedFoodValues, Player player)
 	{
-		if (!isFood(itemStack))
+		if (!isFood(itemStack, player))
 			return 0;
 
 		if (!player.isHurt())
@@ -87,7 +87,7 @@ public class FoodHelper
 		}
 
 		// health for regeneration effect
-		for (Pair<MobEffectInstance, Float> effect : itemStack.getItem().getFoodProperties().getEffects())
+		for (Pair<MobEffectInstance, Float> effect : itemStack.getItem().getFoodProperties(itemStack, player).getEffects())
 		{
 			MobEffectInstance effectInstance = effect.getFirst();
 			if (effectInstance != null && effectInstance.getEffect() == MobEffects.REGENERATION)

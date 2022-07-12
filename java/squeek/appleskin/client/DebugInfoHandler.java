@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.food.FoodData;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import squeek.appleskin.ModConfig;
@@ -25,11 +25,8 @@ public class DebugInfoHandler
 	}
 
 	@SubscribeEvent
-	public void onTextRender(RenderGameOverlayEvent.Text textEvent)
+	public void onTextRender(CustomizeGuiOverlayEvent.DebugText textEvent)
 	{
-		if (textEvent.getType() != RenderGameOverlayEvent.ElementType.TEXT)
-			return;
-
 		if (!ModConfig.SHOW_FOOD_DEBUG_INFO.get())
 			return;
 

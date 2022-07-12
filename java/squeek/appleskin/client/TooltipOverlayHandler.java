@@ -15,7 +15,7 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -38,7 +38,11 @@ public class TooltipOverlayHandler
 	public static void init()
 	{
 		MinecraftForge.EVENT_BUS.register(new TooltipOverlayHandler());
-		MinecraftForgeClient.registerTooltipComponentFactory(FoodTooltip.class, FoodTooltipRenderer::new);
+	}
+
+	public static void register(RegisterClientTooltipComponentFactoriesEvent event)
+	{
+		event.register(FoodTooltip.class, FoodTooltipRenderer::new);
 	}
 
 	private static final TextureOffsets normalBarTextureOffsets = new TextureOffsets();
@@ -119,10 +123,10 @@ public class TooltipOverlayHandler
 		public void renderImage(Font font, int x, int y, PoseStack poseStack, ItemRenderer itemRenderer_, int zIndex)
 		{
 			ItemStack itemStack = foodTooltip.itemStack;
-			if (!shouldShowTooltip(itemStack))
+			Minecraft mc = Minecraft.getInstance();
+			if (!shouldShowTooltip(itemStack, mc.player))
 				return;
 
-			Minecraft mc = Minecraft.getInstance();
 			Screen gui = mc.screen;
 			if (gui == null)
 				return;
@@ -154,7 +158,7 @@ public class TooltipOverlayHandler
 			offsetX += (foodTooltip.hungerBars - 1) * 9;
 
 			RenderSystem.setShaderTexture(0, GuiComponent.GUI_ICONS_LOCATION);
-			TextureOffsets offsets = FoodHelper.isRotten(itemStack) ? rottenBarTextureOffsets : normalBarTextureOffsets;
+			TextureOffsets offsets = FoodHelper.isRotten(itemStack, mc.player) ? rottenBarTextureOffsets : normalBarTextureOffsets;
 			for (int i = 0; i < foodTooltip.hungerBars * 2; i += 2)
 			{
 
@@ -289,11 +293,11 @@ public class TooltipOverlayHandler
 			return;
 
 		ItemStack hoveredStack = event.getItemStack();
-		if (!shouldShowTooltip(hoveredStack))
+		Minecraft mc = Minecraft.getInstance();
+		if (!shouldShowTooltip(hoveredStack, mc.player))
 			return;
 
-		Minecraft mc = Minecraft.getInstance();
-		FoodValues defaultFood = FoodHelper.getDefaultFoodValues(hoveredStack);
+		FoodValues defaultFood = FoodHelper.getDefaultFoodValues(hoveredStack, mc.player);
 		FoodValues modifiedFood = FoodHelper.getModifiedFoodValues(hoveredStack, mc.player);
 
 		FoodValuesEvent foodValuesEvent = new FoodValuesEvent(mc.player, hoveredStack, defaultFood, modifiedFood);
@@ -312,7 +316,7 @@ public class TooltipOverlayHandler
 			event.getTooltipElements().add(Either.right(foodTooltip));
 	}
 
-	private static boolean shouldShowTooltip(ItemStack hoveredStack)
+	private static boolean shouldShowTooltip(ItemStack hoveredStack, Player player)
 	{
 		if (hoveredStack.isEmpty())
 			return false;
@@ -321,7 +325,7 @@ public class TooltipOverlayHandler
 		if (!shouldShowTooltip)
 			return false;
 
-		if (!FoodHelper.isFood(hoveredStack))
+		if (!FoodHelper.isFood(hoveredStack, player))
 			return false;
 
 		return true;

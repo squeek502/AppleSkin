@@ -1,11 +1,13 @@
 package squeek.appleskin;
 
+import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +24,11 @@ public class AppleSkin
 	public AppleSkin()
 	{
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::preInit);
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::preInitClient);
+		if (FMLEnvironment.dist.isClient())
+		{
+			FMLJavaModLoadingContext.get().getModEventBus().addListener(this::preInitClient);
+			FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegisterClientTooltipComponentFactories);
+		}
 		ModLoadingContext.get().registerConfig(
 			net.minecraftforge.fml.config.ModConfig.Type.CLIENT,
 			ModConfig.SPEC
@@ -43,5 +49,10 @@ public class AppleSkin
 		DebugInfoHandler.init();
 		HUDOverlayHandler.init();
 		TooltipOverlayHandler.init();
+	}
+
+	private void onRegisterClientTooltipComponentFactories(RegisterClientTooltipComponentFactoriesEvent event)
+	{
+		TooltipOverlayHandler.register(event);
 	}
 }
