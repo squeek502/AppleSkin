@@ -3,7 +3,7 @@ package squeek.appleskin.network;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.NetworkDirection;
@@ -41,7 +41,7 @@ public class SyncHandler
 	private static final Map<UUID, Float> lastExhaustionLevels = new HashMap<>();
 
 	@SubscribeEvent
-	public void onLivingUpdateEvent(LivingUpdateEvent event)
+	public void onLivingTickEvent(LivingTickEvent event)
 	{
 		if (!(event.getEntity() instanceof ServerPlayer))
 			return;
@@ -69,10 +69,10 @@ public class SyncHandler
 	@SubscribeEvent
 	public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
 	{
-		if (!(event.getPlayer() instanceof ServerPlayer))
+		if (!(event.getEntity() instanceof ServerPlayer))
 			return;
 
-		lastSaturationLevels.remove(event.getPlayer().getUUID());
-		lastExhaustionLevels.remove(event.getPlayer().getUUID());
+		lastSaturationLevels.remove(event.getEntity().getUUID());
+		lastExhaustionLevels.remove(event.getEntity().getUUID());
 	}
 }
