@@ -156,7 +156,7 @@ public class HUDOverlayHandler
 		}
 
 		FoodValues modifiedFoodValues = FoodHelper.getModifiedFoodValues(heldItem, player);
-		FoodValuesEvent foodValuesEvent = new FoodValuesEvent(player, heldItem, FoodHelper.getDefaultFoodValues(heldItem), modifiedFoodValues);
+		FoodValuesEvent foodValuesEvent = new FoodValuesEvent(player, heldItem, FoodHelper.getDefaultFoodValues(heldItem, player), modifiedFoodValues);
 		MinecraftForge.EVENT_BUS.post(foodValuesEvent);
 		modifiedFoodValues = foodValuesEvent.modifiedFoodValues;
 
@@ -201,7 +201,7 @@ public class HUDOverlayHandler
 			float foodSaturationIncrement = modifiedFoodValues.getSaturationIncrement();
 
 			// restored hunger/saturation overlay while holding food
-			drawHungerOverlay(renderRenderEvent, mc, foodHunger, flashAlpha, FoodHelper.isRotten(heldItem));
+			drawHungerOverlay(renderRenderEvent, mc, foodHunger, flashAlpha, FoodHelper.isRotten(heldItem, player));
 
 			// The render saturation overlay event maybe cancelled by other mods
 			assert saturationRenderEvent != null;
