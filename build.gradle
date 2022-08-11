@@ -57,17 +57,21 @@ jar {
 			"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
 		])
 	}
+
+	finalizedBy 'reobfJar'
 }
 
 task sourcesJar(type: Jar) {
-	classifier = "sources"
+	archiveClassifier.set("sources")
 	from sourceSets.main.allJava
 }
 
 task apiJar(type: Jar) {
-	classifier = "api"
+	archiveClassifier.set("api")
 	from sourceSets.main.output
 	include "squeek/appleskin/api/**"
+
+	finalizedBy 'reobfJar'
 }
 
 artifacts {
@@ -75,3 +79,26 @@ artifacts {
 	archives apiJar
 }
 
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			groupId = group
+			artifactId = archivesBaseName
+
+			// add all the jars that should be included when publishing to maven
+			artifact(jar)
+			artifact(sourcesJar)
+			artifact(apiJar)
+		}
+	}
+
+	repositories {
+		maven {
+			url = project.findProperty("maven.url") ?: System.getenv("MAVEN_URL")
+			credentials {
+				username=project.findProperty("maven.user") ?: System.getenv("MAVEN_USER")
+				password=project.findProperty("maven.password") ?: System.getenv("MAVEN_PASSWORD")
+			}
+		}
+	}
+}
