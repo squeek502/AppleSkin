@@ -5,7 +5,7 @@ license="The Unlicense"
 
 [[mods]]
 modId="appleskin"
-version="${version}"
+version="${file.jarVersion}"
 displayName="AppleSkin"
 #updateJSONURL=""
 displayURL="https://github.com/squeek502/AppleSkin"

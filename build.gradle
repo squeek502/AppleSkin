@@ -1,11 +1,10 @@
 buildscript {
 	repositories {
 		maven { url = 'https://files.minecraftforge.net/maven' }
-		jcenter()
 		mavenCentral()
 	}
 	dependencies {
-		classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+		classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
 	}
 }
 apply plugin: 'net.minecraftforge.gradle'
@@ -53,17 +52,6 @@ dependencies {
 	minecraft 'net.minecraftforge:forge:'+minecraft_version+'-'+forge_version
 }
 
-processResources {
-	inputs.property "vars", semver_version
-	from(sourceSets.main.resources.srcDirs) {
-		include '**/mods.toml'
-		expand 'version':semver_version
-	}
-	from(sourceSets.main.resources.srcDirs) {
-		exclude '**/mods.toml'
-	}
-}
-
 jar {
 	manifest {
 		attributes([
@@ -79,12 +67,12 @@ jar {
 }
 
 task sourcesJar(type: Jar) {
-	classifier = "sources"
+	archiveClassifier.set("sources")
 	from sourceSets.main.allJava
 }
 
 task apiJar(type: Jar) {
-	classifier = "api"
+	archiveClassifier.set("api")
 	from sourceSets.main.output
 	include "squeek/appleskin/api/**"
 }
