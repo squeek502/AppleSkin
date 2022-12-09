@@ -99,12 +99,8 @@ public class FoodHelper
 				int amplifier = effectInstance.getAmplifier();
 				int duration = effectInstance.getDuration();
 
-				// when is a permanent status effect, just have to make a big duration
-				if (effectInstance.isPermanent())
-					duration = Integer.MAX_VALUE;
-
 				// Refer: https://minecraft.fandom.com/wiki/Regeneration
-				// Refer: net.minecraft.world.effect.MobEffect.isDurationEffectTick
+				// Refer: net.minecraft.entity.effect.StatusEffect.canApplyUpdateEffect
 				healthIncrement += (float) Math.floor(duration / Math.max(50 >> amplifier, 1));
 				break;
 			}
