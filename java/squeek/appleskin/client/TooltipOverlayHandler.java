@@ -192,10 +192,10 @@ public class TooltipOverlayHandler
 		}
 
 		@Override
-		public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z)
+		public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer)
 		{
 			if (TooltipOverlayHandler.INSTANCE != null)
-				TooltipOverlayHandler.INSTANCE.onRenderTooltip(matrices, this, x, y, z, textRenderer);
+				TooltipOverlayHandler.INSTANCE.onRenderTooltip(matrices, this, x, y, 0, textRenderer);
 		}
 	}
 
