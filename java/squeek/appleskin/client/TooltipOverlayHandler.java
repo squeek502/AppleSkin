@@ -120,7 +120,7 @@ public class TooltipOverlayHandler
 		}
 
 		@Override
-		public void renderImage(Font font, int x, int y, PoseStack poseStack, ItemRenderer itemRenderer_, int zIndex)
+		public void renderImage(Font font, int x, int y, PoseStack poseStack, ItemRenderer itemRenderer_)
 		{
 			ItemStack itemStack = foodTooltip.itemStack;
 			Minecraft mc = Minecraft.getInstance();
@@ -163,26 +163,26 @@ public class TooltipOverlayHandler
 			{
 
 				if (modifiedHunger < 0)
-					GuiComponent.blit(poseStack, offsetX, offsetY, zIndex, offsets.containerNegativeHunger, 27, 9, 9, 256, 256);
+					GuiComponent.blit(poseStack, offsetX, offsetY, 0, offsets.containerNegativeHunger, 27, 9, 9, 256, 256);
 				else if (modifiedHunger > defaultHunger && defaultHunger <= i)
-					GuiComponent.blit(poseStack, offsetX, offsetY, zIndex, offsets.containerExtraHunger, 27, 9, 9, 256, 256);
+					GuiComponent.blit(poseStack, offsetX, offsetY, 0, offsets.containerExtraHunger, 27, 9, 9, 256, 256);
 				else if (modifiedHunger > i + 1 || defaultHunger == modifiedHunger)
-					GuiComponent.blit(poseStack, offsetX, offsetY, zIndex, offsets.containerNormalHunger, 27, 9, 9, 256, 256);
+					GuiComponent.blit(poseStack, offsetX, offsetY, 0, offsets.containerNormalHunger, 27, 9, 9, 256, 256);
 				else if (modifiedHunger == i + 1)
-					GuiComponent.blit(poseStack, offsetX, offsetY, zIndex, offsets.containerPartialHunger, 27, 9, 9, 256, 256);
+					GuiComponent.blit(poseStack, offsetX, offsetY, 0, offsets.containerPartialHunger, 27, 9, 9, 256, 256);
 				else
 				{
 					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, .5F);
-					GuiComponent.blit(poseStack, offsetX, offsetY, zIndex, offsets.containerMissingHunger, 27, 9, 9, 256, 256);
+					GuiComponent.blit(poseStack, offsetX, offsetY, 0, offsets.containerMissingHunger, 27, 9, 9, 256, 256);
 					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 				}
 
 				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, .25F);
-				GuiComponent.blit(poseStack, offsetX, offsetY, zIndex, defaultHunger - 1 == i ? offsets.shankMissingPartial : offsets.shankMissingFull, 27, 9, 9, 256, 256);
+				GuiComponent.blit(poseStack, offsetX, offsetY, 0, defaultHunger - 1 == i ? offsets.shankMissingPartial : offsets.shankMissingFull, 27, 9, 9, 256, 256);
 				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
 				if (modifiedHunger > i)
-					GuiComponent.blit(poseStack, offsetX, offsetY, zIndex, modifiedHunger - 1 == i ? offsets.shankPartial : offsets.shankFull, 27, 9, 9, 256, 256);
+					GuiComponent.blit(poseStack, offsetX, offsetY, 0, modifiedHunger - 1 == i ? offsets.shankPartial : offsets.shankFull, 27, 9, 9, 256, 256);
 
 				offsetX -= 9;
 			}
@@ -190,7 +190,7 @@ public class TooltipOverlayHandler
 			{
 				offsetX += 18;
 				poseStack.pushPose();
-				poseStack.translate(offsetX, offsetY, zIndex);
+				poseStack.translate(offsetX, offsetY, 0);
 				poseStack.scale(0.75f, 0.75f, 0.75f);
 				font.drawShadow(poseStack, foodTooltip.hungerBarsText, 2, 2, 0xFFAAAAAA, false);
 				poseStack.popPose();
@@ -215,7 +215,7 @@ public class TooltipOverlayHandler
 				if (shouldBeFaded)
 					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, .5F);
 
-				GuiComponent.blit(poseStack, offsetX, offsetY, zIndex, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7, 256, 256);
+				GuiComponent.blit(poseStack, offsetX, offsetY, 0, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7, 256, 256);
 
 				if (shouldBeFaded)
 					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -226,7 +226,7 @@ public class TooltipOverlayHandler
 			{
 				offsetX += 14;
 				poseStack.pushPose();
-				poseStack.translate(offsetX, offsetY, zIndex);
+				poseStack.translate(offsetX, offsetY, 0);
 				poseStack.scale(0.75f, 0.75f, 0.75f);
 				font.drawShadow(poseStack, foodTooltip.saturationBarsText, 2, 1, 0xFFAAAAAA, false);
 				poseStack.popPose();
