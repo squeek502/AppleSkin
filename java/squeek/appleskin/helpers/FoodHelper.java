@@ -38,8 +38,8 @@ public class FoodHelper
 	public static FoodValues getDefaultFoodValues(ItemStack itemStack)
 	{
 		FoodComponent itemFood = itemStack.getItem().getFoodComponent();
-		int hunger = itemFood.getHunger();
-		float saturationModifier = itemFood.getSaturationModifier();
+		int hunger = itemFood != null ? itemFood.getHunger() : 0;
+		float saturationModifier = itemFood != null ? itemFood.getSaturationModifier() : 0;
 		return new FoodValues(hunger, saturationModifier);
 	}
 
