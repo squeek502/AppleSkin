@@ -1,7 +1,7 @@
 package squeek.appleskin.api.event;
 
 import net.fabricmc.fabric.api.event.Event;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
 import squeek.appleskin.api.food.FoodValues;
 import squeek.appleskin.api.handler.EventHandler;
@@ -27,17 +27,17 @@ public class TooltipOverlayEvent
 	 */
 	public static class Render extends TooltipOverlayEvent
 	{
-		public Render(ItemStack itemStack, int x, int y, MatrixStack matrixStack, FoodValues defaultFood, FoodValues modifiedFood)
+		public Render(ItemStack itemStack, int x, int y, DrawContext context, FoodValues defaultFood, FoodValues modifiedFood)
 		{
 			super(itemStack, defaultFood, modifiedFood);
-			this.matrixStack = matrixStack;
+			this.context = context;
 			this.x = x;
 			this.y = y;
 		}
 
 		public int x;
 		public int y;
-		public MatrixStack matrixStack;
+		public DrawContext context;
 
 		public static Event<EventHandler<Render>> EVENT = EventHandler.createArrayBacked();
 	}
