@@ -1,7 +1,7 @@
 package squeek.appleskin.api.event;
 
 import net.fabricmc.fabric.api.event.Event;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
 import squeek.appleskin.api.food.FoodValues;
 import squeek.appleskin.api.handler.EventHandler;
@@ -13,9 +13,9 @@ public class HUDOverlayEvent
 	 */
 	public static class Exhaustion extends HUDOverlayEvent
 	{
-		public Exhaustion(float exhaustion, int x, int y, MatrixStack matrixStack)
+		public Exhaustion(float exhaustion, int x, int y, DrawContext context)
 		{
-			super(x, y, matrixStack);
+			super(x, y, context);
 			this.exhaustion = exhaustion;
 		}
 
@@ -29,9 +29,9 @@ public class HUDOverlayEvent
 	 */
 	public static class Saturation extends HUDOverlayEvent
 	{
-		public Saturation(float saturationLevel, int x, int y, MatrixStack matrixStack)
+		public Saturation(float saturationLevel, int x, int y, DrawContext context)
 		{
-			super(x, y, matrixStack);
+			super(x, y, context);
 			this.saturationLevel = saturationLevel;
 		}
 
@@ -45,9 +45,9 @@ public class HUDOverlayEvent
 	 */
 	public static class HungerRestored extends HUDOverlayEvent
 	{
-		public HungerRestored(int foodLevel, ItemStack itemStack, FoodValues foodValues, int x, int y, MatrixStack matrixStack)
+		public HungerRestored(int foodLevel, ItemStack itemStack, FoodValues foodValues, int x, int y, DrawContext context)
 		{
-			super(x, y, matrixStack);
+			super(x, y, context);
 			this.currentFoodLevel = foodLevel;
 			this.itemStack = itemStack;
 			this.foodValues = foodValues;
@@ -65,9 +65,9 @@ public class HUDOverlayEvent
 	 */
 	public static class HealthRestored extends HUDOverlayEvent
 	{
-		public HealthRestored(float modifiedHealth, ItemStack itemStack, FoodValues foodValues, int x, int y, MatrixStack matrixStack)
+		public HealthRestored(float modifiedHealth, ItemStack itemStack, FoodValues foodValues, int x, int y, DrawContext context)
 		{
-			super(x, y, matrixStack);
+			super(x, y, context);
 			this.modifiedHealth = modifiedHealth;
 			this.itemStack = itemStack;
 			this.foodValues = foodValues;
@@ -80,15 +80,15 @@ public class HUDOverlayEvent
 		public static Event<EventHandler<HealthRestored>> EVENT = EventHandler.createArrayBacked();
 	}
 
-	private HUDOverlayEvent(int x, int y, MatrixStack matrixStack)
+	private HUDOverlayEvent(int x, int y, DrawContext context)
 	{
 		this.x = x;
 		this.y = y;
-		this.matrixStack = matrixStack;
+		this.context = context;
 	}
 
 	public int x;
 	public int y;
-	public MatrixStack matrixStack;
+	public DrawContext context;
 	public boolean isCanceled = false;
 }

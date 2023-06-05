@@ -2,24 +2,22 @@ package squeek.appleskin.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.TextVisitFactory;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.*;
-import net.minecraft.util.Identifier;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.api.event.FoodValuesEvent;
 import squeek.appleskin.api.event.TooltipOverlayEvent;
 import squeek.appleskin.api.food.FoodValues;
 import squeek.appleskin.helpers.FoodHelper;
 import squeek.appleskin.helpers.KeyHelper;
+import squeek.appleskin.helpers.TextureHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +26,6 @@ public class TooltipOverlayHandler
 {
 	public static TooltipOverlayHandler INSTANCE;
 
-	private static Identifier modIcons = new Identifier("appleskin", "textures/icons.png");
 	public static final int TOOLTIP_REAL_HEIGHT_OFFSET_BOTTOM = 3;
 	public static final int TOOLTIP_REAL_HEIGHT_OFFSET_TOP = -3;
 	public static final int TOOLTIP_REAL_WIDTH_OFFSET_RIGHT = 3;
@@ -192,10 +189,10 @@ public class TooltipOverlayHandler
 		}
 
 		@Override
-		public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer)
+		public void drawItems(TextRenderer textRenderer, int x, int y, DrawContext context)
 		{
 			if (TooltipOverlayHandler.INSTANCE != null)
-				TooltipOverlayHandler.INSTANCE.onRenderTooltip(matrices, this, x, y, 0, textRenderer);
+				TooltipOverlayHandler.INSTANCE.onRenderTooltip(context, this, x, y, 0, textRenderer);
 		}
 	}
 
@@ -235,17 +232,18 @@ public class TooltipOverlayHandler
 		}
 	}
 
-	public void onRenderTooltip(MatrixStack matrixStack, FoodOverlay foodOverlay, int toolTipX, int toolTipY, int tooltipZ, TextRenderer textRenderer)
+	public void onRenderTooltip(DrawContext context, FoodOverlay foodOverlay, int toolTipX, int toolTipY, int tooltipZ, TextRenderer textRenderer)
 	{
 		// When matrixStack or tooltip is null an unknown exception occurs.
 		// If ModConfig.INSTANCE is null then we're probably still in the init phase
-		if (matrixStack == null || ModConfig.INSTANCE == null)
+		if (context == null || ModConfig.INSTANCE == null)
 			return;
 
 		// Not found overlay text lines, maybe some mods removed it.
 		if (foodOverlay == null)
 			return;
 
+		MatrixStack matrixStack;
 		ItemStack itemStack = foodOverlay.itemStack;
 
 		FoodValues defaultFood = foodOverlay.defaultFood;
@@ -255,7 +253,7 @@ public class TooltipOverlayHandler
 		int y = toolTipY;
 
 		// Notify everyone that we should render tooltip overlay
-		TooltipOverlayEvent.Render renderEvent = new TooltipOverlayEvent.Render(itemStack, x, y, matrixStack, defaultFood, modifiedFood);
+		TooltipOverlayEvent.Render renderEvent = new TooltipOverlayEvent.Render(itemStack, x, y, context, defaultFood, modifiedFood);
 		TooltipOverlayEvent.Render.EVENT.invoker().interact(renderEvent);
 		if (renderEvent.isCanceled)
 			return;
@@ -263,8 +261,9 @@ public class TooltipOverlayHandler
 		x = renderEvent.x;
 		y = renderEvent.y;
 
+		context = renderEvent.context;
 		itemStack = renderEvent.itemStack;
-		matrixStack = renderEvent.matrixStack;
+		matrixStack = context.getMatrices();
 
 		int defaultFoodHunger = defaultFood.hunger;
 		int modifiedFoodHunger = modifiedFood.hunger;
@@ -276,32 +275,31 @@ public class TooltipOverlayHandler
 		// Render from right to left so that the icons 'face' the right way
 		x += (foodOverlay.hungerBars - 1) * 9;
 
-		RenderSystem.setShaderTexture(0, Screen.GUI_ICONS_TEXTURE);
 		TextureOffsets offsets = FoodHelper.isRotten(itemStack) ? rottenBarTextureOffsets : normalBarTextureOffsets;
 		for (int i = 0; i < foodOverlay.hungerBars * 2; i += 2)
 		{
 
 			if (modifiedFoodHunger < 0)
-				DrawableHelper.drawTexture(matrixStack, x, y, tooltipZ, offsets.containerNegativeHunger, 27, 9, 9, 256, 256);
+				context.drawTexture(TextureHelper.MC_ICONS, x, y, tooltipZ, offsets.containerNegativeHunger, 27, 9, 9, 256, 256);
 			else if (modifiedFoodHunger > defaultFoodHunger && defaultFoodHunger <= i)
-				DrawableHelper.drawTexture(matrixStack, x, y, tooltipZ, offsets.containerExtraHunger, 27, 9, 9, 256, 256);
+				context.drawTexture(TextureHelper.MC_ICONS, x, y, tooltipZ, offsets.containerExtraHunger, 27, 9, 9, 256, 256);
 			else if (modifiedFoodHunger > i + 1 || defaultFoodHunger == modifiedFoodHunger)
-				DrawableHelper.drawTexture(matrixStack, x, y, tooltipZ, offsets.containerNormalHunger, 27, 9, 9, 256, 256);
+				context.drawTexture(TextureHelper.MC_ICONS, x, y, tooltipZ, offsets.containerNormalHunger, 27, 9, 9, 256, 256);
 			else if (modifiedFoodHunger == i + 1)
-				DrawableHelper.drawTexture(matrixStack, x, y, tooltipZ, offsets.containerPartialHunger, 27, 9, 9, 256, 256);
+				context.drawTexture(TextureHelper.MC_ICONS, x, y, tooltipZ, offsets.containerPartialHunger, 27, 9, 9, 256, 256);
 			else
 			{
 				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, .5F);
-				DrawableHelper.drawTexture(matrixStack, x, y, tooltipZ, offsets.containerMissingHunger, 27, 9, 9, 256, 256);
+				context.drawTexture(TextureHelper.MC_ICONS, x, y, tooltipZ, offsets.containerMissingHunger, 27, 9, 9, 256, 256);
 				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 			}
 
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, .25F);
-			DrawableHelper.drawTexture(matrixStack, x, y, tooltipZ, defaultFoodHunger - 1 == i ? offsets.shankMissingPartial : offsets.shankMissingFull, 27, 9, 9, 256, 256);
+			context.drawTexture(TextureHelper.MC_ICONS, x, y, tooltipZ, defaultFoodHunger - 1 == i ? offsets.shankMissingPartial : offsets.shankMissingFull, 27, 9, 9, 256, 256);
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
 			if (modifiedFoodHunger > i)
-				DrawableHelper.drawTexture(matrixStack, x, y, tooltipZ, modifiedFoodHunger - 1 == i ? offsets.shankPartial : offsets.shankFull, 27, 9, 9, 256, 256);
+				context.drawTexture(TextureHelper.MC_ICONS, x, y, tooltipZ, modifiedFoodHunger - 1 == i ? offsets.shankPartial : offsets.shankFull, 27, 9, 9, 256, 256);
 
 			x -= 9;
 		}
@@ -311,7 +309,7 @@ public class TooltipOverlayHandler
 			matrixStack.push();
 			matrixStack.translate(x, y, tooltipZ);
 			matrixStack.scale(0.75f, 0.75f, 0.75f);
-			textRenderer.drawWithShadow(matrixStack, foodOverlay.hungerBarsText, 2, 2, 0xFFAAAAAA);
+			context.drawTextWithShadow(textRenderer, foodOverlay.hungerBarsText, 2, 2, 0xFFAAAAAA);
 			matrixStack.pop();
 		}
 
@@ -325,7 +323,6 @@ public class TooltipOverlayHandler
 		x += (foodOverlay.saturationBars - 1) * 7;
 
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.setShaderTexture(0, modIcons);
 		for (int i = 0; i < foodOverlay.saturationBars * 2; i += 2)
 		{
 			float effectiveSaturationOfBar = (absModifiedSaturationIncrement - i) / 2f;
@@ -334,7 +331,7 @@ public class TooltipOverlayHandler
 			if (shouldBeFaded)
 				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, .5F);
 
-			DrawableHelper.drawTexture(matrixStack, x, y, tooltipZ, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7, 256, 256);
+			context.drawTexture(TextureHelper.MOD_ICONS, x, y, tooltipZ, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7, 256, 256);
 
 			if (shouldBeFaded)
 				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -347,12 +344,13 @@ public class TooltipOverlayHandler
 			matrixStack.push();
 			matrixStack.translate(x, y, tooltipZ);
 			matrixStack.scale(0.75f, 0.75f, 0.75f);
-			textRenderer.drawWithShadow(matrixStack, foodOverlay.saturationBarsText, 2, 1, 0xFFAAAAAA);
+			context.drawTextWithShadow(textRenderer, foodOverlay.saturationBarsText, 2, 1, 0xFFAAAAAA);
 			matrixStack.pop();
 		}
 
 		RenderSystem.disableBlend();
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShaderTexture(0, TextureHelper.MC_ICONS);
 
 		// reset to drawHoveringText state
 		RenderSystem.disableDepthTest();
