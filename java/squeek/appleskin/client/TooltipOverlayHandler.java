@@ -5,11 +5,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
@@ -20,17 +18,16 @@ import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import squeek.appleskin.ModConfig;
-import squeek.appleskin.ModInfo;
 import squeek.appleskin.api.event.FoodValuesEvent;
 import squeek.appleskin.api.event.TooltipOverlayEvent;
 import squeek.appleskin.api.food.FoodValues;
 import squeek.appleskin.helpers.FoodHelper;
 import squeek.appleskin.helpers.KeyHelper;
+import squeek.appleskin.helpers.TextureHelper;
 
 @OnlyIn(Dist.CLIENT)
 public class TooltipOverlayHandler
 {
-	private static ResourceLocation modIcons = new ResourceLocation(ModInfo.MODID_LOWER, "textures/icons.png");
 	public static final int TOOLTIP_REAL_HEIGHT_OFFSET_BOTTOM = 3;
 	public static final int TOOLTIP_REAL_HEIGHT_OFFSET_TOP = -3;
 	public static final int TOOLTIP_REAL_WIDTH_OFFSET_RIGHT = 3;
@@ -120,7 +117,7 @@ public class TooltipOverlayHandler
 		}
 
 		@Override
-		public void renderImage(Font font, int x, int y, PoseStack poseStack, ItemRenderer itemRenderer_)
+		public void renderImage(Font font, int x, int y, GuiGraphics guiGraphics)
 		{
 			ItemStack itemStack = foodTooltip.itemStack;
 			Minecraft mc = Minecraft.getInstance();
@@ -135,14 +132,14 @@ public class TooltipOverlayHandler
 			FoodValues modifiedFood = foodTooltip.modifiedFood;
 
 			// Notify everyone that we should render tooltip overlay
-			TooltipOverlayEvent.Render renderEvent = new TooltipOverlayEvent.Render(itemStack, x, y, poseStack, defaultFood, modifiedFood);
+			TooltipOverlayEvent.Render renderEvent = new TooltipOverlayEvent.Render(itemStack, x, y, guiGraphics, defaultFood, modifiedFood);
 			MinecraftForge.EVENT_BUS.post(renderEvent);
 			if (renderEvent.isCanceled())
 				return;
 
 			x = renderEvent.x;
 			y = renderEvent.y;
-			poseStack = renderEvent.matrixStack;
+			guiGraphics = renderEvent.guiGraphics;
 
 			RenderSystem.enableDepthTest();
 			RenderSystem.enableBlend();
@@ -157,42 +154,42 @@ public class TooltipOverlayHandler
 			// Render from right to left so that the icons 'face' the right way
 			offsetX += (foodTooltip.hungerBars - 1) * 9;
 
-			RenderSystem.setShaderTexture(0, GuiComponent.GUI_ICONS_LOCATION);
 			TextureOffsets offsets = FoodHelper.isRotten(itemStack, mc.player) ? rottenBarTextureOffsets : normalBarTextureOffsets;
 			for (int i = 0; i < foodTooltip.hungerBars * 2; i += 2)
 			{
 
 				if (modifiedHunger < 0)
-					GuiComponent.blit(poseStack, offsetX, offsetY, 0, offsets.containerNegativeHunger, 27, 9, 9, 256, 256);
+					guiGraphics.blit(TextureHelper.MC_ICONS, offsetX, offsetY, 0, offsets.containerNegativeHunger, 27, 9, 9, 256, 256);
 				else if (modifiedHunger > defaultHunger && defaultHunger <= i)
-					GuiComponent.blit(poseStack, offsetX, offsetY, 0, offsets.containerExtraHunger, 27, 9, 9, 256, 256);
+					guiGraphics.blit(TextureHelper.MC_ICONS, offsetX, offsetY, 0, offsets.containerExtraHunger, 27, 9, 9, 256, 256);
 				else if (modifiedHunger > i + 1 || defaultHunger == modifiedHunger)
-					GuiComponent.blit(poseStack, offsetX, offsetY, 0, offsets.containerNormalHunger, 27, 9, 9, 256, 256);
+					guiGraphics.blit(TextureHelper.MC_ICONS, offsetX, offsetY, 0, offsets.containerNormalHunger, 27, 9, 9, 256, 256);
 				else if (modifiedHunger == i + 1)
-					GuiComponent.blit(poseStack, offsetX, offsetY, 0, offsets.containerPartialHunger, 27, 9, 9, 256, 256);
+					guiGraphics.blit(TextureHelper.MC_ICONS, offsetX, offsetY, 0, offsets.containerPartialHunger, 27, 9, 9, 256, 256);
 				else
 				{
 					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, .5F);
-					GuiComponent.blit(poseStack, offsetX, offsetY, 0, offsets.containerMissingHunger, 27, 9, 9, 256, 256);
+					guiGraphics.blit(TextureHelper.MC_ICONS, offsetX, offsetY, 0, offsets.containerMissingHunger, 27, 9, 9, 256, 256);
 					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 				}
 
 				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, .25F);
-				GuiComponent.blit(poseStack, offsetX, offsetY, 0, defaultHunger - 1 == i ? offsets.shankMissingPartial : offsets.shankMissingFull, 27, 9, 9, 256, 256);
+				guiGraphics.blit(TextureHelper.MC_ICONS, offsetX, offsetY, 0, defaultHunger - 1 == i ? offsets.shankMissingPartial : offsets.shankMissingFull, 27, 9, 9, 256, 256);
 				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
 				if (modifiedHunger > i)
-					GuiComponent.blit(poseStack, offsetX, offsetY, 0, modifiedHunger - 1 == i ? offsets.shankPartial : offsets.shankFull, 27, 9, 9, 256, 256);
+					guiGraphics.blit(TextureHelper.MC_ICONS, offsetX, offsetY, 0, modifiedHunger - 1 == i ? offsets.shankPartial : offsets.shankFull, 27, 9, 9, 256, 256);
 
 				offsetX -= 9;
 			}
 			if (foodTooltip.hungerBarsText != null)
 			{
 				offsetX += 18;
+				PoseStack poseStack = guiGraphics.pose();
 				poseStack.pushPose();
 				poseStack.translate(offsetX, offsetY, 0);
 				poseStack.scale(0.75f, 0.75f, 0.75f);
-				font.drawShadow(poseStack, foodTooltip.hungerBarsText, 2, 2, 0xFFAAAAAA, false);
+				guiGraphics.drawCenteredString(font, foodTooltip.hungerBarsText, 2, 2, 0xFFAAAAAA);
 				poseStack.popPose();
 			}
 
@@ -206,7 +203,6 @@ public class TooltipOverlayHandler
 			offsetX += (foodTooltip.saturationBars - 1) * 7;
 
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-			RenderSystem.setShaderTexture(0, modIcons);
 			for (int i = 0; i < foodTooltip.saturationBars * 2; i += 2)
 			{
 				float effectiveSaturationOfBar = (absModifiedSaturationIncrement - i) / 2f;
@@ -215,7 +211,7 @@ public class TooltipOverlayHandler
 				if (shouldBeFaded)
 					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, .5F);
 
-				GuiComponent.blit(poseStack, offsetX, offsetY, 0, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7, 256, 256);
+				guiGraphics.blit(TextureHelper.MOD_ICONS, offsetX, offsetY, 0, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7, 256, 256);
 
 				if (shouldBeFaded)
 					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -225,15 +221,17 @@ public class TooltipOverlayHandler
 			if (foodTooltip.saturationBarsText != null)
 			{
 				offsetX += 14;
+				PoseStack poseStack = guiGraphics.pose();
 				poseStack.pushPose();
 				poseStack.translate(offsetX, offsetY, 0);
 				poseStack.scale(0.75f, 0.75f, 0.75f);
-				font.drawShadow(poseStack, foodTooltip.saturationBarsText, 2, 1, 0xFFAAAAAA, false);
+				guiGraphics.drawCenteredString(font, foodTooltip.saturationBarsText, 2, 1, 0xFFAAAAAA);
 				poseStack.popPose();
 			}
 
 			RenderSystem.disableBlend();
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+			RenderSystem.setShaderTexture(0, TextureHelper.MC_ICONS);
 
 			// reset to drawHoveringText state
 			RenderSystem.disableDepthTest();

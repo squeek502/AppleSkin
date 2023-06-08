@@ -1,6 +1,6 @@
 package squeek.appleskin.api.event;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -14,9 +14,9 @@ public class HUDOverlayEvent extends Event
 	 */
 	public static class Exhaustion extends HUDOverlayEvent
 	{
-		public Exhaustion(float exhaustion, int x, int y, PoseStack matrixStack)
+		public Exhaustion(float exhaustion, int x, int y, GuiGraphics guiGraphics)
 		{
-			super(x, y, matrixStack);
+			super(x, y, guiGraphics);
 			this.exhaustion = exhaustion;
 		}
 
@@ -28,9 +28,9 @@ public class HUDOverlayEvent extends Event
 	 */
 	public static class Saturation extends HUDOverlayEvent
 	{
-		public Saturation(float saturationLevel, int x, int y, PoseStack matrixStack)
+		public Saturation(float saturationLevel, int x, int y, GuiGraphics guiGraphics)
 		{
-			super(x, y, matrixStack);
+			super(x, y, guiGraphics);
 			this.saturationLevel = saturationLevel;
 		}
 
@@ -42,9 +42,9 @@ public class HUDOverlayEvent extends Event
 	 */
 	public static class HungerRestored extends HUDOverlayEvent
 	{
-		public HungerRestored(int foodLevel, ItemStack itemStack, FoodValues foodValues, int x, int y, PoseStack matrixStack)
+		public HungerRestored(int foodLevel, ItemStack itemStack, FoodValues foodValues, int x, int y, GuiGraphics guiGraphics)
 		{
-			super(x, y, matrixStack);
+			super(x, y, guiGraphics);
 			this.currentFoodLevel = foodLevel;
 			this.itemStack = itemStack;
 			this.foodValues = foodValues;
@@ -60,9 +60,9 @@ public class HUDOverlayEvent extends Event
 	 */
 	public static class HealthRestored extends HUDOverlayEvent
 	{
-		public HealthRestored(float modifiedHealth, ItemStack itemStack, FoodValues foodValues, int x, int y, PoseStack matrixStack)
+		public HealthRestored(float modifiedHealth, ItemStack itemStack, FoodValues foodValues, int x, int y, GuiGraphics guiGraphics)
 		{
-			super(x, y, matrixStack);
+			super(x, y, guiGraphics);
 			this.modifiedHealth = modifiedHealth;
 			this.itemStack = itemStack;
 			this.foodValues = foodValues;
@@ -73,16 +73,16 @@ public class HUDOverlayEvent extends Event
 		public final float modifiedHealth;
 	}
 
-	private HUDOverlayEvent(int x, int y, PoseStack matrixStack)
+	private HUDOverlayEvent(int x, int y, GuiGraphics guiGraphics)
 	{
 		this.x = x;
 		this.y = y;
-		this.matrixStack = matrixStack;
+		this.guiGraphics = guiGraphics;
 	}
 
 	public int x;
 	public int y;
-	public PoseStack matrixStack;
+	public GuiGraphics guiGraphics;
 
 	@Override
 	public boolean isCancelable()
