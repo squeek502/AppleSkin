@@ -26,13 +26,13 @@ dependencies {
 
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 	modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}") {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 	include "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}"
 
-	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:10.0.592"
+	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:12.0.613"
 }
 
 processResources {
