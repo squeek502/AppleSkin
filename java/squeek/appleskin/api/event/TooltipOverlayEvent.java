@@ -1,6 +1,6 @@
 package squeek.appleskin.api.event;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -26,17 +26,17 @@ public class TooltipOverlayEvent extends Event
 	 */
 	public static class Render extends TooltipOverlayEvent
 	{
-		public Render(ItemStack itemStack, int x, int y, PoseStack matrixStack, FoodValues defaultFood, FoodValues modifiedFood)
+		public Render(ItemStack itemStack, int x, int y, GuiGraphics guiGraphics, FoodValues defaultFood, FoodValues modifiedFood)
 		{
 			super(itemStack, defaultFood, modifiedFood);
-			this.matrixStack = matrixStack;
+			this.guiGraphics = guiGraphics;
 			this.x = x;
 			this.y = y;
 		}
 
 		public int x;
 		public int y;
-		public PoseStack matrixStack;
+		public GuiGraphics guiGraphics;
 	}
 
 	private TooltipOverlayEvent(ItemStack itemStack, FoodValues defaultFood, FoodValues modifiedFood)
