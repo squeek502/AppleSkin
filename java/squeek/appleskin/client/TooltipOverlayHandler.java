@@ -189,7 +189,7 @@ public class TooltipOverlayHandler
 				poseStack.pushPose();
 				poseStack.translate(offsetX, offsetY, 0);
 				poseStack.scale(0.75f, 0.75f, 0.75f);
-				guiGraphics.drawCenteredString(font, foodTooltip.hungerBarsText, 2, 2, 0xFFAAAAAA);
+				guiGraphics.drawString(font, foodTooltip.hungerBarsText, 2, 2, 0xFFAAAAAA);
 				poseStack.popPose();
 			}
 
@@ -225,7 +225,7 @@ public class TooltipOverlayHandler
 				poseStack.pushPose();
 				poseStack.translate(offsetX, offsetY, 0);
 				poseStack.scale(0.75f, 0.75f, 0.75f);
-				guiGraphics.drawCenteredString(font, foodTooltip.saturationBarsText, 2, 1, 0xFFAAAAAA);
+				guiGraphics.drawString(font, foodTooltip.saturationBarsText, 2, 1, 0xFFAAAAAA);
 				poseStack.popPose();
 			}
 
