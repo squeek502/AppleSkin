@@ -8,6 +8,7 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.Difficulty;
 import org.lwjgl.opengl.GL11;
 import squeek.appleskin.ModConfig;
@@ -16,6 +17,8 @@ import squeek.appleskin.api.event.HUDOverlayEvent;
 import squeek.appleskin.api.food.FoodValues;
 import squeek.appleskin.helpers.FoodHelper;
 import squeek.appleskin.helpers.TextureHelper;
+import squeek.appleskin.helpers.TextureHelper.HeartType;
+import squeek.appleskin.helpers.TextureHelper.FoodType;
 import squeek.appleskin.util.IntPoint;
 
 import java.util.Random;
@@ -215,8 +218,6 @@ public class HUDOverlayHandler
 			context.drawTexture(TextureHelper.MOD_ICONS, x, y, u, v, iconSize, iconSize);
 		}
 
-		// rebind default icons
-		RenderSystem.setShaderTexture(0, TextureHelper.MC_ICONS);
 		disableAlpha(alpha);
 	}
 
@@ -245,28 +246,17 @@ public class HUDOverlayHandler
 			int x = right + offset.x;
 			int y = top + offset.y;
 
-			// location to normal food by default
-			int v = 3 * iconSize;
-			int u = iconStartOffset + 4 * iconSize;
-			int ub = iconStartOffset + 1 * iconSize;
-
-			// relocation to rotten food
-			if (useRottenTextures)
-			{
-				u += 4 * iconSize;
-				ub += 12 * iconSize;
-			}
-
-			// relocation to half food
-			if (i * 2 + 1 == modifiedFood)
-				u += 1 * iconSize;
+			Identifier backgroundSprite = TextureHelper.getFoodTexture(useRottenTextures, FoodType.EMPTY);
 
 			// very faint background
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha * 0.25F);
-			context.drawTexture(TextureHelper.MC_ICONS, x, y, ub, v, iconSize, iconSize);
+			context.drawGuiTexture(backgroundSprite, x, y, iconSize, iconSize);
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
 
-			context.drawTexture(TextureHelper.MC_ICONS, x, y, u, v, iconSize, iconSize);
+			boolean isHalf = i * 2 + 1 == modifiedFood;
+			Identifier iconSprite = TextureHelper.getFoodTexture(useRottenTextures, isHalf ? FoodType.HALF : FoodType.FULL);
+
+			context.drawGuiTexture(iconSprite, x, y, iconSize, iconSize);
 		}
 
 		disableAlpha(alpha);
@@ -278,7 +268,6 @@ public class HUDOverlayHandler
 			return;
 
 		enableAlpha(alpha);
-		mc.getTextureManager().bindTexture(TextureHelper.MC_ICONS);
 
 		int fixedModifiedHealth = (int) Math.ceil(modifiedHealth);
 		boolean isHardcore = mc.player.getWorld() != null && mc.player.getWorld().getLevelProperties().isHardcore();
@@ -286,7 +275,6 @@ public class HUDOverlayHandler
 		int startHealthBars = (int) Math.max(0, (Math.ceil(health) / 2.0F));
 		int endHealthBars = (int) Math.max(0, Math.ceil(modifiedHealth / 2.0F));
 
-		int iconStartOffset = 16;
 		int iconSize = 9;
 
 		for (int i = startHealthBars; i < endHealthBars; ++i)
@@ -299,32 +287,17 @@ public class HUDOverlayHandler
 			int x = right + offset.x;
 			int y = top + offset.y;
 
-			// location to full heart icon by default
-			int v = 0 * iconSize;
-			int u = iconStartOffset + 4 * iconSize;
-			int ub = iconStartOffset + 1 * iconSize;
-
-			// relocation to half heart
-			if (i * 2 + 1 == fixedModifiedHealth)
-				u += 1 * iconSize;
-
-			// relocation to special heart of hardcore
-			if (isHardcore)
-				v = 5 * iconSize;
-
-			//// apply the status effects of the player
-			//if (player.hasStatusEffect(StatusEffects.POISON)) {
-			//	u += 4 * iconSize;
-			//} else if (player.hasStatusEffect(StatusEffects.WITHER)) {
-			//	u += 8 * iconSize;
-			//}
+			Identifier backgroundSprite = TextureHelper.getHeartTexture(isHardcore, HeartType.CONTAINER);
 
 			// very faint background
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha * 0.25F);
-			context.drawTexture(TextureHelper.MC_ICONS, x, y, ub, v, iconSize, iconSize);
+			context.drawGuiTexture(backgroundSprite, x, y, iconSize, iconSize);
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
 
-			context.drawTexture(TextureHelper.MC_ICONS, x, y, u, v, iconSize, iconSize);
+			boolean isHalf = i * 2 + 1 == fixedModifiedHealth;
+			Identifier iconSprite = TextureHelper.getHeartTexture(isHardcore, isHalf ? HeartType.HALF : HeartType.FULL);
+
+			context.drawGuiTexture(iconSprite, x, y, iconSize, iconSize);
 		}
 
 		disableAlpha(alpha);
@@ -341,9 +314,6 @@ public class HUDOverlayHandler
 		enableAlpha(.75f);
 		context.drawTexture(TextureHelper.MOD_ICONS, right - width, top, 81 - width, 18, width, height);
 		disableAlpha(.75f);
-
-		// rebind default icons
-		RenderSystem.setShaderTexture(0, TextureHelper.MC_ICONS);
 	}
 
 

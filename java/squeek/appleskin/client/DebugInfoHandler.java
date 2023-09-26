@@ -34,9 +34,6 @@ public class DebugInfoHandler
 		if (mc == null || mc.player == null || mc.player.getHungerManager() == null)
 			return;
 
-		if (!mc.options.debugEnabled)
-			return;
-
 		HungerManager stats = mc.player.getHungerManager();
 		float curExhaustion = stats.getExhaustion();
 		float maxExhaustion = FoodHelper.MAX_EXHAUSTION;
