@@ -514,15 +514,18 @@ public class HUDOverlayHandler
 		final float maxHealth = player.getMaxHealth();
 		final float absorptionHealth = (float) Math.ceil(player.getAbsorptionAmount());
 
-		// Special case for infinite/NaN. Infinite absorption has been seen in the wild.
-		// This will effectively disable rendering while health is infinite.
-		if (!Float.isFinite(maxHealth + absorptionHealth))
-		{
+		int healthBars = (int) Math.ceil((maxHealth + absorptionHealth) / 2.0F);
+		// When maxHealth + absorptionHealth is greater than Integer.INT_MAX,
+		// Minecraft will disable heart rendering due to a quirk of MathHelper.ceil.
+		// We have a much lower threshold since there's no reason to get the offsets
+		// for thousands of hearts.
+		// Note: Infinite and > INT_MAX absorption has been seen in the wild.
+		// This will effectively disable rendering whenever health is unexpectedly large.
+		if (healthBars < 0 || healthBars > 1000) {
 			healthBarOffsets.setSize(0);
 			return;
 		}
 
-		int healthBars = (int) Math.ceil((maxHealth + absorptionHealth) / 2.0F);
 		int healthRows = (int) Math.ceil((float) healthBars / 10.0F);
 
 		int healthRowHeight = Math.max(10 - (healthRows - 2), 3);
