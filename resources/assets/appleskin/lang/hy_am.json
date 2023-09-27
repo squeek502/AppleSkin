@@ -1,0 +1,16 @@
+{
+  "text.autoconfig.appleskin.title": "AppleSkin",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltip": "Ցույց տալ սննդի արժեքները հուշումում",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways": "Միշտ ցույց տալ սննդի արժեքները հուշումում",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay": "Ցույց տալ պահված սննդից վերականգնված քաղցը",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlayWhenOffhand": "Ցույց տալ սննդի ծածկույթը ձեռքից դուրս",
+  "text.autoconfig.appleskin.option.showFoodHealthHudOverlay": "Ցույց տալ գնահատված առողջության ծածկույթը",
+  "text.autoconfig.appleskin.option.showFoodExhaustionHudUnderlay": "Ցույց տալ սովի գիծը",
+  "text.autoconfig.appleskin.option.showSaturationHudOverlay": "Ցույց տալ հագեցվախության ծածկույթը",
+  "text.autoconfig.appleskin.option.showFoodDebugInfo": "Ցուցադրել սննդի արժեքները վրիպազերծման էկրանում",
+  "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay": "Անիմացրեք HUD պատկերակները՝ Minecraft-ին համապատասխանելու համար",
+  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "Մաքսկիմալ անթափանցիկություն ծածկույթի թարթման ժամանակ",
+
+  "modmenu.summaryTranslation.appleskin": "Ավելացնում է սննդի հետ կապված տարբեր HUD բարելավումներ",
+  "modmenu.descriptionTranslation.appleskin": "Ավելացնում է սննդի հետ կապված տարբեր HUD բարելավումներ"
+}

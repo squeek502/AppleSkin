@@ -1,0 +1,16 @@
+{
+  "text.autoconfig.appleskin.title": "AppleSkin",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltip": "Показувати значення їжі у підказці",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways": "Завжди показувати значення їжі у підказці",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay": "Показувати відновлену ситність при утримуванні їжі",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlayWhenOffhand": "Показувати при утримуванні їжі у іншій руці",
+  "text.autoconfig.appleskin.option.showFoodHealthHudOverlay": "Показувати приблизне відновлення здоров'я",
+  "text.autoconfig.appleskin.option.showFoodExhaustionHudUnderlay": "Показувати виснаження",
+  "text.autoconfig.appleskin.option.showSaturationHudOverlay": "Показувати насичення",
+  "text.autoconfig.appleskin.option.showFoodDebugInfo": "Показувати значення їжі на екрані налагодження",
+  "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay": "Анімувати іконки згідно зі стандартними іконками Minecraft",
+  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "Максимальна непрозорість миготіння іконок",
+
+  "modmenu.summaryTranslation.appleskin": "Додає різноманітні покращення інтерфейсу, пов'язані з їжею",
+  "modmenu.descriptionTranslation.appleskin": "AppleSkin додає такі різноманітні покращення інтерфейсу, пов'язані з їжею, як:\n* Підказки про відновлення значень ситности та насичення від їжі\n* Візуалізація показників насичення та виснаження\n* Відображення відновлення здоров'я та ситності гравця\nтощо."
+}

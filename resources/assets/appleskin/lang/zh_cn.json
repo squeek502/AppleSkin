@@ -1,0 +1,26 @@
+{
+  "text.autoconfig.appleskin.title": "AppleSkin",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltip": "显示食物的饥饿值和饱和度",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltip.@Tooltip": "若启用，按下SHIFT后在信息提示内显示食物的饥饿值和饱和度",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways": "始终显示食物的饥饿值和饱和度",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways.@Tooltip": "若启用，自动在信息提示内显示食物的饥饿值和饱和度 (不需要按住SHIFT)",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay": "显示食用后预计恢复的饥饿值",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay.@Tooltip": "若启用，显示正在拿取的食物预计恢复的饥饿值 (在开启“显示饱和度”后将同时显示饱和度)",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlayWhenOffhand": "显示副手食物信息",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlayWhenOffhand.@Tooltip": "若启用，显示副手正在拿取的食物预计恢复的饥饿值/饱和度/生命值",
+  "text.autoconfig.appleskin.option.showFoodHealthHudOverlay": "显示食用后预计恢复的生命值",
+  "text.autoconfig.appleskin.option.showFoodHealthHudOverlay.@Tooltip": "若启用，显示食物食用后预计恢复的生命值",
+  "text.autoconfig.appleskin.option.showFoodExhaustionHudUnderlay": "显示消耗度",
+  "text.autoconfig.appleskin.option.showFoodExhaustionHudUnderlay.@Tooltip": "若启用，在饥饿条后显示消耗度",
+  "text.autoconfig.appleskin.option.showSaturationHudOverlay": "显示饱和度",
+  "text.autoconfig.appleskin.option.showSaturationHudOverlay.@Tooltip": "若启用，在饥饿条上显示饱和度",
+  "text.autoconfig.appleskin.option.showFoodDebugInfo": "在调试屏幕中显示饥饿信息",
+  "text.autoconfig.appleskin.option.showFoodDebugInfo.@Tooltip":"若开启，在调试屏幕中显示你的饥饿值、饱和度和消耗度",
+  "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay": "启用匹配原版HUD图标的动画",
+  "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay.@Tooltip": "若开启，生命条/饥饿条将抖动以与Minecraft图标动画匹配",
+  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "设置HUD闪烁图标的透明度",
+  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha.@Tooltip": "HUD闪烁图标最可见点的透明度 (1.0=不透明 0.0=完全透明)",
+
+  "modmenu.summaryTranslation.appleskin": "增加了各种与食物相关的HUD改进",
+  "modmenu.descriptionTranslation.appleskin": "增加了各种与食物相关的HUD改进"
+}

@@ -1,0 +1,16 @@
+{
+  "text.autoconfig.appleskin.title": "AppleSkin",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltip": "Zeige Nährwerte in Tooltip",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways": "Zeige immer Nährwerte in Tooltip",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay": "Zeige wiederhergestellten Hunger vom gehaltenen Essen",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlayWhenOffhand": "Zeige Overlays für in Offhand gehaltenes Essen",
+  "text.autoconfig.appleskin.option.showFoodHealthHudOverlay": "Zeige geschätzte Gesundheits-Overlay",
+  "text.autoconfig.appleskin.option.showFoodExhaustionHudUnderlay": "Zeige Erschöpfungs-Unterlage",
+  "text.autoconfig.appleskin.option.showSaturationHudOverlay": "Zeige Sättigungs-Overlay",
+  "text.autoconfig.appleskin.option.showFoodDebugInfo": "Zeige Essensangaben in Debug Bildschirm",
+  "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay": "Animiere HUD Icons passend zu Minecraft",
+  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "Max Alpha von aufleuchtenden HUD icons",
+
+  "modmenu.summaryTranslation.appleskin": "Adds various food-related HUD improvements",
+  "modmenu.descriptionTranslation.appleskin": "Adds various food-related HUD improvements"
+}
