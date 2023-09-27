@@ -272,8 +272,6 @@ public class HUDOverlayHandler
 			guiGraphics.blit(TextureHelper.MOD_ICONS, x, y, u, v, iconSize, iconSize);
 		}
 
-		// rebind default icons
-		RenderSystem.setShaderTexture(0, TextureHelper.MC_ICONS);
 		disableAlpha(alpha);
 	}
 
@@ -302,28 +300,17 @@ public class HUDOverlayHandler
 			int x = right + offset.x;
 			int y = top + offset.y;
 
-			// location to normal food by default
-			int v = 3 * iconSize;
-			int u = iconStartOffset + 4 * iconSize;
-			int ub = iconStartOffset + 1 * iconSize;
-
-			// relocation to rotten food
-			if (useRottenTextures)
-			{
-				u += 4 * iconSize;
-				ub += 12 * iconSize;
-			}
-
-			// relocation to half food
-			if (i * 2 + 1 == modifiedFood)
-				u += 1 * iconSize;
+			ResourceLocation backgroundSprite = TextureHelper.getFoodTexture(useRottenTextures, TextureHelper.FoodType.EMPTY);
 
 			// very faint background
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha * 0.25F);
-			guiGraphics.blit(TextureHelper.MC_ICONS, x, y, ub, v, iconSize, iconSize);
+			guiGraphics.blitSprite(backgroundSprite, x, y, iconSize, iconSize);
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
 
-			guiGraphics.blit(TextureHelper.MC_ICONS, x, y, u, v, iconSize, iconSize);
+			boolean isHalf = i * 2 + 1 == modifiedFood;
+			ResourceLocation iconSprite = TextureHelper.getFoodTexture(useRottenTextures, isHalf ? TextureHelper.FoodType.HALF : TextureHelper.FoodType.FULL);
+
+			guiGraphics.blitSprite(iconSprite, x, y, iconSize, iconSize);
 		}
 
 		disableAlpha(alpha);
@@ -355,32 +342,17 @@ public class HUDOverlayHandler
 			int x = right + offset.x;
 			int y = top + offset.y;
 
-			// location to full heart icon by default
-			int v = 0 * iconSize;
-			int u = iconStartOffset + 4 * iconSize;
-			int ub = iconStartOffset + 1 * iconSize;
-
-			// relocation to half heart
-			if (i * 2 + 1 == fixedModifiedHealth)
-				u += 1 * iconSize;
-
-			// relocation to special heart of hardcore
-			if (isHardcore)
-				v = 5 * iconSize;
-
-			//// apply the status effects of the player
-			//if (player.hasStatusEffect(StatusEffects.POISON)) {
-			//	u += 4 * iconSize;
-			//} else if (player.hasStatusEffect(StatusEffects.WITHER)) {
-			//	u += 8 * iconSize;
-			//}
+			ResourceLocation backgroundSprite = TextureHelper.getHeartTexture(isHardcore, TextureHelper.HeartType.CONTAINER);
 
 			// very faint background
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha * 0.25F);
-			guiGraphics.blit(TextureHelper.MC_ICONS, x, y, ub, v, iconSize, iconSize);
+			guiGraphics.blitSprite(backgroundSprite, x, y, iconSize, iconSize);
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
 
-			guiGraphics.blit(TextureHelper.MC_ICONS, x, y, u, v, iconSize, iconSize);
+			boolean isHalf = i * 2 + 1 == fixedModifiedHealth;
+			ResourceLocation iconSprite = TextureHelper.getHeartTexture(isHardcore, isHalf ? TextureHelper.HeartType.HALF : TextureHelper.HeartType.FULL);
+
+			guiGraphics.blitSprite(iconSprite, x, y, iconSize, iconSize);
 		}
 
 		disableAlpha(alpha);
@@ -397,9 +369,6 @@ public class HUDOverlayHandler
 		enableAlpha(.75f);
 		guiGraphics.blit(TextureHelper.MOD_ICONS, right - width, top, 81 - width, 18, width, height);
 		disableAlpha(.75f);
-
-		// rebind default icons
-		RenderSystem.setShaderTexture(0, TextureHelper.MC_ICONS);
 	}
 
 

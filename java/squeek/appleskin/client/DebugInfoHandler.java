@@ -31,12 +31,13 @@ public class DebugInfoHandler
 			return;
 
 		Minecraft mc = Minecraft.getInstance();
-		if (mc.options.renderDebug)
-		{
-			FoodData stats = mc.player.getFoodData();
-			float curExhaustion = stats.getExhaustionLevel();
-			float maxExhaustion = HungerHelper.getMaxExhaustion(mc.player);
-			textEvent.getLeft().add("hunger: " + stats.getFoodLevel() + ", sat: " + saturationDF.format(stats.getSaturationLevel()) + ", exh: " + exhaustionValDF.format(curExhaustion) + "/" + exhaustionMaxDF.format(maxExhaustion));
-		}
+
+		if (!mc.getDebugOverlay().showDebugScreen())
+			return;
+
+		FoodData stats = mc.player.getFoodData();
+		float curExhaustion = stats.getExhaustionLevel();
+		float maxExhaustion = HungerHelper.getMaxExhaustion(mc.player);
+		textEvent.getLeft().add("hunger: " + stats.getFoodLevel() + ", sat: " + saturationDF.format(stats.getSaturationLevel()) + ", exh: " + exhaustionValDF.format(curExhaustion) + "/" + exhaustionMaxDF.format(maxExhaustion));
 	}
 }

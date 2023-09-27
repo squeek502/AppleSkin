@@ -8,6 +8,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
@@ -28,10 +29,6 @@ import squeek.appleskin.helpers.TextureHelper;
 @OnlyIn(Dist.CLIENT)
 public class TooltipOverlayHandler
 {
-	public static final int TOOLTIP_REAL_HEIGHT_OFFSET_BOTTOM = 3;
-	public static final int TOOLTIP_REAL_HEIGHT_OFFSET_TOP = -3;
-	public static final int TOOLTIP_REAL_WIDTH_OFFSET_RIGHT = 3;
-
 	public static void init()
 	{
 		MinecraftForge.EVENT_BUS.register(new TooltipOverlayHandler());
@@ -42,47 +39,39 @@ public class TooltipOverlayHandler
 		event.register(FoodTooltip.class, FoodTooltipRenderer::new);
 	}
 
-	private static final TextureOffsets normalBarTextureOffsets = new TextureOffsets();
-
-	static
+	enum FoodOutline
 	{
-		normalBarTextureOffsets.containerNegativeHunger = 43;
-		normalBarTextureOffsets.containerExtraHunger = 133;
-		normalBarTextureOffsets.containerNormalHunger = 16;
-		normalBarTextureOffsets.containerPartialHunger = 124;
-		normalBarTextureOffsets.containerMissingHunger = 34;
-		normalBarTextureOffsets.shankMissingFull = 70;
-		normalBarTextureOffsets.shankMissingPartial = normalBarTextureOffsets.shankMissingFull + 9;
-		normalBarTextureOffsets.shankFull = 52;
-		normalBarTextureOffsets.shankPartial = normalBarTextureOffsets.shankFull + 9;
-	}
+		NEGATIVE,
+		EXTRA,
+		NORMAL,
+		PARTIAL,
+		MISSING;
 
-	private static final TextureOffsets rottenBarTextureOffsets = new TextureOffsets();
+		public void setShaderColor(GuiGraphics guiGraphics)
+		{
+			switch (this)
+			{
+				case NEGATIVE -> guiGraphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+				case EXTRA -> guiGraphics.setColor(0.06f, 0.32f, 0.02f, 1.0f);
+				case NORMAL -> guiGraphics.setColor(0.0f, 0.0f, 0.0f, 1.0f);
+				case PARTIAL -> guiGraphics.setColor(0.53f, 0.21f, 0.08f, 1.0f);
+				case MISSING -> guiGraphics.setColor(0.62f, 0.0f, 0.0f, 0.5f);
+			}
+		}
 
-	static
-	{
-		rottenBarTextureOffsets.containerNegativeHunger = normalBarTextureOffsets.containerNegativeHunger;
-		rottenBarTextureOffsets.containerExtraHunger = normalBarTextureOffsets.containerExtraHunger;
-		rottenBarTextureOffsets.containerNormalHunger = normalBarTextureOffsets.containerNormalHunger;
-		rottenBarTextureOffsets.containerPartialHunger = normalBarTextureOffsets.containerPartialHunger;
-		rottenBarTextureOffsets.containerMissingHunger = normalBarTextureOffsets.containerMissingHunger;
-		rottenBarTextureOffsets.shankMissingFull = 106;
-		rottenBarTextureOffsets.shankMissingPartial = rottenBarTextureOffsets.shankMissingFull + 9;
-		rottenBarTextureOffsets.shankFull = 88;
-		rottenBarTextureOffsets.shankPartial = rottenBarTextureOffsets.shankFull + 9;
-	}
-
-	static class TextureOffsets
-	{
-		int containerNegativeHunger;
-		int containerExtraHunger;
-		int containerNormalHunger;
-		int containerPartialHunger;
-		int containerMissingHunger;
-		int shankMissingFull;
-		int shankMissingPartial;
-		int shankFull;
-		int shankPartial;
+		public static FoodOutline get(int modifiedFoodHunger, int defaultFoodHunger, int i)
+		{
+			if (modifiedFoodHunger < 0)
+				return NEGATIVE;
+			else if (modifiedFoodHunger > defaultFoodHunger && defaultFoodHunger <= i)
+				return EXTRA;
+			else if (modifiedFoodHunger > i + 1 || defaultFoodHunger == modifiedFoodHunger)
+				return NORMAL;
+			else if (modifiedFoodHunger == i + 1)
+				return PARTIAL;
+			else
+				return MISSING;
+		}
 	}
 
 	static class FoodTooltipRenderer implements ClientTooltipComponent
@@ -154,34 +143,35 @@ public class TooltipOverlayHandler
 			// Render from right to left so that the icons 'face' the right way
 			offsetX += (foodTooltip.hungerBars - 1) * 9;
 
-			TextureOffsets offsets = FoodHelper.isRotten(itemStack, mc.player) ? rottenBarTextureOffsets : normalBarTextureOffsets;
+			boolean isRotten = FoodHelper.isRotten(itemStack, mc.player);
+
 			for (int i = 0; i < foodTooltip.hungerBars * 2; i += 2)
 			{
+				guiGraphics.blitSprite(TextureHelper.FOOD_EMPTY_TEXTURE, offsetX, offsetY, 9, 9);
 
-				if (modifiedHunger < 0)
-					guiGraphics.blit(TextureHelper.MC_ICONS, offsetX, offsetY, 0, offsets.containerNegativeHunger, 27, 9, 9, 256, 256);
-				else if (modifiedHunger > defaultHunger && defaultHunger <= i)
-					guiGraphics.blit(TextureHelper.MC_ICONS, offsetX, offsetY, 0, offsets.containerExtraHunger, 27, 9, 9, 256, 256);
-				else if (modifiedHunger > i + 1 || defaultHunger == modifiedHunger)
-					guiGraphics.blit(TextureHelper.MC_ICONS, offsetX, offsetY, 0, offsets.containerNormalHunger, 27, 9, 9, 256, 256);
-				else if (modifiedHunger == i + 1)
-					guiGraphics.blit(TextureHelper.MC_ICONS, offsetX, offsetY, 0, offsets.containerPartialHunger, 27, 9, 9, 256, 256);
-				else
+				FoodOutline outline = FoodOutline.get(modifiedHunger, defaultHunger, i);
+				if (outline != FoodOutline.NORMAL)
 				{
-					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, .5F);
-					guiGraphics.blit(TextureHelper.MC_ICONS, offsetX, offsetY, 0, offsets.containerMissingHunger, 27, 9, 9, 256, 256);
-					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+					outline.setShaderColor(guiGraphics);
+					guiGraphics.blitSprite(TextureHelper.HUNGER_OUTLINE_SPRITE, offsetX, offsetY, 9, 9);
 				}
 
-				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, .25F);
-				guiGraphics.blit(TextureHelper.MC_ICONS, offsetX, offsetY, 0, defaultHunger - 1 == i ? offsets.shankMissingPartial : offsets.shankMissingFull, 27, 9, 9, 256, 256);
-				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+				guiGraphics.setColor(1.0F, 1.0F, 1.0F, .25F);
+				boolean isDefaultHalf = defaultHunger - 1 == i;
+				ResourceLocation defaultFoodIcon = TextureHelper.getFoodTexture(isRotten, isDefaultHalf ? TextureHelper.FoodType.HALF : TextureHelper.FoodType.FULL);
+				guiGraphics.blitSprite(defaultFoodIcon, offsetX, offsetY, 9, 9);
+				guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 
 				if (modifiedHunger > i)
-					guiGraphics.blit(TextureHelper.MC_ICONS, offsetX, offsetY, 0, modifiedHunger - 1 == i ? offsets.shankPartial : offsets.shankFull, 27, 9, 9, 256, 256);
+				{
+					boolean isModifiedHalf = modifiedHunger - 1 == i;
+					ResourceLocation modifiedFoodIcon = TextureHelper.getFoodTexture(isRotten, isModifiedHalf ? TextureHelper.FoodType.HALF : TextureHelper.FoodType.FULL);
+					guiGraphics.blitSprite(modifiedFoodIcon, offsetX, offsetY, 9, 9);
+				}
 
 				offsetX -= 9;
 			}
+
 			if (foodTooltip.hungerBarsText != null)
 			{
 				offsetX += 18;
@@ -231,7 +221,6 @@ public class TooltipOverlayHandler
 
 			RenderSystem.disableBlend();
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-			RenderSystem.setShaderTexture(0, TextureHelper.MC_ICONS);
 
 			// reset to drawHoveringText state
 			RenderSystem.disableDepthTest();

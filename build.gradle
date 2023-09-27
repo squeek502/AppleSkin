@@ -1,7 +1,8 @@
 plugins {
 	id 'eclipse'
+	id 'idea'
 	id 'maven-publish'
-	id 'net.minecraftforge.gradle' version '6.+'
+	id 'net.minecraftforge.gradle' version '[6.0,6.2)'
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
