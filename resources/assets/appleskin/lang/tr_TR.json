@@ -1,0 +1,16 @@
+{
+  "text.autoconfig.appleskin.title": "AppleSkin",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltip": "Açıklamada yemek değerini göster",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways": "Açıklamada her zaman yemek değerini göster",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay": "Tutulan yemekten kazanılacak açlığı göster",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlayWhenOffhand": "Diğer eldeki yemekten kazanılacak açlığı göster",
+  "text.autoconfig.appleskin.option.showFoodHealthHudOverlay": "Tahmin edilen canı göster",
+  "text.autoconfig.appleskin.option.showFoodExhaustionHudUnderlay": "Yorulmayı göster",
+  "text.autoconfig.appleskin.option.showSaturationHudOverlay": "Doygunluğu göster",
+  "text.autoconfig.appleskin.option.showFoodDebugInfo": "Hata ayıklama ekranında yemek değerlerini göster",
+  "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay": "HUD ikonlarını Minecraftla eşleşmesi için animasyonla",
+  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "Yanıp sönen HUD simgelerinin maksimum alfası",
+
+  "modmenu.summaryTranslation.appleskin": "Adds various food-related HUD improvements",
+  "modmenu.descriptionTranslation.appleskin": "Adds various food-related HUD improvements"
+}

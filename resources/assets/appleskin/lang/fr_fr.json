@@ -1,0 +1,16 @@
+{
+  "text.autoconfig.appleskin.title": "AppleSkin",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltip": "Montrer la nourriture dans les info-bulles",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways": "Toujours montrer la nourriture dans les info-bulles",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay": "Montrer la faim restaurée par la nourriture tenue en main",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlayWhenOffhand": "Montrer la faim restaurée par la nourriture tenue dans la main secondaire",
+  "text.autoconfig.appleskin.option.showFoodHealthHudOverlay": "Montrer l'estimation de vie restaurée",
+  "text.autoconfig.appleskin.option.showFoodExhaustionHudUnderlay": "Montrer l'épuisement",
+  "text.autoconfig.appleskin.option.showSaturationHudOverlay": "Montrer la saturation",
+  "text.autoconfig.appleskin.option.showFoodDebugInfo": "Montrer la nourriture sur l'écran de déboguage",
+  "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay": "Animer les icônes sur l'ATH",
+  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "Opacité des icônes clignotantes de l'ATH",
+
+  "modmenu.summaryTranslation.appleskin": "Ajoute diverses améliorations de l'ATH liées à la nourriture",
+  "modmenu.descriptionTranslation.appleskin": "Ajoute diverses améliorations de l'ATH liées à la nourriture"
+}

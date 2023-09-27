@@ -1,0 +1,16 @@
+{
+  "text.autoconfig.appleskin.title": "Настройки AppleSkin",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltip": "Характеристики еды в подсказке к ней",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways": "Отображать характеристики постоянно",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay": "Оценка утоления голода едой",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlayWhenOffhand": "Учитывать предметы во второй руке",
+  "text.autoconfig.appleskin.option.showFoodHealthHudOverlay": "Оценка восстановления здоровья",
+  "text.autoconfig.appleskin.option.showFoodExhaustionHudUnderlay": "Полоса истощения на фоне",
+  "text.autoconfig.appleskin.option.showSaturationHudOverlay": "Отображение и оценка насыщения",
+  "text.autoconfig.appleskin.option.showFoodDebugInfo": "Показатели еды на экране отладки",
+  "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay": "Анимация показателей подобно Minecraft",
+  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "Максимальная видимость показателей",
+
+  "modmenu.summaryTranslation.appleskin": "Различные улучшения в интерфейсе еды.",
+  "modmenu.descriptionTranslation.appleskin": "AppleSkin улучшает элементы интерфейса, связанные с едой. Например:\n • Информация о характеристиках еды в подсказке к ней\n • Визуализация показателей насыщения и истощения\n • Оценка восстановления едой характеристик игрока\n • И другие особенности!"
+}

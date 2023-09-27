@@ -1,0 +1,16 @@
+{
+  "text.autoconfig.appleskin.title": "AppleSkin",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltip": "Pokazuj wartości jedzenia w podpowiedziach",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways": "Zawsze pokazuj wartości jedzenia w podpowiedziach",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay": "Pokazuj głód przywracany z trzymanego jedzenia",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlayWhenOffhand": "Pokazuj nakładki dla jedzenia w ręce pobocznej",
+  "text.autoconfig.appleskin.option.showFoodHealthHudOverlay": "Pokazuj nakładkę szacowanego zdrowia",
+  "text.autoconfig.appleskin.option.showFoodExhaustionHudUnderlay": "Pokazuj nakładkę zmęczenia",
+  "text.autoconfig.appleskin.option.showSaturationHudOverlay": "Pokazuj nakładkę nasycenia",
+  "text.autoconfig.appleskin.option.showFoodDebugInfo": "Pokazuj wartości jedzenia w ekranie debugowania",
+  "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay": "Animuj ikony inwentarza, aby pasowały do Minecrafta",
+  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "Maksymalna przezroczystość blyszczących ikon inwentarza",
+
+  "modmenu.summaryTranslation.appleskin": "Dodaje różne ulepszenia interfejsu związane z jedzeniem",
+  "modmenu.descriptionTranslation.appleskin": "Dodaje różne ulepszenia interfejsu związane z jedzeniem"
+}
