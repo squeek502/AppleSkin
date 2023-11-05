@@ -12,12 +12,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
-import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
+import net.neoforged.neoforge.client.event.RenderTooltipEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.api.event.FoodValuesEvent;
 import squeek.appleskin.api.event.TooltipOverlayEvent;
@@ -31,7 +31,7 @@ public class TooltipOverlayHandler
 {
 	public static void init()
 	{
-		MinecraftForge.EVENT_BUS.register(new TooltipOverlayHandler());
+		NeoForge.EVENT_BUS.register(new TooltipOverlayHandler());
 	}
 
 	public static void register(RegisterClientTooltipComponentFactoriesEvent event)
@@ -122,7 +122,7 @@ public class TooltipOverlayHandler
 
 			// Notify everyone that we should render tooltip overlay
 			TooltipOverlayEvent.Render renderEvent = new TooltipOverlayEvent.Render(itemStack, x, y, guiGraphics, defaultFood, modifiedFood);
-			MinecraftForge.EVENT_BUS.post(renderEvent);
+			NeoForge.EVENT_BUS.post(renderEvent);
 			if (renderEvent.isCanceled())
 				return;
 
@@ -288,13 +288,13 @@ public class TooltipOverlayHandler
 		FoodValues modifiedFood = FoodHelper.getModifiedFoodValues(hoveredStack, mc.player);
 
 		FoodValuesEvent foodValuesEvent = new FoodValuesEvent(mc.player, hoveredStack, defaultFood, modifiedFood);
-		MinecraftForge.EVENT_BUS.post(foodValuesEvent);
+		NeoForge.EVENT_BUS.post(foodValuesEvent);
 		defaultFood = foodValuesEvent.defaultFoodValues;
 		modifiedFood = foodValuesEvent.modifiedFoodValues;
 
 		// Notify everyone that we should render tooltip overlay
 		TooltipOverlayEvent.Pre prerenderEvent = new TooltipOverlayEvent.Pre(hoveredStack, defaultFood, modifiedFood);
-		MinecraftForge.EVENT_BUS.post(prerenderEvent);
+		NeoForge.EVENT_BUS.post(prerenderEvent);
 		if (prerenderEvent.isCanceled())
 			return;
 

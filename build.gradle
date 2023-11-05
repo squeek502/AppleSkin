@@ -1,35 +1,34 @@
 plugins {
+	id 'java-library'
 	id 'eclipse'
 	id 'idea'
 	id 'maven-publish'
-	id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+	id 'net.neoforged.gradle.userdev' version '7.0.5'
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-minecraft {
-	mappings channel: mappings_channel, version: mappings_version
+// default run configurations.
+// these can be tweaked, removed, or duplicated as needed.
+runs {
+	// applies to all the run configs below
+	configureEach {
+		systemProperty 'forge.logging.markers', 'REGISTRIES'
+		systemProperty 'forge.logging.console.level', 'debug'
+		modSource project.sourceSets.main
+	}
 
-	// default run configurations.
-	// these can be tweaked, removed, or duplicated as needed.
-	runs {
-		client {
-			workingDirectory project.file('run')
-			mods {
-				appleskin {
-					source sourceSets.main
-				}
-			}
-		}
+	client {
+		systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+	}
 
-		server {
-			workingDirectory project.file('run')
-			mods {
-				appleskin {
-					source sourceSets.main
-				}
-			}
-		}
+	server {
+		systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+		programArgument '--nogui'
+	}
+
+	gameTestServer {
+		systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
 	}
 }
 
@@ -43,7 +42,7 @@ sourceSets.main.java.srcDirs += 'apis'
 sourceSets.main.resources.srcDirs += 'resources'
 
 dependencies {
-	minecraft 'net.minecraftforge:forge:'+minecraft_version+'-'+forge_version
+	implementation "net.neoforged:neoforge:${neo_version}"
 }
 
 jar {
@@ -58,8 +57,6 @@ jar {
 			"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
 		])
 	}
-
-	finalizedBy 'reobfJar'
 }
 
 task sourcesJar(type: Jar) {
@@ -71,8 +68,6 @@ task apiJar(type: Jar) {
 	archiveClassifier.set("api")
 	from sourceSets.main.output
 	include "squeek/appleskin/api/**"
-
-	finalizedBy 'reobfJar'
 }
 
 artifacts {

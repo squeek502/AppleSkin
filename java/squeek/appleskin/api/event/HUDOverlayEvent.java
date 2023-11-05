@@ -2,12 +2,11 @@ package squeek.appleskin.api.event;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.ICancellableEvent;
 import squeek.appleskin.api.food.FoodValues;
 
-@Cancelable
-public class HUDOverlayEvent extends Event
+public class HUDOverlayEvent extends Event implements ICancellableEvent
 {
 	/**
 	 * If cancelled, will stop all rendering of the exhaustion meter.
@@ -83,10 +82,4 @@ public class HUDOverlayEvent extends Event
 	public int x;
 	public int y;
 	public GuiGraphics guiGraphics;
-
-	@Override
-	public boolean isCancelable()
-	{
-		return true;
-	}
 }

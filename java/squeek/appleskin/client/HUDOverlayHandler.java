@@ -10,14 +10,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
-import net.minecraftforge.client.gui.overlay.GuiOverlayManager;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.RenderGuiOverlayEvent;
+import net.neoforged.neoforge.client.gui.overlay.ExtendedGui;
+import net.neoforged.neoforge.client.gui.overlay.GuiOverlayManager;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.TickEvent;
 import org.lwjgl.opengl.GL11;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.api.event.FoodValuesEvent;
@@ -46,7 +46,7 @@ public class HUDOverlayHandler
 
 	public static void init()
 	{
-		MinecraftForge.EVENT_BUS.register(new HUDOverlayHandler());
+		NeoForge.EVENT_BUS.register(new HUDOverlayHandler());
 	}
 
 	static ResourceLocation FOOD_LEVEL_ELEMENT = new ResourceLocation("minecraft", "food_level");
@@ -58,7 +58,7 @@ public class HUDOverlayHandler
 		if (event.getOverlay() == GuiOverlayManager.findOverlay(FOOD_LEVEL_ELEMENT))
 		{
 			Minecraft mc = Minecraft.getInstance();
-			ForgeGui gui = (ForgeGui) mc.gui;
+			ExtendedGui gui = (ExtendedGui) mc.gui;
 			boolean isMounted = mc.player.getVehicle() instanceof LivingEntity;
 			if (!isMounted && !mc.options.hideGui && gui.shouldDrawSurvivalElements())
 			{
@@ -73,7 +73,7 @@ public class HUDOverlayHandler
 		if (event.getOverlay() == GuiOverlayManager.findOverlay(FOOD_LEVEL_ELEMENT))
 		{
 			Minecraft mc = Minecraft.getInstance();
-			ForgeGui gui = (ForgeGui) mc.gui;
+			ExtendedGui gui = (ExtendedGui) mc.gui;
 			boolean isMounted = mc.player.getVehicle() instanceof LivingEntity;
 			if (!isMounted && !mc.options.hideGui && gui.shouldDrawSurvivalElements())
 			{
@@ -83,7 +83,7 @@ public class HUDOverlayHandler
 		else if (event.getOverlay() == GuiOverlayManager.findOverlay(PLAYER_HEALTH_ELEMENT))
 		{
 			Minecraft mc = Minecraft.getInstance();
-			ForgeGui gui = (ForgeGui) mc.gui;
+			ExtendedGui gui = (ExtendedGui) mc.gui;
 			if (!mc.options.hideGui && gui.shouldDrawSurvivalElements())
 			{
 				renderFoodOrHealthOverlay(gui, event.getGuiGraphics(), event.getPartialTick(), event.getWindow().getScreenWidth(), event.getWindow().getScreenHeight(), RenderOverlayType.HEALTH);
@@ -91,7 +91,7 @@ public class HUDOverlayHandler
 		}
 	}
 
-	public static void renderExhaustion(ForgeGui gui, GuiGraphics guiGraphics, float partialTicks, int screenWidth, int screenHeight)
+	public static void renderExhaustion(ExtendedGui gui, GuiGraphics guiGraphics, float partialTicks, int screenWidth, int screenHeight)
 	{
 		foodIconsOffset = gui.rightHeight;
 
@@ -108,7 +108,7 @@ public class HUDOverlayHandler
 
 		// Notify everyone that we should render exhaustion hud overlay
 		HUDOverlayEvent.Exhaustion renderEvent = new HUDOverlayEvent.Exhaustion(exhaustion, right, top, guiGraphics);
-		MinecraftForge.EVENT_BUS.post(renderEvent);
+		NeoForge.EVENT_BUS.post(renderEvent);
 		if (!renderEvent.isCanceled())
 			drawExhaustionOverlay(renderEvent, mc, 1f);
 	}
@@ -119,7 +119,7 @@ public class HUDOverlayHandler
 		FOOD,
 	}
 
-	public static void renderFoodOrHealthOverlay(ForgeGui gui, GuiGraphics guiGraphics, float partialTicks, int screenWidth, int screenHeight, RenderOverlayType type)
+	public static void renderFoodOrHealthOverlay(ExtendedGui gui, GuiGraphics guiGraphics, float partialTicks, int screenWidth, int screenHeight, RenderOverlayType type)
 	{
 		if (!shouldRenderAnyOverlays())
 			return;
@@ -149,7 +149,7 @@ public class HUDOverlayHandler
 
 			// notify everyone that we should render saturation hud overlay
 			if (!saturationRenderEvent.isCanceled())
-				MinecraftForge.EVENT_BUS.post(saturationRenderEvent);
+				NeoForge.EVENT_BUS.post(saturationRenderEvent);
 
 			// the render saturation event maybe cancelled by other mods
 			if (!saturationRenderEvent.isCanceled())
@@ -170,7 +170,7 @@ public class HUDOverlayHandler
 
 		FoodValues modifiedFoodValues = FoodHelper.getModifiedFoodValues(heldItem, player);
 		FoodValuesEvent foodValuesEvent = new FoodValuesEvent(player, heldItem, FoodHelper.getDefaultFoodValues(heldItem, player), modifiedFoodValues);
-		MinecraftForge.EVENT_BUS.post(foodValuesEvent);
+		NeoForge.EVENT_BUS.post(foodValuesEvent);
 		modifiedFoodValues = foodValuesEvent.modifiedFoodValues;
 
 		if (type == RenderOverlayType.HEALTH)
@@ -193,7 +193,7 @@ public class HUDOverlayHandler
 
 			// notify everyone that we should render estimated health hud
 			if (healthRenderEvent != null)
-				MinecraftForge.EVENT_BUS.post(healthRenderEvent);
+				NeoForge.EVENT_BUS.post(healthRenderEvent);
 
 			if (healthRenderEvent != null && !healthRenderEvent.isCanceled())
 				drawHealthOverlay(healthRenderEvent, mc, flashAlpha);
@@ -205,7 +205,7 @@ public class HUDOverlayHandler
 
 			// notify everyone that we should render hunger hud overlay
 			HUDOverlayEvent.HungerRestored renderRenderEvent = new HUDOverlayEvent.HungerRestored(stats.getFoodLevel(), heldItem, modifiedFoodValues, right, top, guiGraphics);
-			MinecraftForge.EVENT_BUS.post(renderRenderEvent);
+			NeoForge.EVENT_BUS.post(renderRenderEvent);
 			if (renderRenderEvent.isCanceled())
 				return;
 

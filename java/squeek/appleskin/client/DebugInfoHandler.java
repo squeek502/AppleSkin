@@ -2,11 +2,11 @@ package squeek.appleskin.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.food.FoodData;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.helpers.HungerHelper;
 
@@ -21,7 +21,7 @@ public class DebugInfoHandler
 
 	public static void init()
 	{
-		MinecraftForge.EVENT_BUS.register(new DebugInfoHandler());
+		NeoForge.EVENT_BUS.register(new DebugInfoHandler());
 	}
 
 	@SubscribeEvent

@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[47,)"
+loaderVersion="[1,)"
 issueTrackerURL="https://github.com/squeek502/AppleSkin"
 license="The Unlicense"
 
@@ -14,8 +14,8 @@ authors="squeek"
 description="Adds various food-related HUD improvements"
 
 [[dependencies.appleskin]]
-    modId="forge"
+    modId="neoforge"
     mandatory=true
-    versionRange="[47.0.12,)"
-    ordering="AFTER"
+    versionRange="[20.2,)"
+    ordering="NONE"
     side="CLIENT"

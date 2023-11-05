@@ -2,7 +2,7 @@ package squeek.appleskin;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.nio.file.Path;
 
@@ -20,7 +20,7 @@ public class ModConfig
 		SPEC.setConfig(configData);
 	}
 
-	private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+	private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
 	/*
 	 * CLIENT
@@ -29,61 +29,61 @@ public class ModConfig
 	private static final String CATEGORY_CLIENT_COMMENT =
 		"These config settings are client-side only";
 
-	public static final ForgeConfigSpec.BooleanValue SHOW_FOOD_VALUES_IN_TOOLTIP;
+	public static final ModConfigSpec.BooleanValue SHOW_FOOD_VALUES_IN_TOOLTIP;
 	public static boolean SHOW_FOOD_VALUES_IN_TOOLTIP_DEFAULT = true;
 	private static final String SHOW_FOOD_VALUES_IN_TOOLTIP_NAME = "showFoodValuesInTooltip";
 	private static final String SHOW_FOOD_VALUES_IN_TOOLTIP_COMMENT =
 		"If true, shows the hunger and saturation values of food in its tooltip while holding SHIFT";
 
-	public static final ForgeConfigSpec.BooleanValue ALWAYS_SHOW_FOOD_VALUES_TOOLTIP;
+	public static final ModConfigSpec.BooleanValue ALWAYS_SHOW_FOOD_VALUES_TOOLTIP;
 	public static boolean ALWAYS_SHOW_FOOD_VALUES_TOOLTIP_DEFAULT = true;
 	private static final String ALWAYS_SHOW_FOOD_VALUES_TOOLTIP_NAME = "showFoodValuesInTooltipAlways";
 	private static final String ALWAYS_SHOW_FOOD_VALUES_TOOLTIP_COMMENT =
 		"If true, shows the hunger and saturation values of food in its tooltip automatically (without needing to hold SHIFT)";
 
-	public static final ForgeConfigSpec.BooleanValue SHOW_SATURATION_OVERLAY;
+	public static final ModConfigSpec.BooleanValue SHOW_SATURATION_OVERLAY;
 	public static boolean SHOW_SATURATION_OVERLAY_DEFAULT = true;
 	private static final String SHOW_SATURATION_OVERLAY_NAME = "showSaturationHudOverlay";
 	private static final String SHOW_SATURATION_OVERLAY_COMMENT =
 		"If true, shows your current saturation level overlayed on the hunger bar";
 
-	public static final ForgeConfigSpec.BooleanValue SHOW_FOOD_VALUES_OVERLAY;
+	public static final ModConfigSpec.BooleanValue SHOW_FOOD_VALUES_OVERLAY;
 	public static boolean SHOW_FOOD_VALUES_OVERLAY_DEFAULT = true;
 	private static final String SHOW_FOOD_VALUES_OVERLAY_NAME = "showFoodValuesHudOverlay";
 	private static final String SHOW_FOOD_VALUES_OVERLAY_COMMENT =
 		"If true, shows the hunger (and saturation if " + SHOW_SATURATION_OVERLAY_NAME + " is true) that would be restored by food you are currently holding";
 
-	public static final ForgeConfigSpec.BooleanValue SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND;
+	public static final ModConfigSpec.BooleanValue SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND;
 	public static boolean SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND_DEFAULT = true;
 	private static final String SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND_NAME = "showFoodValuesHudOverlayWhenOffhand";
 	private static final String SHOW_FOOD_VALUES_OVERLAY_WHEN_OFFHAND_COMMENT =
 		"If true, enables the hunger/saturation/health overlays for food in your off-hand";
 
-	public static final ForgeConfigSpec.BooleanValue SHOW_FOOD_EXHAUSTION_UNDERLAY;
+	public static final ModConfigSpec.BooleanValue SHOW_FOOD_EXHAUSTION_UNDERLAY;
 	public static boolean SHOW_FOOD_EXHAUSTION_UNDERLAY_DEFAULT = true;
 	private static final String SHOW_FOOD_EXHAUSTION_UNDERLAY_NAME = "showFoodExhaustionHudUnderlay";
 	private static final String SHOW_FOOD_EXHAUSTION_UNDERLAY_COMMENT =
 		"If true, shows your food exhaustion as a progress bar behind the hunger bars";
 
-	public static final ForgeConfigSpec.BooleanValue SHOW_FOOD_DEBUG_INFO;
+	public static final ModConfigSpec.BooleanValue SHOW_FOOD_DEBUG_INFO;
 	public static boolean SHOW_FOOD_DEBUG_INFO_DEFAULT = true;
 	private static final String SHOW_FOOD_DEBUG_INFO_NAME = "showFoodStatsInDebugOverlay";
 	private static final String SHOW_FOOD_DEBUG_INFO_COMMENT =
 		"If true, adds a line that shows your hunger, saturation, and exhaustion level in the F3 debug overlay";
 
-	public static final ForgeConfigSpec.BooleanValue SHOW_FOOD_HEALTH_HUD_OVERLAY;
+	public static final ModConfigSpec.BooleanValue SHOW_FOOD_HEALTH_HUD_OVERLAY;
 	public static boolean SHOW_FOOD_HEALTH_HUD_OVERLAY_DEFAULT = true;
 	private static final String SHOW_FOOD_HEALTH_HUD_OVERLAY_NAME = "showFoodHealthHudOverlay";
 	private static final String SHOW_FOOD_HEALTH_HUD_OVERLAY_COMMENT =
 		"If true, shows estimated health restored by food on the health bar";
 
-	public static final ForgeConfigSpec.BooleanValue SHOW_VANILLA_ANIMATION_OVERLAY;
+	public static final ModConfigSpec.BooleanValue SHOW_VANILLA_ANIMATION_OVERLAY;
 	public static boolean SHOW_VANILLA_ANIMATION_OVERLAY_DEFAULT = true;
 	private static final String SHOW_VANILLA_ANIMATION_OVERLAY_NAME = "showVanillaAnimationsOverlay";
 	private static final String SHOW_VANILLA_ANIMATION_OVERLAY_COMMENT =
 		"If true, health/hunger overlay will shake to match Minecraft's icon animations";
 
-	public static final ForgeConfigSpec.DoubleValue MAX_HUD_OVERLAY_FLASH_ALPHA;
+	public static final ModConfigSpec.DoubleValue MAX_HUD_OVERLAY_FLASH_ALPHA;
 	public static double MAX_HUD_OVERLAY_FLASH_ALPHA_DEFAULT = 0.65D;
 	private static final String MAX_HUD_OVERLAY_FLASH_ALPHA_NAME = "maxHudOverlayFlashAlpha";
 	private static final String MAX_HUD_OVERLAY_FLASH_ALPHA_COMMENT =
@@ -125,5 +125,5 @@ public class ModConfig
 		BUILDER.pop();
 	}
 
-	public static final ForgeConfigSpec SPEC = BUILDER.build();
+	public static final ModConfigSpec SPEC = BUILDER.build();
 }

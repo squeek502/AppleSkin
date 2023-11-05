@@ -2,12 +2,11 @@ package squeek.appleskin.api.event;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.ICancellableEvent;
 import squeek.appleskin.api.food.FoodValues;
 
-@Cancelable
-public class TooltipOverlayEvent extends Event
+public class TooltipOverlayEvent extends Event implements ICancellableEvent
 {
 	/**
 	 * If cancelled, will stop all rendering from happening.
@@ -50,10 +49,4 @@ public class TooltipOverlayEvent extends Event
 	public final FoodValues modifiedFood;
 
 	public final ItemStack itemStack;
-
-	@Override
-	public boolean isCancelable()
-	{
-		return true;
-	}
 }

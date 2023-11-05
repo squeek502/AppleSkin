@@ -2,14 +2,13 @@ package squeek.appleskin.network;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.network.ChannelBuilder;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.SimpleChannel;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.living.LivingEvent.LivingTickEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.network.NetworkRegistry;
+import net.neoforged.neoforge.network.PlayNetworkDirection;
+import net.neoforged.neoforge.network.simple.SimpleChannel;
 import squeek.appleskin.ModInfo;
 
 import java.util.HashMap;
@@ -18,27 +17,20 @@ import java.util.UUID;
 
 public class SyncHandler
 {
-	private static final int PROTOCOL_VERSION = 1;
-	public static final SimpleChannel CHANNEL = ChannelBuilder
-		.named(new ResourceLocation(ModInfo.MODID, "sync"))
-		.optional()
-		.acceptedVersions((status, version) -> true)
-		.networkProtocolVersion(PROTOCOL_VERSION)
-		.simpleChannel();
+	private static final String PROTOCOL_VERSION = Integer.toString(1);
+	public static final SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
+			.named(new ResourceLocation(ModInfo.MODID, "sync"))
+			.clientAcceptedVersions(s -> true)
+			.serverAcceptedVersions(s -> true)
+			.networkProtocolVersion(() -> PROTOCOL_VERSION)
+			.simpleChannel();
 
 	public static void init()
 	{
-		CHANNEL.messageBuilder(MessageExhaustionSync.class, NetworkDirection.PLAY_TO_CLIENT)
-			.encoder(MessageExhaustionSync::encode)
-			.decoder(MessageExhaustionSync::decode)
-			.consumerNetworkThread(MessageExhaustionSync::handle)
-			.add();
-		CHANNEL.messageBuilder(MessageSaturationSync.class, NetworkDirection.PLAY_TO_CLIENT)
-			.encoder(MessageSaturationSync::encode)
-			.decoder(MessageSaturationSync::decode)
-			.consumerNetworkThread(MessageSaturationSync::handle)
-			.add();
-		MinecraftForge.EVENT_BUS.register(new SyncHandler());
+		CHANNEL.registerMessage(1, MessageExhaustionSync.class, MessageExhaustionSync::encode, MessageExhaustionSync::decode, MessageExhaustionSync::handle);
+		CHANNEL.registerMessage(2, MessageSaturationSync.class, MessageSaturationSync::encode, MessageSaturationSync::decode, MessageSaturationSync::handle);
+
+		NeoForge.EVENT_BUS.register(new SyncHandler());
 	}
 
 	/*
@@ -61,7 +53,7 @@ public class SyncHandler
 		if (lastSaturationLevel == null || lastSaturationLevel != player.getFoodData().getSaturationLevel())
 		{
 			var msg = new MessageSaturationSync(player.getFoodData().getSaturationLevel());
-			CHANNEL.send(msg, PacketDistributor.PLAYER.with(player));
+			CHANNEL.sendTo(msg, player.connection.connection, PlayNetworkDirection.PLAY_TO_CLIENT);
 			lastSaturationLevels.put(player.getUUID(), player.getFoodData().getSaturationLevel());
 		}
 
@@ -69,7 +61,7 @@ public class SyncHandler
 		if (lastExhaustionLevel == null || Math.abs(lastExhaustionLevel - exhaustionLevel) >= 0.01f)
 		{
 			var msg = new MessageExhaustionSync(exhaustionLevel);
-			CHANNEL.send(msg, PacketDistributor.PLAYER.with(player));
+			CHANNEL.sendTo(msg, player.connection.connection, PlayNetworkDirection.PLAY_TO_CLIENT);
 			lastExhaustionLevels.put(player.getUUID(), exhaustionLevel);
 		}
 	}

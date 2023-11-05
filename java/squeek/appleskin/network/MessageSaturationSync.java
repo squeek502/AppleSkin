@@ -1,7 +1,9 @@
 package squeek.appleskin.network;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
+
+import java.util.function.Supplier;
 
 public class MessageSaturationSync
 {
@@ -22,7 +24,7 @@ public class MessageSaturationSync
 		return new MessageSaturationSync(buf.readFloat());
 	}
 
-	public static void handle(final MessageSaturationSync message, CustomPayloadEvent.Context ctx)
+	public static void handle(final MessageSaturationSync message, NetworkEvent.Context ctx)
 	{
 		ctx.enqueueWork(() -> {
 			NetworkHelper.getSidedPlayer(ctx).getFoodData().setSaturation(message.saturationLevel);
