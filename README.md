@@ -36,7 +36,7 @@ Note: To give the build a version number, use ```gradlew build -Pversion=<versio
 
 ### For Mod Developers
 
-> Note: These instructions are Forge-specific. For Fabric, see the instructions in the relevant `-fabric` branch.
+> Note: These instructions are NeoForge-specific. For Fabric, see the instructions in the relevant `-fabric` branch.
 
 If followed, the directions below will make it so that your mod's Maven dependencies won't include AppleSkin at all, and your mod will load fine with or without AppleSkin installed.
 
@@ -51,12 +51,12 @@ repositories {
 and add this to your `dependencies` block:
 
 ```groovy
-compileOnly fg.deobf("squeek.appleskin:appleskin-forge:<version>:api")
+compileOnly fg.deobf("squeek.appleskin:appleskin-neoforge:<version>:api")
 ```
 
 where `<version>` is replaced by the appropriate version found here:
 
-https://maven.ryanliptak.com/squeek/appleskin/appleskin-forge
+https://maven.ryanliptak.com/squeek/appleskin/appleskin-neoforge
 
 Once you're compiling against the AppleSkin API, you can create an event handler and only register it when `appleskin` is loaded. Here's an example implementation:
 
@@ -65,7 +65,7 @@ In your `@Mod` annotated class:
 ```java
 private void clientInit(final FMLClientSetupEvent event) {
     if (ModList.get().isLoaded("appleskin")) {
-        MinecraftForge.EVENT_BUS.register(new AppleSkinEventHandler());
+        NeoForge.EVENT_BUS.register(new AppleSkinEventHandler());
     }
 }
 ```
@@ -92,7 +92,7 @@ public class AppleSkinEventHandler
 Note: if you want to test with the full AppleSkin mod in your development environment, you can also add the following to your `dependencies`:
 
 ```groovy
-runtimeOnly fg.deobf("squeek.appleskin:appleskin-forge:<version>")
+runtimeOnly fg.deobf("squeek.appleskin:appleskin-neoforge:<version>")
 ```
 
 while replacing `<version>` as mentioned above.
