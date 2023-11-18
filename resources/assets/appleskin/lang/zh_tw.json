@@ -1,0 +1,26 @@
+{
+  "text.autoconfig.appleskin.title": "AppleSkin",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltip": "在物品提示中顯示食物飽食度",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltip.@Tooltip": "若啟用，在按住 SHIFT 鍵時顯示食物的飢餓值和飽和度",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways": "總是在物品提示中顯示食物飽食度",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways.@Tooltip": "若啟用，自動在物品提示中顯示食物的飢餓值和飽和度（不需要按住 SHIFT 鍵）",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay": "手持食物時顯示可回復的飢餓值",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay.@Tooltip": "若啟用，顯示你目前手持的食物預計恢復的飢餓值（在開啟「顯示飽和度」後將同時顯示飽和度）",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlayWhenOffhand": "食物在副手時顯示飢餓值重疊",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlayWhenOffhand.@Tooltip": "若啟用，顯示副手手持的食物預計恢復的飢餓值／飽和度／生命值",
+  "text.autoconfig.appleskin.option.showFoodHealthHudOverlay": "顯示估計恢復的生命值覆蓋層",
+  "text.autoconfig.appleskin.option.showFoodHealthHudOverlay.@Tooltip": "若啟用，顯示食物食用後預計恢復的生命值",
+  "text.autoconfig.appleskin.option.showFoodExhaustionHudUnderlay.@Tooltip": "若啟用，在飢餓條後顯示消耗度",
+  "text.autoconfig.appleskin.option.showFoodExhaustionHudUnderlay": "顯示飽食度消耗值",
+  "text.autoconfig.appleskin.option.showSaturationHudOverlay.@Tooltip": "若啟用，在飢餓條上顯示飽和度",
+  "text.autoconfig.appleskin.option.showSaturationHudOverlay": "顯示飽食度消耗重疊",
+  "text.autoconfig.appleskin.option.showFoodDebugInfo": "在除錯介面中顯示食物數值",
+  "text.autoconfig.appleskin.option.showFoodDebugInfo.@Tooltip":"若開啟，在除錯畫面中顯示你的飢餓值、飽和度和消耗度",
+  "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay": "顯示動畫 HUD 圖示來與 Minecraft 相符",
+  "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay.@Tooltip": "若開啟，生命條／飢餓條將抖動以與 Minecraft 圖示動畫匹配",
+  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "最大 HUD 圖示閃爍的不透明度",
+  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha.@Tooltip": "HUD 閃爍圖示在其最可見點的不透明度值（1.0=完全不透明，0.0=完全透明）",
+
+  "modmenu.summaryTranslation.appleskin": "新增多種食物顯示相關的 HUD 改進",
+  "modmenu.descriptionTranslation.appleskin": "新增多種食物顯示相關的 HUD 改進"
+}
