@@ -39,7 +39,7 @@ public class TooltipOverlayHandler
 		@Override
 		public TextContent getContent()
 		{
-			return TextContent.EMPTY;
+			return PlainTextContent.EMPTY;
 		}
 
 		static List<Text> emptySiblings = new ArrayList<Text>();
