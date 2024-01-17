@@ -1,34 +1,36 @@
 package squeek.appleskin.network;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import squeek.appleskin.ModInfo;
 
-import java.util.function.Supplier;
-
-public class MessageExhaustionSync
+public record MessageExhaustionSync(float exhaustionLevel) implements CustomPacketPayload
 {
-	float exhaustionLevel;
+	public static final ResourceLocation ID = new ResourceLocation(ModInfo.MODID, "exhaustion");
 
-	public MessageExhaustionSync(float exhaustionLevel)
+	public MessageExhaustionSync(final FriendlyByteBuf buffer)
 	{
-		this.exhaustionLevel = exhaustionLevel;
+		this(buffer.readFloat());
 	}
 
-	public static void encode(MessageExhaustionSync pkt, FriendlyByteBuf buf)
+	@Override
+	public void write(final FriendlyByteBuf buffer)
 	{
-		buf.writeFloat(pkt.exhaustionLevel);
+		buffer.writeFloat(exhaustionLevel());
 	}
 
-	public static MessageExhaustionSync decode(FriendlyByteBuf buf)
+	@Override
+	public ResourceLocation id()
 	{
-		return new MessageExhaustionSync(buf.readFloat());
+		return ID;
 	}
 
-	public static void handle(final MessageExhaustionSync message, NetworkEvent.Context ctx)
+	public static void handle(final MessageExhaustionSync message, final PlayPayloadContext ctx)
 	{
-		ctx.enqueueWork(() -> {
-			NetworkHelper.getSidedPlayer(ctx).getFoodData().setExhaustion(message.exhaustionLevel);
+		ctx.workHandler().submitAsync(() -> {
+			ctx.player().ifPresent(player -> player.getFoodData().setExhaustion(message.exhaustionLevel()));
 		});
-		ctx.setPacketHandled(true);
 	}
 }

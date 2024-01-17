@@ -1,14 +1,14 @@
 package squeek.appleskin;
 
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
-import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import squeek.appleskin.client.DebugInfoHandler;
@@ -21,24 +21,19 @@ public class AppleSkin
 {
 	public static Logger Log = LogManager.getLogger(ModInfo.MODID);
 
-	public AppleSkin()
+	public AppleSkin(IEventBus modEventBus)
 	{
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::preInit);
+		modEventBus.addListener(this::onRegisterPayloadHandler);
 		if (FMLEnvironment.dist.isClient())
 		{
-			FMLJavaModLoadingContext.get().getModEventBus().addListener(this::preInitClient);
-			FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegisterClientTooltipComponentFactories);
+			modEventBus.addListener(this::preInitClient);
+			modEventBus.addListener(this::onRegisterClientTooltipComponentFactories);
 		}
 		ModLoadingContext.get().registerConfig(
 			net.neoforged.fml.config.ModConfig.Type.CLIENT,
 			ModConfig.SPEC
 		);
 		ModConfig.init(FMLPaths.CONFIGDIR.get().resolve(ModInfo.MODID + "-client.toml"));
-	}
-
-	private void preInit(final FMLCommonSetupEvent event)
-	{
-		SyncHandler.init();
 	}
 
 	private void preInitClient(final FMLClientSetupEvent event)
@@ -51,5 +46,11 @@ public class AppleSkin
 	private void onRegisterClientTooltipComponentFactories(RegisterClientTooltipComponentFactoriesEvent event)
 	{
 		TooltipOverlayHandler.register(event);
+	}
+
+	@SubscribeEvent
+	private void onRegisterPayloadHandler(final RegisterPayloadHandlerEvent event)
+	{
+		SyncHandler.register(event);
 	}
 }
