@@ -1,9 +1,8 @@
 package squeek.appleskin.client;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
@@ -11,11 +10,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.Difficulty;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.opengl.GL11;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.api.event.HUDOverlayEvent;
-import squeek.appleskin.helpers.FoodHelper;
-import squeek.appleskin.helpers.TextureHelper;
+import squeek.appleskin.helpers.*;
 import squeek.appleskin.helpers.TextureHelper.FoodType;
 import squeek.appleskin.helpers.TextureHelper.HeartType;
 import squeek.appleskin.util.IntPoint;
@@ -51,7 +48,7 @@ public class HUDOverlayHandler
 
 		assert player != null;
 
-		float exhaustion = player.getHungerManager().getExhaustion();
+		float exhaustion = ExhaustionHelper.getExhaustion(player);
 
 		// Notify everyone that we should render exhaustion hud overlay
 		HUDOverlayEvent.Exhaustion renderEvent = new HUDOverlayEvent.Exhaustion(exhaustion, right, top, context);
@@ -112,7 +109,7 @@ public class HUDOverlayHandler
 			float foodSaturationIncrement = result.modifiedFoodComponent.saturation();
 
 			// draw hunger overlay
-			drawHungerOverlay(hungerRenderEvent, mc, foodHunger, flashAlpha, FoodHelper.isRotten(result.modifiedFoodComponent), mc.inGameHud.getTicks());
+			drawHungerOverlay(hungerRenderEvent, mc, foodHunger, flashAlpha, FoodHelper.isRotten(result.consumableComponent), mc.inGameHud.getTicks());
 
 			int newFoodValue = stats.getFoodLevel() + foodHunger;
 			float newSaturationValue = stats.getSaturationLevel() + foodSaturationIncrement;
@@ -149,7 +146,7 @@ public class HUDOverlayHandler
 		// draw health overlay if needed
 		if (shouldShowEstimatedHealth(player, mc.inGameHud.getTicks()))
 		{
-			float foodHealthIncrement = FoodHelper.getEstimatedHealthIncrement(player, result.modifiedFoodComponent);
+			float foodHealthIncrement = FoodHelper.getEstimatedHealthIncrement(player, new ConsumableFood(result.modifiedFoodComponent, result.consumableComponent));
 			float currentHealth = player.getHealth();
 			float modifiedHealth = Math.min(currentHealth + foodHealthIncrement, player.getMaxHealth());
 
@@ -172,7 +169,7 @@ public class HUDOverlayHandler
 		if (saturationLevel + saturationGained < 0)
 			return;
 
-		enableAlpha(alpha);
+		var alphaColor = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, alpha);
 
 		float modifiedSaturation = Math.max(0, Math.min(saturationLevel + saturationGained, 20));
 
@@ -208,10 +205,8 @@ public class HUDOverlayHandler
 			else if (effectiveSaturationOfBar > .25)
 				u = 1 * iconSize;
 
-			context.drawTexture(TextureHelper.MOD_ICONS, x, y, u, v, iconSize, iconSize);
+			context.drawTexture(RenderLayer::getGuiTextured, TextureHelper.MOD_ICONS, x, y, u, v, iconSize, iconSize, 256, 256, alphaColor);
 		}
-
-		disableAlpha(alpha);
 	}
 
 	public void drawHungerOverlay(DrawContext context, int hungerRestored, int foodLevel, MinecraftClient mc, int right, int top, float alpha, boolean useRottenTextures, int guiTicks)
@@ -219,7 +214,7 @@ public class HUDOverlayHandler
 		if (hungerRestored <= 0)
 			return;
 
-		enableAlpha(alpha);
+		var alphaColor = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, alpha);
 
 		int modifiedFood = Math.max(0, Math.min(20, foodLevel + hungerRestored));
 
@@ -242,17 +237,14 @@ public class HUDOverlayHandler
 			Identifier backgroundSprite = TextureHelper.getFoodTexture(useRottenTextures, FoodType.EMPTY);
 
 			// very faint background
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha * 0.25F);
-			context.drawGuiTexture(backgroundSprite, x, y, iconSize, iconSize);
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
+			var bgColor = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, alpha * 0.25F);
+			context.drawGuiTexture(RenderLayer::getGuiTextured, backgroundSprite, x, y, iconSize, iconSize, bgColor);
 
 			boolean isHalf = i * 2 + 1 == modifiedFood;
 			Identifier iconSprite = TextureHelper.getFoodTexture(useRottenTextures, isHalf ? FoodType.HALF : FoodType.FULL);
 
-			context.drawGuiTexture(iconSprite, x, y, iconSize, iconSize);
+			context.drawGuiTexture(RenderLayer::getGuiTextured, iconSprite, x, y, iconSize, iconSize, alphaColor);
 		}
-
-		disableAlpha(alpha);
 	}
 
 	public void drawHealthOverlay(DrawContext context, float health, float modifiedHealth, MinecraftClient mc, int right, int top, float alpha, int guiTicks)
@@ -260,7 +252,7 @@ public class HUDOverlayHandler
 		if (modifiedHealth <= health)
 			return;
 
-		enableAlpha(alpha);
+		var alphaColor = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, alpha);
 
 		int fixedModifiedHealth = (int) Math.ceil(modifiedHealth);
 		boolean isHardcore = mc.player.getWorld() != null && mc.player.getWorld().getLevelProperties().isHardcore();
@@ -284,17 +276,14 @@ public class HUDOverlayHandler
 			Identifier backgroundSprite = TextureHelper.getHeartTexture(isHardcore, HeartType.CONTAINER);
 
 			// very faint background
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha * 0.25F);
-			context.drawGuiTexture(backgroundSprite, x, y, iconSize, iconSize);
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
+			var bgColor = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, alpha * 0.25F);
+			context.drawGuiTexture(RenderLayer::getGuiTextured, backgroundSprite, x, y, iconSize, iconSize, bgColor);
 
 			boolean isHalf = i * 2 + 1 == fixedModifiedHealth;
 			Identifier iconSprite = TextureHelper.getHeartTexture(isHardcore, isHalf ? HeartType.HALF : HeartType.FULL);
 
-			context.drawGuiTexture(iconSprite, x, y, iconSize, iconSize);
+			context.drawGuiTexture(RenderLayer::getGuiTextured, iconSprite, x, y, iconSize, iconSize, alphaColor);
 		}
-
-		disableAlpha(alpha);
 	}
 
 	public void drawExhaustionOverlay(DrawContext context, float exhaustion, int right, int top, float alpha)
@@ -305,9 +294,8 @@ public class HUDOverlayHandler
 		int width = (int) (ratio * 81);
 		int height = 9;
 
-		enableAlpha(.75f);
-		context.drawTexture(TextureHelper.MOD_ICONS, right - width, top, 81 - width, 18, width, height);
-		disableAlpha(.75f);
+		var color = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, 0.75F);
+		context.drawTexture(RenderLayer::getGuiTextured, TextureHelper.MOD_ICONS, right - width, top, 81 - width, 18, width, height, 256, 256, color);
 	}
 
 
@@ -335,22 +323,6 @@ public class HUDOverlayHandler
 	{
 		return ModConfig.INSTANCE.showFoodValuesHudOverlay || ModConfig.INSTANCE.showSaturationHudOverlay || ModConfig.INSTANCE.showFoodHealthHudOverlay;
 	}
-
-	private void enableAlpha(float alpha)
-	{
-		needDisableBlend = !GL11.glIsEnabled(GL11.GL_BLEND);
-		RenderSystem.enableBlend();
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
-		RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
-	}
-
-	private void disableAlpha(float alpha)
-	{
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		if (needDisableBlend)
-			RenderSystem.disableBlend();
-	}
-
 
 	public void onClientTick()
 	{

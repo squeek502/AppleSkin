@@ -4,6 +4,7 @@ package squeek.appleskin.client;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.HungerManager;
 import squeek.appleskin.ModConfig;
+import squeek.appleskin.helpers.ExhaustionHelper;
 import squeek.appleskin.helpers.FoodHelper;
 
 import java.text.DecimalFormat;
@@ -38,7 +39,7 @@ public class DebugInfoHandler
 			return;
 
 		HungerManager stats = mc.player.getHungerManager();
-		float curExhaustion = stats.getExhaustion();
+		float curExhaustion = ExhaustionHelper.getExhaustion(mc.player);
 		float maxExhaustion = FoodHelper.MAX_EXHAUSTION;
 		leftDebugInfo.add("hunger: " + stats.getFoodLevel() + ", sat: " + saturationDF.format(stats.getSaturationLevel()) + ", exh: " + exhaustionValDF.format(curExhaustion) + "/" + exhaustionMaxDF.format(maxExhaustion));
 	}
