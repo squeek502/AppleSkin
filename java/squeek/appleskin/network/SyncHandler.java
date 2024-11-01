@@ -65,7 +65,7 @@ public class SyncHandler
 		var cur = world.getGameRules().getBoolean(GameRules.NATURAL_REGENERATION);
 		if (naturalRegeneration != cur) {
 			for (ServerPlayerEntity player : world.getPlayers()) {
-				ServerPlayNetworking.send(player, new NaturalRegenerationSyncPayload(naturalRegeneration));
+				ServerPlayNetworking.send(player, new NaturalRegenerationSyncPayload(cur));
 			}
 			naturalRegeneration = cur;
 		}
