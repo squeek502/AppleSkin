@@ -86,7 +86,7 @@ public class SyncHandler
 	{
 		var cur = event.getServer().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
 		if (naturalRegeneration != cur) {
-			PacketDistributor.sendToAllPlayers(new MessageNaturalRegenerationSync(naturalRegeneration));
+			PacketDistributor.sendToAllPlayers(new MessageNaturalRegenerationSync(cur));
 			naturalRegeneration = cur;
 		}
 	}
