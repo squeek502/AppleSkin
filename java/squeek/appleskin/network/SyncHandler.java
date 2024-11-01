@@ -67,6 +67,7 @@ public class SyncHandler
 			for (ServerPlayerEntity player : world.getPlayers()) {
 				ServerPlayNetworking.send(player, new NaturalRegenerationSyncPayload(naturalRegeneration));
 			}
+			naturalRegeneration = cur;
 		}
 	}
 }
