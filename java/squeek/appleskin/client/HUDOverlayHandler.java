@@ -1,10 +1,10 @@
 package squeek.appleskin.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
@@ -21,13 +21,10 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.opengl.GL11;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.ModInfo;
 import squeek.appleskin.api.event.HUDOverlayEvent;
-import squeek.appleskin.helpers.FoodHelper;
-import squeek.appleskin.helpers.HungerHelper;
-import squeek.appleskin.helpers.TextureHelper;
+import squeek.appleskin.helpers.*;
 import squeek.appleskin.util.IntPoint;
 
 import java.util.Vector;
@@ -110,7 +107,7 @@ public class HUDOverlayHandler
 				return;
 			}
 
-			float foodHealthIncrement = FoodHelper.getEstimatedHealthIncrement(player, result.modifiedFoodProperties);
+			float foodHealthIncrement = FoodHelper.getEstimatedHealthIncrement(player, new ConsumableFood(result.modifiedFoodProperties, result.consumable));
 			float currentHealth = player.getHealth();
 			float modifiedHealth = Math.min(currentHealth + foodHealthIncrement, player.getMaxHealth());
 
@@ -174,7 +171,7 @@ public class HUDOverlayHandler
 			float foodSaturationIncrement = modifiedFoodProperties.saturation();
 
 			// restored hunger/saturation overlay while holding food
-			drawHungerOverlay(renderRenderEvent, player, foodHunger, flashAlpha, FoodHelper.isRotten(modifiedFoodProperties), guiTicks);
+			drawHungerOverlay(renderRenderEvent, player, foodHunger, flashAlpha, FoodHelper.isRotten(result.consumable), guiTicks);
 		}
 
 		@Override
@@ -239,7 +236,7 @@ public class HUDOverlayHandler
 		@Override
 		public void render(Minecraft mc, Player player, GuiGraphics guiGraphics, int left, int right, int top, int guiTicks)
 		{
-			float exhaustion = player.getFoodData().getExhaustionLevel();
+			float exhaustion = player.getFoodData().exhaustionLevel;
 
 			// Notify everyone that we should render exhaustion hud overlay
 			HUDOverlayEvent.Exhaustion renderEvent = new HUDOverlayEvent.Exhaustion(exhaustion, right, top - foodIconsOffset, guiGraphics);
@@ -267,7 +264,7 @@ public class HUDOverlayHandler
 		if (saturationLevel + saturationGained < 0)
 			return;
 
-		enableAlpha(alpha);
+		var alphaColor = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, alpha);
 
 		float modifiedSaturation = Math.max(0, Math.min(saturationLevel + saturationGained, 20));
 
@@ -303,10 +300,8 @@ public class HUDOverlayHandler
 			else if (effectiveSaturationOfBar > .25)
 				u = 1 * iconSize;
 
-			guiGraphics.blit(TextureHelper.MOD_ICONS, x, y, u, v, iconSize, iconSize);
+			guiGraphics.blit(RenderType::guiTextured, TextureHelper.MOD_ICONS, x, y, u, v, iconSize, iconSize, 256, 256, alphaColor);
 		}
-
-		disableAlpha(alpha);
 	}
 
 	public static void drawHungerOverlay(int hungerRestored, int foodLevel, Player player, GuiGraphics guiGraphics, int right, int top, float alpha, boolean useRottenTextures, int guiTicks)
@@ -314,7 +309,7 @@ public class HUDOverlayHandler
 		if (hungerRestored <= 0)
 			return;
 
-		enableAlpha(alpha);
+		var alphaColor = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, alpha);
 
 		int modifiedFood = Math.max(0, Math.min(20, foodLevel + hungerRestored));
 
@@ -338,17 +333,14 @@ public class HUDOverlayHandler
 			ResourceLocation backgroundSprite = TextureHelper.getFoodTexture(useRottenTextures, TextureHelper.FoodType.EMPTY);
 
 			// very faint background
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha * 0.25F);
-			guiGraphics.blitSprite(backgroundSprite, x, y, iconSize, iconSize);
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
+			var bgColor = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, alpha * 0.25F);
+			guiGraphics.blitSprite(RenderType::guiTextured, backgroundSprite, x, y, iconSize, iconSize, bgColor);
 
 			boolean isHalf = i * 2 + 1 == modifiedFood;
 			ResourceLocation iconSprite = TextureHelper.getFoodTexture(useRottenTextures, isHalf ? TextureHelper.FoodType.HALF : TextureHelper.FoodType.FULL);
 
-			guiGraphics.blitSprite(iconSprite, x, y, iconSize, iconSize);
+			guiGraphics.blitSprite(RenderType::guiTextured, iconSprite, x, y, iconSize, iconSize, alphaColor);
 		}
-
-		disableAlpha(alpha);
 	}
 
 	public static void drawHealthOverlay(float health, float modifiedHealth, Player player, GuiGraphics guiGraphics, int right, int top, float alpha, int guiTicks)
@@ -356,7 +348,7 @@ public class HUDOverlayHandler
 		if (modifiedHealth <= health)
 			return;
 
-		enableAlpha(alpha);
+		var alphaColor = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, alpha);
 
 		int fixedModifiedHealth = (int) Math.ceil(modifiedHealth);
 		boolean isHardcore = player.level().getLevelData().isHardcore();
@@ -380,17 +372,14 @@ public class HUDOverlayHandler
 			ResourceLocation backgroundSprite = TextureHelper.getHeartTexture(isHardcore, TextureHelper.HeartType.CONTAINER);
 
 			// very faint background
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha * 0.25F);
-			guiGraphics.blitSprite(backgroundSprite, x, y, iconSize, iconSize);
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
+			var bgColor = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, alpha * 0.25F);
+			guiGraphics.blitSprite(RenderType::guiTextured, backgroundSprite, x, y, iconSize, iconSize, bgColor);
 
 			boolean isHalf = i * 2 + 1 == fixedModifiedHealth;
 			ResourceLocation iconSprite = TextureHelper.getHeartTexture(isHardcore, isHalf ? TextureHelper.HeartType.HALF : TextureHelper.HeartType.FULL);
 
-			guiGraphics.blitSprite(iconSprite, x, y, iconSize, iconSize);
+			guiGraphics.blitSprite(RenderType::guiTextured, iconSprite, x, y, iconSize, iconSize, alphaColor);
 		}
-
-		disableAlpha(alpha);
 	}
 
 	public static void drawExhaustionOverlay(float exhaustion, Player player, GuiGraphics guiGraphics, int right, int top, float alpha)
@@ -401,23 +390,8 @@ public class HUDOverlayHandler
 		int width = (int) (ratio * 81);
 		int height = 9;
 
-		enableAlpha(.75f);
-		guiGraphics.blit(TextureHelper.MOD_ICONS, right - width, top, 81 - width, 18, width, height);
-		disableAlpha(.75f);
-	}
-
-
-	public static void enableAlpha(float alpha)
-	{
-		RenderSystem.enableBlend();
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
-		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-	}
-
-	public static void disableAlpha(float alpha)
-	{
-		RenderSystem.disableBlend();
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+		var color = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, 0.75F);
+		guiGraphics.blit(RenderType::guiTextured, TextureHelper.MOD_ICONS, right - width, top, 81 - width, 18, width, height, 256, 256, color);
 	}
 
 	public static void onClientTick(ClientTickEvent.Post event)

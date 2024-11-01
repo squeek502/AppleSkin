@@ -1,6 +1,5 @@
 package squeek.appleskin.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Minecraft;
@@ -8,12 +7,14 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.Consumable;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -21,8 +22,8 @@ import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactori
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import squeek.appleskin.ModConfig;
-import squeek.appleskin.api.event.FoodValuesEvent;
 import squeek.appleskin.api.event.TooltipOverlayEvent;
+import squeek.appleskin.helpers.ColorHelper;
 import squeek.appleskin.helpers.FoodHelper;
 import squeek.appleskin.helpers.KeyHelper;
 import squeek.appleskin.helpers.TextureHelper;
@@ -48,16 +49,16 @@ public class TooltipOverlayHandler
 		PARTIAL,
 		MISSING;
 
-		public void setShaderColor(GuiGraphics guiGraphics)
+		public int argb()
 		{
-			switch (this)
+			return switch (this)
 			{
-				case NEGATIVE -> guiGraphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-				case EXTRA -> guiGraphics.setColor(0.06f, 0.32f, 0.02f, 1.0f);
-				case NORMAL -> guiGraphics.setColor(0.0f, 0.0f, 0.0f, 1.0f);
-				case PARTIAL -> guiGraphics.setColor(0.53f, 0.21f, 0.08f, 1.0f);
-				case MISSING -> guiGraphics.setColor(0.62f, 0.0f, 0.0f, 0.5f);
-			}
+				case NEGATIVE -> ColorHelper.argbFromRGBA(1.0f, 1.0f, 1.0f, 1.0f);
+				case EXTRA -> ColorHelper.argbFromRGBA(0.06f, 0.32f, 0.02f, 1.0f);
+				case NORMAL -> ColorHelper.argbFromRGBA(0.0f, 0.0f, 0.0f, 1.0f);
+				case PARTIAL -> ColorHelper.argbFromRGBA(0.53f, 0.21f, 0.08f, 1.0f);
+				case MISSING -> ColorHelper.argbFromRGBA(0.62f, 0.0f, 0.0f, 0.5f);
+			};
 		}
 
 		public static FoodOutline get(int modifiedFoodHunger, int defaultFoodHunger, int i)
@@ -85,7 +86,7 @@ public class TooltipOverlayHandler
 		}
 
 		@Override
-		public int getHeight()
+		public int getHeight(Font font)
 		{
 			// hunger + spacing + saturation + arbitrary spacing,
 			// for some reason 3 extra looks best
@@ -107,7 +108,7 @@ public class TooltipOverlayHandler
 		}
 
 		@Override
-		public void renderImage(Font font, int x, int y, GuiGraphics guiGraphics)
+		public void renderImage(Font font, int x, int y, int width, int height, GuiGraphics guiGraphics)
 		{
 			ItemStack itemStack = foodTooltip.itemStack;
 			Minecraft mc = Minecraft.getInstance();
@@ -131,10 +132,6 @@ public class TooltipOverlayHandler
 			y = renderEvent.y;
 			guiGraphics = renderEvent.guiGraphics;
 
-			RenderSystem.enableDepthTest();
-			RenderSystem.enableBlend();
-			RenderSystem.defaultBlendFunc();
-
 			int offsetX = x;
 			int offsetY = y;
 
@@ -144,30 +141,27 @@ public class TooltipOverlayHandler
 			// Render from right to left so that the icons 'face' the right way
 			offsetX += (foodTooltip.hungerBars - 1) * 9;
 
-			boolean isRotten = FoodHelper.isRotten(modifiedFood);
+			boolean isRotten = FoodHelper.isRotten(foodTooltip.consumable);
 
 			for (int i = 0; i < foodTooltip.hungerBars * 2; i += 2)
 			{
-				guiGraphics.blitSprite(TextureHelper.FOOD_EMPTY_TEXTURE, offsetX, offsetY, 9, 9);
+				guiGraphics.blitSprite(RenderType::guiTextured, TextureHelper.FOOD_EMPTY_TEXTURE, offsetX, offsetY, 9, 9);
 
 				FoodOutline outline = FoodOutline.get(modifiedHunger, defaultHunger, i);
 				if (outline != FoodOutline.NORMAL)
 				{
-					outline.setShaderColor(guiGraphics);
-					guiGraphics.blitSprite(TextureHelper.HUNGER_OUTLINE_SPRITE, offsetX, offsetY, 9, 9);
+					guiGraphics.blitSprite(RenderType::guiTextured, TextureHelper.HUNGER_OUTLINE_SPRITE, offsetX, offsetY, 9, 9, outline.argb());
 				}
 
-				guiGraphics.setColor(1.0F, 1.0F, 1.0F, .25F);
 				boolean isDefaultHalf = defaultHunger - 1 == i;
 				ResourceLocation defaultFoodIcon = TextureHelper.getFoodTexture(isRotten, isDefaultHalf ? TextureHelper.FoodType.HALF : TextureHelper.FoodType.FULL);
-				guiGraphics.blitSprite(defaultFoodIcon, offsetX, offsetY, 9, 9);
-				guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+				guiGraphics.blitSprite(RenderType::guiTextured, defaultFoodIcon, offsetX, offsetY, 9, 9, ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, 0.25F));
 
 				if (modifiedHunger > i)
 				{
 					boolean isModifiedHalf = modifiedHunger - 1 == i;
 					ResourceLocation modifiedFoodIcon = TextureHelper.getFoodTexture(isRotten, isModifiedHalf ? TextureHelper.FoodType.HALF : TextureHelper.FoodType.FULL);
-					guiGraphics.blitSprite(modifiedFoodIcon, offsetX, offsetY, 9, 9);
+					guiGraphics.blitSprite(RenderType::guiTextured, modifiedFoodIcon, offsetX, offsetY, 9, 9);
 				}
 
 				offsetX -= 9;
@@ -193,19 +187,13 @@ public class TooltipOverlayHandler
 			// Render from right to left so that the icons 'face' the right way
 			offsetX += (foodTooltip.saturationBars - 1) * 7;
 
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 			for (int i = 0; i < foodTooltip.saturationBars * 2; i += 2)
 			{
 				float effectiveSaturationOfBar = (absModifiedSaturationIncrement - i) / 2f;
 
 				boolean shouldBeFaded = absModifiedSaturationIncrement <= i;
-				if (shouldBeFaded)
-					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, .5F);
-
-				guiGraphics.blit(TextureHelper.MOD_ICONS, offsetX, offsetY, 0, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7, 256, 256);
-
-				if (shouldBeFaded)
-					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+				int color = shouldBeFaded ? ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, 0.5F) : ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, 1.0F);
+				guiGraphics.blit(RenderType::guiTextured, TextureHelper.MOD_ICONS, offsetX, offsetY, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7, 256, 256, color);
 
 				offsetX -= 7;
 			}
@@ -219,12 +207,6 @@ public class TooltipOverlayHandler
 				guiGraphics.drawString(font, foodTooltip.saturationBarsText, 2, 1, 0xFFAAAAAA);
 				poseStack.popPose();
 			}
-
-			RenderSystem.disableBlend();
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-
-			// reset to drawHoveringText state
-			RenderSystem.disableDepthTest();
 		}
 	}
 
@@ -232,6 +214,7 @@ public class TooltipOverlayHandler
 	{
 		private FoodProperties defaultFood;
 		private FoodProperties modifiedFood;
+		private Consumable consumable;
 
 		private int biggestHunger;
 		private float biggestSaturationIncrement;
@@ -244,11 +227,12 @@ public class TooltipOverlayHandler
 
 		private ItemStack itemStack;
 
-		FoodTooltip(ItemStack itemStack, FoodProperties defaultFood, FoodProperties modifiedFood, Player player)
+		FoodTooltip(ItemStack itemStack, FoodProperties defaultFood, FoodProperties modifiedFood, Consumable consumable, Player player)
 		{
 			this.itemStack = itemStack;
 			this.defaultFood = defaultFood;
 			this.modifiedFood = modifiedFood;
+			this.consumable = consumable;
 
 			biggestHunger = Math.max(defaultFood.nutrition(), modifiedFood.nutrition());
 			biggestSaturationIncrement = Math.max(defaultFood.saturation(), modifiedFood.saturation());
@@ -298,7 +282,7 @@ public class TooltipOverlayHandler
 		if (prerenderEvent.isCanceled())
 			return;
 
-		FoodTooltip foodTooltip = new FoodTooltip(prerenderEvent.itemStack, defaultFood, modifiedFood, mc.player);
+		FoodTooltip foodTooltip = new FoodTooltip(prerenderEvent.itemStack, defaultFood, modifiedFood, queriedFoodResult.consumable, mc.player);
 		if (foodTooltip.shouldRenderHungerBars())
 			event.getTooltipElements().add(Either.right(foodTooltip));
 	}

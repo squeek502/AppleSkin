@@ -26,7 +26,7 @@ public record MessageExhaustionSync(float exhaustionLevel) implements CustomPack
 	public static void handle(final MessageExhaustionSync message, final IPayloadContext ctx)
 	{
 		ctx.enqueueWork(() -> {
-			ctx.player().getFoodData().setExhaustion(message.exhaustionLevel());
+			ctx.player().getFoodData().exhaustionLevel = message.exhaustionLevel();
 		});
 	}
 }

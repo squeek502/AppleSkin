@@ -1,10 +1,12 @@
 package squeek.appleskin.network;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.GameRules;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -26,6 +28,7 @@ public class SyncHandler
 
 		registrar.playToClient(MessageExhaustionSync.TYPE, MessageExhaustionSync.CODEC, MessageExhaustionSync::handle);
 		registrar.playToClient(MessageSaturationSync.TYPE, MessageSaturationSync.CODEC, MessageSaturationSync::handle);
+		registrar.playToClient(MessageNaturalRegenerationSync.TYPE, MessageNaturalRegenerationSync.CODEC, MessageNaturalRegenerationSync::handle);
 
 		NeoForge.EVENT_BUS.register(new SyncHandler());
 	}
@@ -36,6 +39,7 @@ public class SyncHandler
 	 */
 	private static final Map<UUID, Float> lastSaturationLevels = new HashMap<>();
 	private static final Map<UUID, Float> lastExhaustionLevels = new HashMap<>();
+	private static boolean naturalRegeneration = true;
 
 	@SubscribeEvent
 	public void onLivingTickEvent(EntityTickEvent.Pre event)
@@ -54,7 +58,7 @@ public class SyncHandler
 			lastSaturationLevels.put(player.getUUID(), player.getFoodData().getSaturationLevel());
 		}
 
-		float exhaustionLevel = player.getFoodData().getExhaustionLevel();
+		float exhaustionLevel = player.getFoodData().exhaustionLevel;
 		if (lastExhaustionLevel == null || Math.abs(lastExhaustionLevel - exhaustionLevel) >= 0.01f)
 		{
 			var msg = new MessageExhaustionSync(exhaustionLevel);
@@ -71,5 +75,19 @@ public class SyncHandler
 
 		lastSaturationLevels.remove(event.getEntity().getUUID());
 		lastExhaustionLevels.remove(event.getEntity().getUUID());
+		// Assumed to be true by default, so we only need to update the client if it's actually false
+		if (!naturalRegeneration) {
+			PacketDistributor.sendToPlayer((ServerPlayer)event.getEntity(), new MessageNaturalRegenerationSync(false));
+		}
+	}
+
+	@SubscribeEvent
+	public void onServerWorldTick(ServerTickEvent.Post event)
+	{
+		var cur = event.getServer().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
+		if (naturalRegeneration != cur) {
+			PacketDistributor.sendToAllPlayers(new MessageNaturalRegenerationSync(naturalRegeneration));
+			naturalRegeneration = cur;
+		}
 	}
 }

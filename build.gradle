@@ -3,7 +3,7 @@ plugins {
 	id 'eclipse'
 	id 'idea'
 	id 'maven-publish'
-	id 'net.neoforged.gradle.userdev' version '7.0.142'
+	id 'net.neoforged.gradle.userdev' version '7.0.165'
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -43,6 +43,12 @@ sourceSets.main.resources.srcDirs += 'resources'
 
 dependencies {
 	implementation "net.neoforged:neoforge:${neo_version}"
+}
+
+minecraft {
+	accessTransformers {
+		file('resources/META-INF/accesstransformer.cfg')
+	}
 }
 
 jar {

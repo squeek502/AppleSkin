@@ -1,5 +1,6 @@
 package squeek.appleskin.helpers;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -7,17 +8,21 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.Consumable;
+import net.minecraft.world.item.component.Consumables;
+import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.Nullable;
 import squeek.appleskin.api.event.FoodValuesEvent;
+import squeek.appleskin.network.MessageNaturalRegenerationSync;
 
 public class FoodHelper
 {
 	public static boolean isFood(ItemStack itemStack, Player player)
 	{
-		return itemStack.getFoodProperties(player) != null;
+		return itemStack.get(DataComponents.FOOD) != null && itemStack.get(DataComponents.CONSUMABLE) != null;
 	}
 
 	public static boolean canConsume(Player player, FoodProperties foodProperties)
@@ -26,27 +31,32 @@ public class FoodHelper
 	}
 
 	public static FoodProperties EMPTY_FOOD_PROPERTIES = new FoodProperties.Builder().build();
+	public static Consumable DEFAULT_CONSUMABLE = Consumables.DEFAULT_FOOD;
 
 	/**
 	 * Assumes itemStack is known to be a food, always returns a non-null FoodComponent
 	 */
-	public static FoodProperties getDefaultFoodValues(ItemStack itemStack, Player player)
+	public static ConsumableFood getDefaultFoodValues(ItemStack itemStack, Player player)
 	{
-		var properties = itemStack.getFoodProperties(player);
-		return properties != null ? properties : EMPTY_FOOD_PROPERTIES;
+		return new ConsumableFood(
+			itemStack.getOrDefault(DataComponents.FOOD, EMPTY_FOOD_PROPERTIES),
+			itemStack.getOrDefault(DataComponents.CONSUMABLE, DEFAULT_CONSUMABLE)
+		);
 	}
 
 	public static class QueriedFoodResult
 	{
 		public FoodProperties defaultFoodProperties;
 		public FoodProperties modifiedFoodProperties;
+		public Consumable consumable;
 
 		public final ItemStack itemStack;
 
-		public QueriedFoodResult(FoodProperties defaultFoodProperties, FoodProperties modifiedFoodProperties, ItemStack itemStack)
+		public QueriedFoodResult(FoodProperties defaultFoodProperties, FoodProperties modifiedFoodProperties, Consumable consumable, ItemStack itemStack)
 		{
 			this.defaultFoodProperties = defaultFoodProperties;
 			this.modifiedFoodProperties = modifiedFoodProperties;
+			this.consumable = consumable;
 			this.itemStack = itemStack;
 		}
 	}
@@ -57,63 +67,66 @@ public class FoodHelper
 		if (!isFood(itemStack, player))
 			return null;
 
-		FoodProperties defaultFood = getDefaultFoodValues(itemStack, player);
+		ConsumableFood defaultFood = getDefaultFoodValues(itemStack, player);
 
-		FoodValuesEvent foodValuesEvent = new FoodValuesEvent(player, itemStack, defaultFood, defaultFood);
+		FoodValuesEvent foodValuesEvent = new FoodValuesEvent(player, itemStack, defaultFood.food(), defaultFood.food());
 		NeoForge.EVENT_BUS.post(foodValuesEvent);
 
-		return new QueriedFoodResult(foodValuesEvent.defaultFoodProperties, foodValuesEvent.modifiedFoodProperties, itemStack);
+		return new QueriedFoodResult(foodValuesEvent.defaultFoodProperties, foodValuesEvent.modifiedFoodProperties, defaultFood.consumable(), itemStack);
 	}
 
-
-	public static boolean isRotten(FoodProperties foodProperties)
+	public static boolean isRotten(Consumable consumable)
 	{
-		for (FoodProperties.PossibleEffect effect : foodProperties.effects())
+		for (var effect : consumable.onConsumeEffects())
 		{
-			MobEffectInstance effectInstance = effect.effect();
-			if (effectInstance.getEffect().value().getCategory() == MobEffectCategory.HARMFUL)
+			if (!(effect instanceof ApplyStatusEffectsConsumeEffect)) continue;
+
+			for (var statusEffect : ((ApplyStatusEffectsConsumeEffect) effect).effects())
 			{
-				return true;
+				if (statusEffect.getEffect().value().getCategory() == MobEffectCategory.HARMFUL)
+					return true;
 			}
 		}
 		return false;
 	}
 
-	public static float getEstimatedHealthIncrement(Player player, FoodProperties foodProperties)
+	public static float getEstimatedHealthIncrement(Player player, ConsumableFood consumableFood)
 	{
 		if (!player.isHurt())
 			return 0;
 
 		FoodData stats = player.getFoodData();
-		Level world = player.getCommandSenderWorld();
 
-		int foodLevel = Math.min(stats.getFoodLevel() + foodProperties.nutrition(), 20);
+		int foodLevel = Math.min(stats.getFoodLevel() + consumableFood.food().nutrition(), 20);
 		float healthIncrement = 0;
 
 		// health for natural regen
-		if (foodLevel >= 18.0F && world != null && world.getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION))
+		if (foodLevel >= 18.0F && MessageNaturalRegenerationSync.NATURAL_REGENERATION)
 		{
-			float saturationLevel = Math.min(stats.getSaturationLevel() + foodProperties.saturation(), (float) foodLevel);
-			float exhaustionLevel = stats.getExhaustionLevel();
+			float saturationLevel = Math.min(stats.getSaturationLevel() + consumableFood.food().saturation(), (float) foodLevel);
+			float exhaustionLevel = stats.exhaustionLevel;
 			healthIncrement = getEstimatedHealthIncrement(foodLevel, saturationLevel, exhaustionLevel);
 		}
 
 		// health for regeneration effect
-		for (FoodProperties.PossibleEffect effect : foodProperties.effects())
+		for (var effect : consumableFood.consumable().onConsumeEffects())
 		{
-			MobEffectInstance effectInstance = effect.effect();
-			if (effectInstance.is(MobEffects.REGENERATION))
-			{
-				int amplifier = effectInstance.getAmplifier();
-				int duration = effectInstance.getDuration();
+			if (!(effect instanceof ApplyStatusEffectsConsumeEffect)) continue;
 
-				// Refer: https://minecraft.fandom.com/wiki/Regeneration
-				// Refer: net.minecraft.world.effect.MobEffect.isDurationEffectTick
-				healthIncrement += (float) Math.floor(duration / Math.max(50 >> amplifier, 1));
-				break;
+			for (var effectInstance : ((ApplyStatusEffectsConsumeEffect) effect).effects())
+			{
+				if (effectInstance.is(MobEffects.REGENERATION))
+				{
+					int amplifier = effectInstance.getAmplifier();
+					int duration = effectInstance.getDuration();
+
+					// Refer: https://minecraft.fandom.com/wiki/Regeneration
+					// Refer: net.minecraft.world.effect.MobEffect.isDurationEffectTick
+					healthIncrement += (float) Math.floor(duration / Math.max(50 >> amplifier, 1));
+					break;
+				}
 			}
 		}
-
 		return healthIncrement;
 	}
 

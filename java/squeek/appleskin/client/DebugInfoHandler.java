@@ -36,7 +36,7 @@ public class DebugInfoHandler
 			return;
 
 		FoodData stats = mc.player.getFoodData();
-		float curExhaustion = stats.getExhaustionLevel();
+		float curExhaustion = stats.exhaustionLevel;
 		float maxExhaustion = HungerHelper.getMaxExhaustion(mc.player);
 		textEvent.getLeft().add("hunger: " + stats.getFoodLevel() + ", sat: " + saturationDF.format(stats.getSaturationLevel()) + ", exh: " + exhaustionValDF.format(curExhaustion) + "/" + exhaustionMaxDF.format(maxExhaustion));
 	}
