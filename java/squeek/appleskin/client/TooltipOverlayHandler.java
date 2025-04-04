@@ -9,6 +9,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ConsumableComponent;
 import net.minecraft.component.type.FoodComponent;
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -348,7 +349,7 @@ public class TooltipOverlayHandler
 		}
 
 		// Note: The intention here is to match the logic in ItemStack.getTooltip
-		if (!type.isCreative() && hoveredStack.contains(DataComponentTypes.HIDE_TOOLTIP))
+		if (!type.isCreative() && hoveredStack.getOrDefault(DataComponentTypes.TOOLTIP_DISPLAY, TooltipDisplayComponent.DEFAULT).hideTooltip())
 		{
 			return false;
 		}
