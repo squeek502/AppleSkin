@@ -348,7 +348,8 @@ public class TooltipOverlayHandler
 		}
 
 		// Note: The intention here is to match the logic in ItemStack.getTooltip
-		if (!type.isCreative() && hoveredStack.contains(DataComponentTypes.HIDE_TOOLTIP))
+		if (!type.isCreative() &&
+				(hoveredStack.contains(DataComponentTypes.TOOLTIP_DISPLAY) && hoveredStack.get(DataComponentTypes.TOOLTIP_DISPLAY).hideTooltip()))
 		{
 			return false;
 		}
