@@ -15,6 +15,7 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.Consumable;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -295,7 +296,7 @@ public class TooltipOverlayHandler
 		// Note: The intention here is to match the conditional in ItemStack.getTooltipLines, but
 		//       the NeoForge event does not provide TooltipFlags so this does not match exactly.
 		// TODO: (!tooltipFlags.isCreative() && ...) if NeoForge starts providing TooltipFlags
-		if (hoveredStack.has(DataComponents.HIDE_TOOLTIP))
+		if (hoveredStack.getOrDefault(DataComponents.TOOLTIP_DISPLAY, TooltipDisplay.DEFAULT).hideTooltip())
 			return false;
 
 		boolean shouldShowTooltip = (ModConfig.SHOW_FOOD_VALUES_IN_TOOLTIP.get() && KeyHelper.isShiftKeyDown()) || ModConfig.ALWAYS_SHOW_FOOD_VALUES_TOOLTIP.get();
