@@ -1,16 +1,26 @@
 {
   "text.autoconfig.appleskin.title": "AppleSkin",
-  "text.autoconfig.appleskin.option.showFoodValuesInTooltip": "Zeige Nährwerte in Tooltip",
-  "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways": "Zeige immer Nährwerte in Tooltip",
-  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay": "Zeige wiederhergestellten Hunger vom gehaltenen Essen",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltip": "Zeige Sättigungswerte im Tooltip an",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltip.@Tooltip": "Wenn aktiviert, zeigt die Hunger- und Sättigungswerte von Nahrung im Tooltip an, während die SHIFT-Taste gedrückt gehalten wird.",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways": "Zeige Sättigungswerte immer im Tooltip an",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways.@Tooltip": "Wenn aktiviert, werden die Hunger- und Sättigungswerte von Nahrung im Tooltip automatisch angezeigt (ohne die SHIFT-Taste gedrückt halten zu müssen)",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay": "Zeige Hungerregeneration durch in der hand gehaltenes Essen",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay.@Tooltip": "Wenn aktiviert, werden der Hunger (und die Sättigung, falls 'Sättigungsanzeige anzeigen' aktiviert ist) angezeigt, die durch das aktuell gehaltene Essen wiederhergestellt würden",
   "text.autoconfig.appleskin.option.showFoodValuesHudOverlayWhenOffhand": "Zeige Overlays für in Offhand gehaltenes Essen",
-  "text.autoconfig.appleskin.option.showFoodHealthHudOverlay": "Zeige geschätzte Gesundheits-Overlay",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlayWhenOffhand.@Tooltip": "Wenn aktiviert, werden die Hunger-, Sättigungs- und Gesundheits-Overlays für das Essen in der Off-Hand angezeigt.",
+  "text.autoconfig.appleskin.option.showFoodHealthHudOverlay": "Zeige geschätzte Gesundheits regeneration im Overlay",
+  "text.autoconfig.appleskin.option.showFoodHealthHudOverlay.@Tooltip": "Wenn aktiviert, wird die geschätzte Gesundheitsregeneration durch Essen in der Gesundheitsleiste angezeigt.",
   "text.autoconfig.appleskin.option.showFoodExhaustionHudUnderlay": "Zeige Erschöpfungs-Unterlage",
+  "text.autoconfig.appleskin.option.showFoodExhaustionHudUnderlay.@Tooltip": "Wenn aktiviert, wird deine Nahrungserschöpfung als Fortschrittsbalken hinter der Hungerleiste angezeigt.",
   "text.autoconfig.appleskin.option.showSaturationHudOverlay": "Zeige Sättigungs-Overlay",
-  "text.autoconfig.appleskin.option.showFoodDebugInfo": "Zeige Essensangaben in Debug Bildschirm",
+  "text.autoconfig.appleskin.option.showSaturationHudOverlay.@Tooltip": "Wenn aktiviert, wird dein aktueller Sättigungswert als Overlay auf der Hungerleiste angezeigt.",
+  "text.autoconfig.appleskin.option.showFoodDebugInfo": "Zeige Essens-werte im Debug Bildschirm",
+  "text.autoconfig.appleskin.option.showFoodDebugInfo.@Tooltip": "Wenn aktiviert, werden deine Hunger-, Sättigungs- und Erschöpfungswerte im Debug-Bildschirm angezeigt.",
   "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay": "Animiere HUD Icons passend zu Minecraft",
+  "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay.@Tooltip": "Wenn aktiviert, wird das Gesundheits- und Hunger-Overlay wackeln, um den Icon-Animationen von Minecraft zu entsprechen.",
   "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "Max Alpha von aufleuchtenden HUD icons",
+  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha.@Tooltip": "Alpha-Wert der blinkenden Icons an ihrem sichtbarsten Punkt (1.0 = vollständig opak, 0.0 = vollständig transparent).",
 
-  "modmenu.summaryTranslation.appleskin": "Adds various food-related HUD improvements",
-  "modmenu.descriptionTranslation.appleskin": "Adds various food-related HUD improvements"
+  "modmenu.summaryTranslation.appleskin": "Fügt verschiedene HUD-Verbesserungen im Zusammenhang mit Essen hinzu",
+  "modmenu.descriptionTranslation.appleskin": "Fügt verschiedene HUD-Verbesserungen im Zusammenhang mit Essen hinzu"
 }
