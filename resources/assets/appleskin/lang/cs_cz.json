@@ -1,0 +1,15 @@
+{
+  "appleskin.configuration.client": "AppleSkin",
+  "appleskin.configuration.showFoodValuesInTooltip": "Zobrazit hodnoty jídla v nápovědě",
+  "appleskin.configuration.showFoodValuesInTooltipAlways": "Vždy zobrazovat hodnoty jídla v nápovědě",
+  "appleskin.configuration.showFoodValuesHudOverlay": "Zobrazit obnovení hladu z drženého jídla",
+  "appleskin.configuration.showFoodValuesHudOverlayWhenOffhand": "Zobrazeit překryvy pro jídlo v režimu mimo dosah ruky",
+  "appleskin.configuration.showFoodHealthHudOverlay": "Zobrazit překrytí odhadovaného stavu",
+  "appleskin.configuration.showFoodExhaustionHudUnderlay": "Zobrazit odkrytí hladu",
+  "appleskin.configuration.showSaturationHudOverlay": "Zobrazit překrytí sytosti",
+  "appleskin.configuration.showFoodStatsInDebugOverlay": "Zobrazit hodnoty jídla na obrazovce ladění",
+  "appleskin.configuration.showVanillaAnimationsOverlay": "Animovat ikony hladu (HUD) tak, aby odpovídaly Minecraftu",
+  "appleskin.configuration.maxHudOverlayFlashAlpha": "Neprůhlednost blikajících ikon hladu (HUD)",
+
+  "fml.menu.mods.info.description.appleskin": "Přidá různá vylepšení HUD související s jídlem"
+}
