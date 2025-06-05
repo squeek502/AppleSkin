@@ -1,0 +1,15 @@
+{
+  "appleskin.configuration.client": "AppleSkin",
+  "appleskin.configuration.showFoodValuesInTooltip": "아이템 설명에 회복량 표시",
+  "appleskin.configuration.showFoodValuesInTooltipAlways": "아이템 설명에 회복량 항상 표시",
+  "appleskin.configuration.showFoodValuesHudOverlay": "들고 있는 아이템의 회복량을 오버레이에 표시",
+  "appleskin.configuration.showFoodValuesHudOverlayWhenOffhand": "다른 손에 든 아이템의 회복량을 오버레이에 표시",
+  "appleskin.configuration.showFoodHealthHudOverlay": "체력 회복량을 오버레이 표시",
+  "appleskin.configuration.showFoodExhaustionHudUnderlay": "소진량을 언더레이에 표시",
+  "appleskin.configuration.showSaturationHudOverlay": "포만감을 오버레이에 표시",
+  "appleskin.configuration.showFoodStatsInDebugOverlay": "디버그 화면에 회복량 표시",
+  "appleskin.configuration.showVanillaAnimationsOverlay": "허기 HUD에 애니메이션 적용",
+  "appleskin.configuration.maxHudOverlayFlashAlpha": "발광 HUD의 최대 투명도 값",
+
+  "fml.menu.mods.info.description.appleskin": "음식과 관련된 HUD에 다양한 개선 사항을 추가합니다."
+}

@@ -1,0 +1,15 @@
+{
+  "appleskin.configuration.client": "AppleSkin",
+  "appleskin.configuration.showFoodValuesInTooltip": "Montrer la nourriture dans les info-bulles",
+  "appleskin.configuration.showFoodValuesInTooltipAlways": "Toujours montrer la nourriture dans les info-bulles",
+  "appleskin.configuration.showFoodValuesHudOverlay": "Montrer la faim restaurée par la nourriture tenue en main",
+  "appleskin.configuration.showFoodValuesHudOverlayWhenOffhand": "Montrer la faim restaurée par la nourriture tenue dans la main secondaire",
+  "appleskin.configuration.showFoodHealthHudOverlay": "Montrer l'estimation de vie restaurée",
+  "appleskin.configuration.showFoodExhaustionHudUnderlay": "Montrer l'épuisement",
+  "appleskin.configuration.showSaturationHudOverlay": "Montrer la saturation",
+  "appleskin.configuration.showFoodStatsInDebugOverlay": "Montrer la nourriture sur l'écran de déboguage",
+  "appleskin.configuration.showVanillaAnimationsOverlay": "Animer les icônes sur l'ATH",
+  "appleskin.configuration.maxHudOverlayFlashAlpha": "Opacité des icônes clignotantes de l'ATH",
+
+  "fml.menu.mods.info.description.appleskin": "Ajoute diverses améliorations de l'ATH liées à la nourriture"
+}
