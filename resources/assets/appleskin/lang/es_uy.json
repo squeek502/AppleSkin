@@ -1,0 +1,25 @@
+{
+  "appleskin.configuration.client": "AppleSkin",
+  "appleskin.configuration.showFoodValuesInTooltip": "Valores de comida en la descripción emergente",
+  "appleskin.configuration.showFoodValuesInTooltip.tooltip": "Si está activado, muestra los valores de hambre y saturación de la comida en su descripción emergente mientras se mantiene la tecla SHIFT presionada",
+  "appleskin.configuration.showFoodValuesInTooltipAlways": "Valores de comida en la descripción emergente, siempre",
+  "appleskin.configuration.showFoodValuesInTooltipAlways.tooltip": "Si está activado, muestra los valores de hambre y saturación de la comida en su descripción emergente (sin necesidad de mantener presionada la tecla SHIFT)",
+  "appleskin.configuration.showFoodValuesHudOverlay": "Hambre por restaurar de la comida que tienes en la mano",
+  "appleskin.configuration.showFoodValuesHudOverlay.tooltip": "Si está activado, muestra la comida (y saturación si \"Mostrar Barra de Saturación\" está activado) que se restaurará por la comida que tienes en la mano",
+  "appleskin.configuration.showFoodValuesHudOverlayWhenOffhand": "Hambre por restaurar de la comida que tienes en la mano secundaria",
+  "appleskin.configuration.showFoodValuesHudOverlayWhenOffhand.tooltip": "Si está activado, muestra la comida/saturación/salud que se restaurará por la comida que tienes en la mano secundaria",
+  "appleskin.configuration.showFoodHealthHudOverlay": "Salud que se restaurará por la comida que tienes en la mano",
+  "appleskin.configuration.showFoodHealthHudOverlay.tooltip": "Si está activado, muestra la salud estimada que se restaurará por la comida que tienes en la mano",
+  "appleskin.configuration.showFoodExhaustionHudUnderlay": "Barra de agotamiento",
+  "appleskin.configuration.showFoodExhaustionHudUnderlay.tooltip": "Si está activado, se mostrará su agotamiento alimentario como barra de progreso detrás de la barra de hambre",
+  "appleskin.configuration.showSaturationHudOverlay": "Barra de saturación",
+  "appleskin.configuration.showSaturationHudOverlay.tooltip": "Si está activado, se mostrará tu nivel de saturación actual encima de la barra de hambre",
+  "appleskin.configuration.showFoodStatsInDebugOverlay": "Valores de la comida en la pantalla de depuración",
+  "appleskin.configuration.showFoodStatsInDebugOverlay.tooltip":"Si está activado, muestra los valores de hambre, saturación y agotamiento en la pantalla de depuración",
+  "appleskin.configuration.showVanillaAnimationsOverlay": "Animar los íconos del HUD para que coincidan con Minecraft",
+  "appleskin.configuration.showVanillaAnimationsOverlay.tooltip": "Si está activado, la barra de salud/hambre se agitará para coincidir con las animaciones de los íconos de Minecraft",
+  "appleskin.configuration.maxHudOverlayFlashAlpha": "Transparencia máxima de los íconos parpadeantes",
+  "appleskin.configuration.maxHudOverlayFlashAlpha.tooltip": "La transparencia máxima de los ícnonos parpadeantes (1.0 = completamente opaco; 0.0 = completamente transparente)",
+
+  "fml.menu.mods.info.description.appleskin": "Agrega varias mejoras relacionadas con los alimentos en el HUD"
+}

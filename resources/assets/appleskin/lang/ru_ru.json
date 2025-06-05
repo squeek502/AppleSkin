@@ -1,0 +1,15 @@
+{
+  "appleskin.configuration.client": "Настройки AppleSkin",
+  "appleskin.configuration.showFoodValuesInTooltip": "Характеристики еды в подсказке к ней",
+  "appleskin.configuration.showFoodValuesInTooltipAlways": "Отображать характеристики постоянно",
+  "appleskin.configuration.showFoodValuesHudOverlay": "Оценка утоления голода едой",
+  "appleskin.configuration.showFoodValuesHudOverlayWhenOffhand": "Учитывать предметы во второй руке",
+  "appleskin.configuration.showFoodHealthHudOverlay": "Оценка восстановления здоровья",
+  "appleskin.configuration.showFoodExhaustionHudUnderlay": "Полоса истощения на фоне",
+  "appleskin.configuration.showSaturationHudOverlay": "Отображение и оценка насыщения",
+  "appleskin.configuration.showFoodStatsInDebugOverlay": "Показатели еды на экране отладки",
+  "appleskin.configuration.showVanillaAnimationsOverlay": "Анимация показателей подобно Minecraft",
+  "appleskin.configuration.maxHudOverlayFlashAlpha": "Максимальная видимость показателей",
+
+  "fml.menu.mods.info.description.appleskin": "Различные улучшения в интерфейсе еды."
+}
