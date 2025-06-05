@@ -93,7 +93,7 @@ public class AppleSkinEventHandler implements AppleSkinApi
 Note: if you want to test with the full AppleSkin mod in your development environment, you can also add the following to your `dependencies`:
 
 ```groovy
-modRuntime("squeek.appleskin:appleskin-fabric:<version>") {
+modLocalRuntime("squeek.appleskin:appleskin-fabric:<version>") {
     exclude module: 'modmenu'
 }
 ```
