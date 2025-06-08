@@ -122,23 +122,51 @@ public class TooltipOverlayHandler
 		@Override
 		public int getHeight()
 		{
-			// hunger + spacing + saturation + arbitrary spacing,
+			int height = 0;
+			// hunger
+			if (ModConfig.INSTANCE.showHungerValueInTooltip)
+			{
+				height += 9;
+			}
+			// spacing
+			if (ModConfig.INSTANCE.showHungerValueInTooltip && ModConfig.INSTANCE.showSaturationValueInTooltip)
+			{
+				height += 1;
+			}
+			// saturation
+			if (ModConfig.INSTANCE.showSaturationValueInTooltip)
+			{
+				height += 7;
+			}
+			// arbitrary spacing,
 			// for some reason 3 extra looks best
-			return 9 + 1 + 7 + 3;
+			if (ModConfig.INSTANCE.showHungerValueInTooltip || ModConfig.INSTANCE.showSaturationValueInTooltip)
+			{
+				height += 3;
+			}
+			return height;
 		}
 
 		@Override
 		public int getWidth(TextRenderer textRenderer)
 		{
-			int hungerBarLength = hungerBars * 9;
-			if (hungerBarsText != null)
+			int hungerBarLength = 0;
+			if (ModConfig.INSTANCE.showHungerValueInTooltip)
 			{
-				hungerBarLength += textRenderer.getWidth(hungerBarsText);
+				hungerBarLength = hungerBars * 9;
+				if (hungerBarsText != null)
+				{
+					hungerBarLength += textRenderer.getWidth(hungerBarsText);
+				}
 			}
-			int saturationBarLength = saturationBars * 7;
-			if (saturationBarsText != null)
+			int saturationBarLength = 0;
+			if (ModConfig.INSTANCE.showSaturationValueInTooltip)
 			{
-				saturationBarLength += textRenderer.getWidth(saturationBarsText);
+				saturationBarLength = saturationBars * 7;
+				if (saturationBarsText != null)
+				{
+					saturationBarLength += textRenderer.getWidth(saturationBarsText);
+				}
 			}
 			return Math.max(hungerBarLength, saturationBarLength);
 		}
@@ -271,79 +299,86 @@ public class TooltipOverlayHandler
 		RenderSystem.defaultBlendFunc();
 
 		// Render from right to left so that the icons 'face' the right way
-		x += (foodOverlay.hungerBars - 1) * 9;
-
-		boolean isRotten = FoodHelper.isRotten(modifiedFood);
-
-		for (int i = 0; i < foodOverlay.hungerBars * 2; i += 2)
+		if (ModConfig.INSTANCE.showHungerValueInTooltip)
 		{
-			context.drawGuiTexture(TextureHelper.FOOD_EMPTY_TEXTURE, x, y, 9, 9);
+			x += (foodOverlay.hungerBars - 1) * 9;
 
-			FoodOutline outline = FoodOutline.get(modifiedFoodHunger, defaultFoodHunger, i);
-			if (outline != FoodOutline.NORMAL)
+			boolean isRotten = FoodHelper.isRotten(modifiedFood);
+
+			for (int i = 0; i < foodOverlay.hungerBars * 2; i += 2)
 			{
-				outline.setShaderColor(context);
-				context.drawGuiTexture(TextureHelper.HUNGER_OUTLINE_SPRITE, x, y, 9, 9);
+				context.drawGuiTexture(TextureHelper.FOOD_EMPTY_TEXTURE, x, y, 9, 9);
+
+				FoodOutline outline = FoodOutline.get(modifiedFoodHunger, defaultFoodHunger, i);
+				if (outline != FoodOutline.NORMAL)
+				{
+					outline.setShaderColor(context);
+					context.drawGuiTexture(TextureHelper.HUNGER_OUTLINE_SPRITE, x, y, 9, 9);
+				}
+
+				context.setShaderColor(1.0F, 1.0F, 1.0F, .25F);
+				boolean isDefaultHalf = defaultFoodHunger - 1 == i;
+				Identifier defaultFoodIcon = TextureHelper.getFoodTexture(isRotten, isDefaultHalf ? FoodType.HALF : FoodType.FULL);
+				context.drawGuiTexture(defaultFoodIcon, x, y, 9, 9);
+				context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+				if (modifiedFoodHunger > i)
+				{
+					boolean isModifiedHalf = modifiedFoodHunger - 1 == i;
+					Identifier modifiedFoodIcon = TextureHelper.getFoodTexture(isRotten, isModifiedHalf ? FoodType.HALF : FoodType.FULL);
+					context.drawGuiTexture(modifiedFoodIcon, x, y, 9, 9);
+				}
+
+				x -= 9;
+			}
+			if (foodOverlay.hungerBarsText != null)
+			{
+				x += 18;
+				matrixStack.push();
+				matrixStack.translate(x, y, tooltipZ);
+				matrixStack.scale(0.75f, 0.75f, 0.75f);
+				context.drawTextWithShadow(textRenderer, foodOverlay.hungerBarsText, 2, 2, 0xFFAAAAAA);
+				matrixStack.pop();
+			}
+		}
+
+		if (ModConfig.INSTANCE.showSaturationValueInTooltip) {
+			x = toolTipX;
+
+			if (ModConfig.INSTANCE.showHungerValueInTooltip)
+			{
+				y += 10;
 			}
 
-			context.setShaderColor(1.0F, 1.0F, 1.0F, .25F);
-			boolean isDefaultHalf = defaultFoodHunger - 1 == i;
-			Identifier defaultFoodIcon = TextureHelper.getFoodTexture(isRotten, isDefaultHalf ? FoodType.HALF : FoodType.FULL);
-			context.drawGuiTexture(defaultFoodIcon, x, y, 9, 9);
-			context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+			float modifiedSaturationIncrement = modifiedFood.saturation();
+			float absModifiedSaturationIncrement = Math.abs(modifiedSaturationIncrement);
 
-			if (modifiedFoodHunger > i)
-			{
-				boolean isModifiedHalf = modifiedFoodHunger - 1 == i;
-				Identifier modifiedFoodIcon = TextureHelper.getFoodTexture(isRotten, isModifiedHalf ? FoodType.HALF : FoodType.FULL);
-				context.drawGuiTexture(modifiedFoodIcon, x, y, 9, 9);
+			// Render from right to left so that the icons 'face' the right way
+			x += (foodOverlay.saturationBars - 1) * 7;
+
+			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+			for (int i = 0; i < foodOverlay.saturationBars * 2; i += 2) {
+				float effectiveSaturationOfBar = (absModifiedSaturationIncrement - i) / 2f;
+
+				boolean shouldBeFaded = absModifiedSaturationIncrement <= i;
+				if (shouldBeFaded)
+					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, .5F);
+
+				context.drawTexture(TextureHelper.MOD_ICONS, x, y, tooltipZ, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7, 256, 256);
+
+				if (shouldBeFaded)
+					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+				x -= 7;
 			}
-
-			x -= 9;
-		}
-		if (foodOverlay.hungerBarsText != null)
-		{
-			x += 18;
-			matrixStack.push();
-			matrixStack.translate(x, y, tooltipZ);
-			matrixStack.scale(0.75f, 0.75f, 0.75f);
-			context.drawTextWithShadow(textRenderer, foodOverlay.hungerBarsText, 2, 2, 0xFFAAAAAA);
-			matrixStack.pop();
-		}
-
-		x = toolTipX;
-		y += 10;
-
-		float modifiedSaturationIncrement = modifiedFood.saturation();
-		float absModifiedSaturationIncrement = Math.abs(modifiedSaturationIncrement);
-
-		// Render from right to left so that the icons 'face' the right way
-		x += (foodOverlay.saturationBars - 1) * 7;
-
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		for (int i = 0; i < foodOverlay.saturationBars * 2; i += 2)
-		{
-			float effectiveSaturationOfBar = (absModifiedSaturationIncrement - i) / 2f;
-
-			boolean shouldBeFaded = absModifiedSaturationIncrement <= i;
-			if (shouldBeFaded)
-				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, .5F);
-
-			context.drawTexture(TextureHelper.MOD_ICONS, x, y, tooltipZ, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7, 256, 256);
-
-			if (shouldBeFaded)
-				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-
-			x -= 7;
-		}
-		if (foodOverlay.saturationBarsText != null)
-		{
-			x += 14;
-			matrixStack.push();
-			matrixStack.translate(x, y, tooltipZ);
-			matrixStack.scale(0.75f, 0.75f, 0.75f);
-			context.drawTextWithShadow(textRenderer, foodOverlay.saturationBarsText, 2, 1, 0xFFAAAAAA);
-			matrixStack.pop();
+			if (foodOverlay.saturationBarsText != null) {
+				x += 14;
+				matrixStack.push();
+				matrixStack.translate(x, y, tooltipZ);
+				matrixStack.scale(0.75f, 0.75f, 0.75f);
+				context.drawTextWithShadow(textRenderer, foodOverlay.saturationBarsText, 2, 1, 0xFFAAAAAA);
+				matrixStack.pop();
+			}
 		}
 
 		RenderSystem.disableBlend();
@@ -366,8 +401,13 @@ public class TooltipOverlayHandler
 			return false;
 		}
 
-		boolean shouldShowTooltip = (ModConfig.INSTANCE.showFoodValuesInTooltip && KeyHelper.isShiftKeyDown()) || ModConfig.INSTANCE.showFoodValuesInTooltipAlways;
+		boolean shouldShowTooltip = (ModConfig.INSTANCE.showFoodValuesInTooltip && KeyHelper.isShiftKeyDown()) || (ModConfig.INSTANCE.showFoodValuesInTooltip && ModConfig.INSTANCE.showFoodValuesInTooltipAlways);
 		if (!shouldShowTooltip)
+		{
+			return false;
+		}
+
+		if (!ModConfig.INSTANCE.showHungerValueInTooltip && !ModConfig.INSTANCE.showSaturationValueInTooltip)
 		{
 			return false;
 		}

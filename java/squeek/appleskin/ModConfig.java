@@ -26,6 +26,14 @@ public class ModConfig implements ConfigData
 	public boolean showFoodValuesInTooltip = true;
 
 	@ConfigEntry.Gui.Tooltip()
+	@Comment("If true, shows the hunger value of food in its tooltip")
+	public boolean showHungerValueInTooltip = true;
+
+	@ConfigEntry.Gui.Tooltip()
+	@Comment("If true, shows the saturation value of food in its tooltip")
+	public boolean showSaturationValueInTooltip = true;
+
+	@ConfigEntry.Gui.Tooltip()
 	@Comment("If true, shows the hunger and saturation values of food in its tooltip automatically (without needing to hold SHIFT)")
 	public boolean showFoodValuesInTooltipAlways = true;
 
