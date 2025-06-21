@@ -3,8 +3,7 @@ package squeek.appleskin.client;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
@@ -18,6 +17,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
+import net.neoforged.neoforge.client.gui.GuiLayer;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.Nullable;
@@ -68,7 +68,7 @@ public class HUDOverlayHandler
 		NeoForge.EVENT_BUS.addListener(HUDOverlayHandler::onClientTick);
 	}
 
-	public static abstract class Overlay implements LayeredDraw.Layer
+	public static abstract class Overlay implements GuiLayer
 	{
 		public abstract void render(Minecraft mc, Player player, GuiGraphics guiGraphics, int left, int right, int top, int guiTicks);
 
@@ -300,7 +300,7 @@ public class HUDOverlayHandler
 			else if (effectiveSaturationOfBar > .25)
 				u = 1 * iconSize;
 
-			guiGraphics.blit(RenderType::guiTextured, TextureHelper.MOD_ICONS, x, y, u, v, iconSize, iconSize, 256, 256, alphaColor);
+			guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TextureHelper.MOD_ICONS, x, y, u, v, iconSize, iconSize, 256, 256, alphaColor);
 		}
 	}
 
@@ -334,12 +334,12 @@ public class HUDOverlayHandler
 
 			// very faint background
 			var bgColor = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, alpha * 0.25F);
-			guiGraphics.blitSprite(RenderType::guiTextured, backgroundSprite, x, y, iconSize, iconSize, bgColor);
+			guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, backgroundSprite, x, y, iconSize, iconSize, bgColor);
 
 			boolean isHalf = i * 2 + 1 == modifiedFood;
 			ResourceLocation iconSprite = TextureHelper.getFoodTexture(useRottenTextures, isHalf ? TextureHelper.FoodType.HALF : TextureHelper.FoodType.FULL);
 
-			guiGraphics.blitSprite(RenderType::guiTextured, iconSprite, x, y, iconSize, iconSize, alphaColor);
+			guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, iconSprite, x, y, iconSize, iconSize, alphaColor);
 		}
 	}
 
@@ -373,12 +373,12 @@ public class HUDOverlayHandler
 
 			// very faint background
 			var bgColor = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, alpha * 0.25F);
-			guiGraphics.blitSprite(RenderType::guiTextured, backgroundSprite, x, y, iconSize, iconSize, bgColor);
+			guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, backgroundSprite, x, y, iconSize, iconSize, bgColor);
 
 			boolean isHalf = i * 2 + 1 == fixedModifiedHealth;
 			ResourceLocation iconSprite = TextureHelper.getHeartTexture(isHardcore, isHalf ? TextureHelper.HeartType.HALF : TextureHelper.HeartType.FULL);
 
-			guiGraphics.blitSprite(RenderType::guiTextured, iconSprite, x, y, iconSize, iconSize, alphaColor);
+			guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, iconSprite, x, y, iconSize, iconSize, alphaColor);
 		}
 	}
 
@@ -391,7 +391,7 @@ public class HUDOverlayHandler
 		int height = 9;
 
 		var color = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, 0.75F);
-		guiGraphics.blit(RenderType::guiTextured, TextureHelper.MOD_ICONS, right - width, top, 81 - width, 18, width, height, 256, 256, color);
+		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TextureHelper.MOD_ICONS, right - width, top, 81 - width, 18, width, height, 256, 256, color);
 	}
 
 	public static void onClientTick(ClientTickEvent.Post event)

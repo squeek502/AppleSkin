@@ -7,6 +7,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
@@ -22,6 +23,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import org.joml.Matrix3x2fStack;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.api.event.TooltipOverlayEvent;
 import squeek.appleskin.helpers.ColorHelper;
@@ -146,23 +148,23 @@ public class TooltipOverlayHandler
 
 			for (int i = 0; i < foodTooltip.hungerBars * 2; i += 2)
 			{
-				guiGraphics.blitSprite(RenderType::guiTextured, TextureHelper.FOOD_EMPTY_TEXTURE, offsetX, offsetY, 9, 9);
+				guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, TextureHelper.FOOD_EMPTY_TEXTURE, offsetX, offsetY, 9, 9);
 
 				FoodOutline outline = FoodOutline.get(modifiedHunger, defaultHunger, i);
 				if (outline != FoodOutline.NORMAL)
 				{
-					guiGraphics.blitSprite(RenderType::guiTextured, TextureHelper.HUNGER_OUTLINE_SPRITE, offsetX, offsetY, 9, 9, outline.argb());
+					guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, TextureHelper.HUNGER_OUTLINE_SPRITE, offsetX, offsetY, 9, 9, outline.argb());
 				}
 
 				boolean isDefaultHalf = defaultHunger - 1 == i;
 				ResourceLocation defaultFoodIcon = TextureHelper.getFoodTexture(isRotten, isDefaultHalf ? TextureHelper.FoodType.HALF : TextureHelper.FoodType.FULL);
-				guiGraphics.blitSprite(RenderType::guiTextured, defaultFoodIcon, offsetX, offsetY, 9, 9, ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, 0.25F));
+				guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, defaultFoodIcon, offsetX, offsetY, 9, 9, ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, 0.25F));
 
 				if (modifiedHunger > i)
 				{
 					boolean isModifiedHalf = modifiedHunger - 1 == i;
 					ResourceLocation modifiedFoodIcon = TextureHelper.getFoodTexture(isRotten, isModifiedHalf ? TextureHelper.FoodType.HALF : TextureHelper.FoodType.FULL);
-					guiGraphics.blitSprite(RenderType::guiTextured, modifiedFoodIcon, offsetX, offsetY, 9, 9);
+					guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, modifiedFoodIcon, offsetX, offsetY, 9, 9);
 				}
 
 				offsetX -= 9;
@@ -171,12 +173,12 @@ public class TooltipOverlayHandler
 			if (foodTooltip.hungerBarsText != null)
 			{
 				offsetX += 18;
-				PoseStack poseStack = guiGraphics.pose();
-				poseStack.pushPose();
-				poseStack.translate(offsetX, offsetY, 0);
-				poseStack.scale(0.75f, 0.75f, 0.75f);
+				Matrix3x2fStack poseStack = guiGraphics.pose();
+				poseStack.pushMatrix();
+				poseStack.translate(offsetX, offsetY);
+				poseStack.scale(0.75f, 0.75f);
 				guiGraphics.drawString(font, foodTooltip.hungerBarsText, 2, 2, 0xFFAAAAAA);
-				poseStack.popPose();
+				poseStack.popMatrix();
 			}
 
 			offsetX = x;
@@ -194,19 +196,19 @@ public class TooltipOverlayHandler
 
 				boolean shouldBeFaded = absModifiedSaturationIncrement <= i;
 				int color = shouldBeFaded ? ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, 0.5F) : ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, 1.0F);
-				guiGraphics.blit(RenderType::guiTextured, TextureHelper.MOD_ICONS, offsetX, offsetY, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7, 256, 256, color);
+				guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TextureHelper.MOD_ICONS, offsetX, offsetY, effectiveSaturationOfBar >= 1 ? 21 : effectiveSaturationOfBar > 0.5 ? 14 : effectiveSaturationOfBar > 0.25 ? 7 : effectiveSaturationOfBar > 0 ? 0 : 28, modifiedSaturationIncrement >= 0 ? 27 : 34, 7, 7, 256, 256, color);
 
 				offsetX -= 7;
 			}
 			if (foodTooltip.saturationBarsText != null)
 			{
 				offsetX += 14;
-				PoseStack poseStack = guiGraphics.pose();
-				poseStack.pushPose();
-				poseStack.translate(offsetX, offsetY, 0);
-				poseStack.scale(0.75f, 0.75f, 0.75f);
+				Matrix3x2fStack poseStack = guiGraphics.pose();
+				poseStack.pushMatrix();
+				poseStack.translate(offsetX, offsetY);
+				poseStack.scale(0.75f, 0.75f);
 				guiGraphics.drawString(font, foodTooltip.saturationBarsText, 2, 1, 0xFFAAAAAA);
-				poseStack.popPose();
+				poseStack.popMatrix();
 			}
 		}
 	}
