@@ -156,7 +156,7 @@ public class TooltipOverlayHandler
 		public void drawItems(TextRenderer textRenderer, int x, int y, int width, int height, DrawContext context)
 		{
 			if (TooltipOverlayHandler.INSTANCE != null)
-				TooltipOverlayHandler.INSTANCE.onRenderTooltip(context, this, x, y, 0, textRenderer);
+				TooltipOverlayHandler.INSTANCE.onRenderTooltip(context, this, x, y, textRenderer);
 		}
 	}
 
@@ -239,7 +239,7 @@ public class TooltipOverlayHandler
 		}
 	}
 
-	public void onRenderTooltip(DrawContext context, FoodOverlay foodOverlay, int toolTipX, int toolTipY, int tooltipZ, TextRenderer textRenderer)
+	public void onRenderTooltip(DrawContext context, FoodOverlay foodOverlay, int toolTipX, int toolTipY, TextRenderer textRenderer)
 	{
 		// When matrixStack or tooltip is null an unknown exception occurs.
 		// If ModConfig.INSTANCE is null then we're probably still in the init phase
@@ -303,15 +303,13 @@ public class TooltipOverlayHandler
 
 			x -= 9;
 		}
+		final Matrix3x2f dummyMat = new Matrix3x2f();
 		if (foodOverlay.hungerBarsText != null)
 		{
-			final Matrix3x2f tooltipZMat = new Matrix3x2f();
-			final Matrix3x2f scaleMat = new Matrix3x2f();
-
 			x += 18;
 			matrixStack.pushMatrix();
-			matrixStack.translate(x, y, tooltipZMat);
-			matrixStack.scale(0.75f, 0.75f, scaleMat);
+			matrixStack.translate(x, y, dummyMat);
+			matrixStack.scale(0.75f, 0.75f, dummyMat);
 			context.drawTextWithShadow(textRenderer, foodOverlay.hungerBarsText, 2, 2, 0xFFAAAAAA);
 			matrixStack.popMatrix();
 		}
@@ -337,13 +335,10 @@ public class TooltipOverlayHandler
 		}
 		if (foodOverlay.saturationBarsText != null)
 		{
-			final Matrix3x2f tooltipZMat = new Matrix3x2f();
-			final Matrix3x2f scaleMat = new Matrix3x2f();
-
 			x += 14;
 			matrixStack.pushMatrix();
-			matrixStack.translate(x, y, tooltipZMat);
-			matrixStack.scale(0.75f, 0.75f, scaleMat);
+			matrixStack.translate(x, y, dummyMat);
+			matrixStack.scale(0.75f, 0.75f, dummyMat);
 			context.drawTextWithShadow(textRenderer, foodOverlay.saturationBarsText, 2, 1, 0xFFAAAAAA);
 			matrixStack.popMatrix();
 		}
