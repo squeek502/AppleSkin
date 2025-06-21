@@ -325,7 +325,6 @@ public class TooltipOverlayHandler
 		// Render from right to left so that the icons 'face' the right way
 		x += (foodOverlay.saturationBars - 1) * 7;
 
-		//test RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		for (int i = 0; i < foodOverlay.saturationBars * 2; i += 2)
 		{
 			float effectiveSaturationOfBar = (absModifiedSaturationIncrement - i) / 2f;
