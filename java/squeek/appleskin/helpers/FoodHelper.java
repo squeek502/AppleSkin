@@ -93,7 +93,6 @@ public class FoodHelper
 			return 0;
 
 		HungerManager stats = player.getHungerManager();
-		World world = player.getEntityWorld();
 
 		int foodLevel = Math.min(stats.getFoodLevel() + consumableFood.food().nutrition(), 20);
 		float healthIncrement = 0;

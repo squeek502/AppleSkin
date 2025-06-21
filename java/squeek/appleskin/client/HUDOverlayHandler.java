@@ -1,6 +1,7 @@
 package squeek.appleskin.client;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.effect.StatusEffects;
@@ -205,7 +206,7 @@ public class HUDOverlayHandler
 			else if (effectiveSaturationOfBar > .25)
 				u = 1 * iconSize;
 
-			context.drawTexture(RenderLayer::getGuiTextured, TextureHelper.MOD_ICONS, x, y, u, v, iconSize, iconSize, 256, 256, alphaColor);
+			context.drawTexture(RenderPipelines.GUI_TEXTURED, TextureHelper.MOD_ICONS, x, y, u, v, iconSize, iconSize, 256, 256, alphaColor);
 		}
 	}
 
@@ -238,12 +239,12 @@ public class HUDOverlayHandler
 
 			// very faint background
 			var bgColor = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, alpha * 0.25F);
-			context.drawGuiTexture(RenderLayer::getGuiTextured, backgroundSprite, x, y, iconSize, iconSize, bgColor);
+			context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, backgroundSprite, x, y, iconSize, iconSize, bgColor);
 
 			boolean isHalf = i * 2 + 1 == modifiedFood;
 			Identifier iconSprite = TextureHelper.getFoodTexture(useRottenTextures, isHalf ? FoodType.HALF : FoodType.FULL);
 
-			context.drawGuiTexture(RenderLayer::getGuiTextured, iconSprite, x, y, iconSize, iconSize, alphaColor);
+			context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, iconSprite, x, y, iconSize, iconSize, alphaColor);
 		}
 	}
 
@@ -277,12 +278,12 @@ public class HUDOverlayHandler
 
 			// very faint background
 			var bgColor = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, alpha * 0.25F);
-			context.drawGuiTexture(RenderLayer::getGuiTextured, backgroundSprite, x, y, iconSize, iconSize, bgColor);
+			context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, backgroundSprite, x, y, iconSize, iconSize, bgColor);
 
 			boolean isHalf = i * 2 + 1 == fixedModifiedHealth;
 			Identifier iconSprite = TextureHelper.getHeartTexture(isHardcore, isHalf ? HeartType.HALF : HeartType.FULL);
 
-			context.drawGuiTexture(RenderLayer::getGuiTextured, iconSprite, x, y, iconSize, iconSize, alphaColor);
+			context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, iconSprite, x, y, iconSize, iconSize, alphaColor);
 		}
 	}
 
@@ -295,7 +296,7 @@ public class HUDOverlayHandler
 		int height = 9;
 
 		var color = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, 0.75F);
-		context.drawTexture(RenderLayer::getGuiTextured, TextureHelper.MOD_ICONS, right - width, top, 81 - width, 18, width, height, 256, 256, color);
+		context.drawTexture(RenderPipelines.GUI_TEXTURED, TextureHelper.MOD_ICONS, right - width, top, 81 - width, 18, width, height, 256, 256, color);
 	}
 
 
