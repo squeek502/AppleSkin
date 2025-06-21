@@ -32,7 +32,7 @@ dependencies {
 	}
 	include "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}"
 
-	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:18.0.800"
+	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:19.0.806"
 }
 
 processResources {
