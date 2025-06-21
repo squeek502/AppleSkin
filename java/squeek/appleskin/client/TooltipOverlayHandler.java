@@ -1,12 +1,9 @@
 package squeek.appleskin.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ConsumableComponent;
 import net.minecraft.component.type.FoodComponent;
@@ -18,7 +15,6 @@ import net.minecraft.item.tooltip.TooltipData;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.*;
 import net.minecraft.util.Identifier;
-import org.joml.Matrix3x2f;
 import org.joml.Matrix3x2fStack;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.api.event.TooltipOverlayEvent;
@@ -303,13 +299,12 @@ public class TooltipOverlayHandler
 
 			x -= 9;
 		}
-		final Matrix3x2f dummyMat = new Matrix3x2f();
 		if (foodOverlay.hungerBarsText != null)
 		{
 			x += 18;
 			matrixStack.pushMatrix();
-			matrixStack.translate(x, y, dummyMat);
-			matrixStack.scale(0.75f, 0.75f, dummyMat);
+			matrixStack.translate(x, y);
+			matrixStack.scale(0.75f, 0.75f);
 			context.drawTextWithShadow(textRenderer, foodOverlay.hungerBarsText, 2, 2, 0xFFAAAAAA);
 			matrixStack.popMatrix();
 		}
@@ -337,8 +332,8 @@ public class TooltipOverlayHandler
 		{
 			x += 14;
 			matrixStack.pushMatrix();
-			matrixStack.translate(x, y, dummyMat);
-			matrixStack.scale(0.75f, 0.75f, dummyMat);
+			matrixStack.translate(x, y);
+			matrixStack.scale(0.75f, 0.75f);
 			context.drawTextWithShadow(textRenderer, foodOverlay.saturationBarsText, 2, 1, 0xFFAAAAAA);
 			matrixStack.popMatrix();
 		}
