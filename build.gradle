@@ -27,19 +27,20 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-	modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}") {
+	modImplementation("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}") {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
-	include "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}"
 
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:19.0.806"
 }
 
 processResources {
 	inputs.property "version", semver_version
+	inputs.property "cloth_version", project.cloth_version
 
 	filesMatching("fabric.mod.json") {
-		expand "version": semver_version
+		expand "version": semver_version,
+				"cloth_version": project.cloth_version
 	}
 }
 
