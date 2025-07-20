@@ -13,7 +13,7 @@ import java.util.List;
 public final class DebugHudMixin
 {
 	@Inject(at = @At("RETURN"), method = "getLeftText")
-    private void getLeftText(CallbackInfoReturnable<List<String>> info)
+	protected void getLeftText(CallbackInfoReturnable<List<String>> info)
 	{
 		if (DebugInfoHandler.instance != null)
 			DebugInfoHandler.instance.onTextRender(info.getReturnValue());

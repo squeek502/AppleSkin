@@ -90,5 +90,5 @@ public class HUDOverlayEvent
 	public int x;
 	public int y;
 	public DrawContext context;
-	public boolean isCanceled;
+	public boolean isCanceled = false;
 }

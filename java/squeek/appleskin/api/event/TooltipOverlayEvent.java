@@ -21,7 +21,26 @@ public class TooltipOverlayEvent
 		public static final Event<EventHandler<Pre>> EVENT = EventHandler.createArrayBacked();
 	}
 
-	public boolean isCanceled;
+	/**
+	 * If cancelled, will reserve space for the food values, but will not
+	 * render them.
+	 */
+	public static final class Render extends TooltipOverlayEvent
+	{
+		public Render(ItemStack itemStack, int x, int y, DrawContext context, FoodComponent defaultFood, FoodComponent modifiedFood)
+		{
+			super(itemStack, defaultFood, modifiedFood);
+			this.context = context;
+			this.x = x;
+			this.y = y;
+		}
+
+		public int x;
+		public int y;
+		public DrawContext context;
+
+		public static final Event<EventHandler<Render>> EVENT = EventHandler.createArrayBacked();
+	}
 
 	private TooltipOverlayEvent(ItemStack itemStack, FoodComponent defaultFood, FoodComponent modifiedFood)
 	{
@@ -35,21 +54,5 @@ public class TooltipOverlayEvent
 
 	public final ItemStack itemStack;
 
-	/**
-	 * If cancelled, will reserve space for the food values, but will not
-	 * render them.
-	 */
-	public static final class Render extends TooltipOverlayEvent {
-		public static final Event<EventHandler<Render>> EVENT = EventHandler.createArrayBacked();
-		public int x;
-		public int y;
-		public DrawContext context;
-
-		public Render(ItemStack itemStack, int x, int y, DrawContext context, FoodComponent defaultFood, FoodComponent modifiedFood) {
-			super(itemStack, defaultFood, modifiedFood);
-			this.context = context;
-			this.x = x;
-			this.y = y;
-		}
-	}
+	public boolean isCanceled;
 }

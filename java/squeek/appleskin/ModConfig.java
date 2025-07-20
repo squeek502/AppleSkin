@@ -15,7 +15,8 @@ public final class ModConfig implements ConfigData
 	@ConfigEntry.Gui.Excluded
 	public static ModConfig instance;
 
-	public static void init() {
+	public static void init()
+	{
 		AutoConfig.register(ModConfig.class, JanksonConfigSerializer::new);
 		instance = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
 	}

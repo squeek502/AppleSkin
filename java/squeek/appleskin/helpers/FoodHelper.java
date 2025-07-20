@@ -16,7 +16,9 @@ import squeek.appleskin.network.ClientSyncHandler;
 
 public final class FoodHelper
 {
-	public static final FoodComponent EMPTY_FOOD_COMPONENT = new FoodComponent.Builder().build();
+	private FoodHelper() {
+		throw new UnsupportedOperationException();
+	}
 
 	public static boolean isFood(ItemStack itemStack)
 	{
@@ -27,7 +29,8 @@ public final class FoodHelper
 	{
 		return player.canConsume(foodComponent.canAlwaysEat());
 	}
-	public static final float REGEN_EXHAUSTION_INCREMENT = 6.0F;
+
+	public static final FoodComponent EMPTY_FOOD_COMPONENT = new FoodComponent.Builder().build();
 	public static final ConsumableComponent DEFAULT_CONSUMABLE_COMPONENT = ConsumableComponents.FOOD;
 
 	/**
@@ -126,10 +129,9 @@ public final class FoodHelper
 
 		return healthIncrement;
 	}
+
+	public static final float REGEN_EXHAUSTION_INCREMENT = 6.0F;
 	public static final float MAX_EXHAUSTION = 4.0F;
-	private FoodHelper() {
-		throw new UnsupportedOperationException();
-	}
 
 	public static float getEstimatedHealthIncrement(int foodLevel, float saturationLevel, float exhaustionLevel)
 	{

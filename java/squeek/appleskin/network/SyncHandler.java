@@ -14,11 +14,9 @@ import java.util.UUID;
 
 public final class SyncHandler
 {
-	/*
-	 * Sync saturation (vanilla MC only syncs when it hits 0)
-	 * Sync exhaustion (vanilla MC does not sync it at all)
-	 */
-	private static final Map<UUID, Float> LAST_SATURATION_LEVELS = new HashMap<>();
+	private SyncHandler() {
+		throw new UnsupportedOperationException();
+	}
 
 	public static void init()
 	{
@@ -28,9 +26,11 @@ public final class SyncHandler
 		ServerTickEvents.END_WORLD_TICK.register(SyncHandler::onServerWorldTick);
 	}
 
-	private SyncHandler() {
-		throw new UnsupportedOperationException();
-	}
+	/*
+	 * Sync saturation (vanilla MC only syncs when it hits 0)
+	 * Sync exhaustion (vanilla MC does not sync it at all)
+	 */
+	private static final Map<UUID, Float> LAST_SATURATION_LEVELS = new HashMap<>();
 	private static final Map<UUID, Float> LAST_EXHAUSTION_LEVELS = new HashMap<>();
 	private static boolean naturalRegeneration = true;
 
