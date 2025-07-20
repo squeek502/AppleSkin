@@ -36,8 +36,7 @@ public final class TooltipOverlayHandler
 {
 	public static TooltipOverlayHandler instance;
 
-	public static void init()
-	{
+	public static void init() {
 		instance = new TooltipOverlayHandler();
 	}
 
@@ -61,6 +60,58 @@ public final class TooltipOverlayHandler
 		public boolean accept(CharacterVisitor visitor)
 		{
 			return TextVisitFactory.visitFormatted(this, getStyle(), visitor);
+		}
+	}
+
+	private boolean shouldShowTooltip(ItemStack hoveredStack, TooltipType type) {
+		if (hoveredStack.isEmpty()) {
+			return false;
+		}
+
+		// Note: The intention here is to match the logic in ItemStack.getTooltip
+		if (!type.isCreative() && hoveredStack.getOrDefault(DataComponentTypes.TOOLTIP_DISPLAY, TooltipDisplayComponent.DEFAULT).hideTooltip())
+		{
+			return false;
+		}
+
+		boolean shouldShowTooltip = (ModConfig.instance.showFoodValuesInTooltip && KeyHelper.isShiftKeyDown()) || ModConfig.instance.showFoodValuesInTooltipAlways;
+		if (!shouldShowTooltip)
+		{
+			return false;
+		}
+
+        return FoodHelper.isFood(hoveredStack);
+    }
+
+	enum FoodOutline {
+		NEGATIVE,
+		EXTRA,
+		NORMAL,
+		PARTIAL,
+		MISSING;
+
+		public static FoodOutline get(int modifiedFoodHunger, int defaultFoodHunger, int i)
+		{
+			if (modifiedFoodHunger < 0)
+				return NEGATIVE;
+			else if (modifiedFoodHunger > defaultFoodHunger && defaultFoodHunger <= i)
+				return EXTRA;
+			else if (modifiedFoodHunger > i + 1 || defaultFoodHunger == modifiedFoodHunger)
+				return NORMAL;
+			else if (modifiedFoodHunger == i + 1)
+				return PARTIAL;
+			else
+				return MISSING;
+		}
+
+		public int argb() {
+			return switch (this) {
+				case NEGATIVE -> ColorHelper.argbFromRGBA(1.0f, 1.0f, 1.0f, 1.0f);
+				case EXTRA -> ColorHelper.argbFromRGBA(0.06f, 0.32f, 0.02f, 1.0f);
+				case NORMAL -> ColorHelper.argbFromRGBA(0.0f, 0.0f, 0.0f, 1.0f);
+				case PARTIAL -> ColorHelper.argbFromRGBA(0.53f, 0.21f, 0.08f, 1.0f);
+				case MISSING -> ColorHelper.argbFromRGBA(0.62f, 0.0f, 0.0f, 0.5f);
+			};
 		}
 	}
 
@@ -103,27 +154,24 @@ public final class TooltipOverlayHandler
 		}
 	}
 
-	private boolean shouldShowTooltip(ItemStack hoveredStack, TooltipType type)
-	{
-		if (hoveredStack.isEmpty())
-		{
-			return false;
+	static abstract class EmptyText implements Text {
+		static List<Text> emptySiblings = new ArrayList<>();
+
+		@Override
+		public Style getStyle() {
+			return Style.EMPTY;
 		}
 
-		// Note: The intention here is to match the logic in ItemStack.getTooltip
-		if (!type.isCreative() && hoveredStack.getOrDefault(DataComponentTypes.TOOLTIP_DISPLAY, TooltipDisplayComponent.DEFAULT).hideTooltip())
-		{
-			return false;
+		@Override
+		public TextContent getContent() {
+			return PlainTextContent.EMPTY;
 		}
 
-		boolean shouldShowTooltip = (ModConfig.instance.showFoodValuesInTooltip && KeyHelper.isShiftKeyDown()) || ModConfig.instance.showFoodValuesInTooltipAlways;
-		if (!shouldShowTooltip)
-		{
-			return false;
+		@Override
+		public List<Text> getSiblings() {
+			return emptySiblings;
 		}
-
-        return FoodHelper.isFood(hoveredStack);
-    }
+	}
 
 	public void onRenderTooltip(DrawContext context, FoodOverlay foodOverlay, int toolTipX, int toolTipY, TextRenderer textRenderer)
 	{
@@ -229,66 +277,7 @@ public final class TooltipOverlayHandler
 		}
 	}
 
-	enum FoodOutline
-	{
-		NEGATIVE,
-		EXTRA,
-		NORMAL,
-		PARTIAL,
-		MISSING;
-
-		public int argb()
-		{
-			return switch (this)
-			{
-				case NEGATIVE -> ColorHelper.argbFromRGBA(1.0f, 1.0f, 1.0f, 1.0f);
-				case EXTRA -> ColorHelper.argbFromRGBA(0.06f, 0.32f, 0.02f, 1.0f);
-				case NORMAL -> ColorHelper.argbFromRGBA(0.0f, 0.0f, 0.0f, 1.0f);
-				case PARTIAL -> ColorHelper.argbFromRGBA(0.53f, 0.21f, 0.08f, 1.0f);
-				case MISSING -> ColorHelper.argbFromRGBA(0.62f, 0.0f, 0.0f, 0.5f);
-			};
-		}
-
-		public static FoodOutline get(int modifiedFoodHunger, int defaultFoodHunger, int i)
-		{
-			if (modifiedFoodHunger < 0)
-				return NEGATIVE;
-			else if (modifiedFoodHunger > defaultFoodHunger && defaultFoodHunger <= i)
-				return EXTRA;
-			else if (modifiedFoodHunger > i + 1 || defaultFoodHunger == modifiedFoodHunger)
-				return NORMAL;
-			else if (modifiedFoodHunger == i + 1)
-				return PARTIAL;
-			else
-				return MISSING;
-		}
-	}
-
-	static abstract class EmptyText implements Text
-	{
-		@Override
-		public Style getStyle()
-		{
-			return Style.EMPTY;
-		}
-
-		@Override
-		public TextContent getContent()
-		{
-			return PlainTextContent.EMPTY;
-		}
-
-		static List<Text> emptySiblings = new ArrayList<>();
-
-		@Override
-		public List<Text> getSiblings()
-		{
-			return emptySiblings;
-		}
-	}
-
-	public static class FoodOverlay implements TooltipComponent, TooltipData
-	{
+	public static class FoodOverlay implements TooltipComponent, TooltipData {
 		private FoodComponent defaultFood;
 		private FoodComponent modifiedFood;
 		private ConsumableComponent consumableComponent;
@@ -304,8 +293,7 @@ public final class TooltipOverlayHandler
 
 		private ItemStack itemStack;
 
-		FoodOverlay(ItemStack itemStack, FoodComponent defaultFood, FoodComponent modifiedFood, ConsumableComponent consumableComponent)
-		{
+		FoodOverlay(ItemStack itemStack, FoodComponent defaultFood, FoodComponent modifiedFood, ConsumableComponent consumableComponent) {
 			this.itemStack = itemStack;
 			this.defaultFood = defaultFood;
 			this.modifiedFood = modifiedFood;
@@ -315,52 +303,44 @@ public final class TooltipOverlayHandler
 			biggestSaturationIncrement = Math.max(defaultFood.saturation(), modifiedFood.saturation());
 
 			hungerBars = (int) Math.ceil(Math.abs(biggestHunger) / 2f);
-			if (hungerBars > 10)
-			{
+			if (hungerBars > 10) {
 				hungerBarsText = "x" + ((biggestHunger < 0 ? -1 : 1) * hungerBars);
 				hungerBars = 1;
 			}
 
 			saturationBars = (int) Math.ceil(Math.abs(biggestSaturationIncrement) / 2f);
-			if (saturationBars > 10 || saturationBars == 0)
-			{
+			if (saturationBars > 10 || saturationBars == 0) {
 				saturationBarsText = "x" + ((biggestSaturationIncrement < 0 ? -1 : 1) * saturationBars);
 				saturationBars = 1;
 			}
 		}
 
-		boolean shouldRenderHungerBars()
-		{
+		boolean shouldRenderHungerBars() {
 			return hungerBars > 0;
 		}
 
 		@Override
-		public int getHeight(TextRenderer textRenderer)
-		{
+		public int getHeight(TextRenderer textRenderer) {
 			// hunger + spacing + saturation + arbitrary spacing,
 			// for some reason 3 extra looks best
 			return 9 + 1 + 7 + 3;
 		}
 
 		@Override
-		public int getWidth(TextRenderer textRenderer)
-		{
+		public int getWidth(TextRenderer textRenderer) {
 			int hungerBarLength = hungerBars * 9;
-			if (hungerBarsText != null)
-			{
+			if (hungerBarsText != null) {
 				hungerBarLength += textRenderer.getWidth(hungerBarsText);
 			}
 			int saturationBarLength = saturationBars * 7;
-			if (saturationBarsText != null)
-			{
+			if (saturationBarsText != null) {
 				saturationBarLength += textRenderer.getWidth(saturationBarsText);
 			}
 			return Math.max(hungerBarLength, saturationBarLength);
 		}
 
 		@Override
-		public void drawItems(TextRenderer textRenderer, int x, int y, int width, int height, DrawContext context)
-		{
+		public void drawItems(TextRenderer textRenderer, int x, int y, int width, int height, DrawContext context) {
 			if (TooltipOverlayHandler.instance != null)
 				TooltipOverlayHandler.instance.onRenderTooltip(context, this, x, y, textRenderer);
 		}

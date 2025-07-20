@@ -5,11 +5,12 @@ import squeek.appleskin.AppleSkin;
 
 public final class TextureHelper
 {
-	public static final Identifier MOD_ICONS = Identifier.of(AppleSkin.MOD_ID, "textures/icons.png");
-	public static final Identifier HUNGER_OUTLINE_SPRITE = Identifier.of(AppleSkin.MOD_ID, "tooltip_hunger_outline");
 	private TextureHelper() {
 		throw new UnsupportedOperationException();
 	}
+
+	public static final Identifier MOD_ICONS = Identifier.of(AppleSkin.MOD_ID, "textures/icons.png");
+	public static final Identifier HUNGER_OUTLINE_SPRITE = Identifier.of(AppleSkin.MOD_ID, "tooltip_hunger_outline");
 
 	// Hunger
 	public static final Identifier FOOD_EMPTY_HUNGER_TEXTURE = Identifier.ofVanilla("hud/food_empty_hunger");

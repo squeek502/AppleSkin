@@ -27,8 +27,8 @@ public final class FoodHelper
 	{
 		return player.canConsume(foodComponent.canAlwaysEat());
 	}
-	public static final ConsumableComponent DEFAULT_CONSUMABLE_COMPONENT = ConsumableComponents.FOOD;
 	public static final float REGEN_EXHAUSTION_INCREMENT = 6.0F;
+	public static final ConsumableComponent DEFAULT_CONSUMABLE_COMPONENT = ConsumableComponents.FOOD;
 
 	/**
 	 * Assumes itemStack is known to be a food, always returns a non-null ConsumableFood
@@ -85,11 +85,6 @@ public final class FoodHelper
 		}
 		return false;
 	}
-	public static final float MAX_EXHAUSTION = 4.0F;
-
-	private FoodHelper() {
-		throw new UnsupportedOperationException();
-	}
 
 	public static float getEstimatedHealthIncrement(PlayerEntity player, ConsumableFood consumableFood)
 	{
@@ -130,6 +125,10 @@ public final class FoodHelper
 		}
 
 		return healthIncrement;
+	}
+	public static final float MAX_EXHAUSTION = 4.0F;
+	private FoodHelper() {
+		throw new UnsupportedOperationException();
 	}
 
 	public static float getEstimatedHealthIncrement(int foodLevel, float saturationLevel, float exhaustionLevel)

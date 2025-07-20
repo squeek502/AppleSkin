@@ -12,10 +12,11 @@ import java.util.List;
 
 public final class DebugInfoHandler
 {
+	public static DebugInfoHandler instance;
+
 	private static final DecimalFormat SATURATION_DF = new DecimalFormat("#.##");
 	private static final DecimalFormat EXHAUSTION_VAL_DF = new DecimalFormat("0.00");
 	private static final DecimalFormat EXHAUSTION_MAX_DF = new DecimalFormat("#.##");
-	public static DebugInfoHandler instance;
 
 	public static void init()
 	{

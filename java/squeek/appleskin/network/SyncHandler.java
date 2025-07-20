@@ -27,10 +27,11 @@ public final class SyncHandler
 		PayloadTypeRegistry.playS2C().register(NaturalRegenerationSyncPayload.ID, NaturalRegenerationSyncPayload.CODEC);
 		ServerTickEvents.END_WORLD_TICK.register(SyncHandler::onServerWorldTick);
 	}
-	private static final Map<UUID, Float> LAST_EXHAUSTION_LEVELS = new HashMap<>();
+
 	private SyncHandler() {
 		throw new UnsupportedOperationException();
 	}
+	private static final Map<UUID, Float> LAST_EXHAUSTION_LEVELS = new HashMap<>();
 	private static boolean naturalRegeneration = true;
 
 	public static void onPlayerUpdate(ServerPlayerEntity player)
