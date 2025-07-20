@@ -10,9 +10,10 @@ import squeek.appleskin.client.HUDOverlayHandler;
 import squeek.appleskin.client.TooltipOverlayHandler;
 import squeek.appleskin.network.ClientSyncHandler;
 
-public class AppleSkin implements ClientModInitializer
+public final class AppleSkin implements ClientModInitializer
 {
 	public static final Logger LOGGER = LogManager.getLogger();
+	public static final String MOD_ID = "appleskin";
 
 	@Override
 	public void onInitializeClient()
@@ -22,7 +23,7 @@ public class AppleSkin implements ClientModInitializer
 		HUDOverlayHandler.init();
 		TooltipOverlayHandler.init();
 		DebugInfoHandler.init();
-		FabricLoader.getInstance().getEntrypointContainers("appleskin", AppleSkinApi.class).forEach(entrypoint -> {
+		FabricLoader.getInstance().getEntrypointContainers(MOD_ID, AppleSkinApi.class).forEach(entrypoint -> {
 			try
 			{
 				entrypoint.getEntrypoint().registerEvents();

@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import squeek.appleskin.helpers.ExhaustionHelper;
 
 @Mixin(HungerManager.class)
-public class HungerManagerMixin implements ExhaustionHelper.ExhaustionManipulator
+public final class HungerManagerMixin implements ExhaustionHelper.ExhaustionManipulator
 {
 	@Shadow
 	private float exhaustion;

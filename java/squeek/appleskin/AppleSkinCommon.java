@@ -3,7 +3,7 @@ package squeek.appleskin;
 import net.fabricmc.api.ModInitializer;
 import squeek.appleskin.network.SyncHandler;
 
-public class AppleSkinCommon implements ModInitializer
+public final class AppleSkinCommon implements ModInitializer
 {
 	@Override
 	public void onInitialize()

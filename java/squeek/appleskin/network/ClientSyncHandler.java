@@ -5,7 +5,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import squeek.appleskin.helpers.ExhaustionHelper;
 
-public class ClientSyncHandler
+public final class ClientSyncHandler
 {
 	public static boolean naturalRegeneration = true;
 	@Environment(EnvType.CLIENT)

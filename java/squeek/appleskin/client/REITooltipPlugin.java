@@ -8,7 +8,7 @@ import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import java.util.ArrayList;
 import java.util.List;
 
-public class REITooltipPlugin implements REIClientPlugin
+public final class REITooltipPlugin implements REIClientPlugin
 {
 	// Because AppleSkin adds its custom tooltip as an OrderedText, REI treats it
 	// as a string and it gets transformed into a plain StyledText before it gets

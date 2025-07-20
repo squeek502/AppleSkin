@@ -2,8 +2,12 @@ package squeek.appleskin.helpers;
 
 import net.minecraft.util.math.MathHelper;
 
-public class ColorHelper
+public final class ColorHelper
 {
+	private ColorHelper() {
+		throw new UnsupportedOperationException();
+	}
+
 	public static int argbFromRGBA(float r, float g, float b, float a)
 	{
 		return (MathHelper.floor(a * 255.0) << 24) |

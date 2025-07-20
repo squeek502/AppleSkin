@@ -10,17 +10,16 @@ import squeek.appleskin.helpers.FoodHelper;
 import java.text.DecimalFormat;
 import java.util.List;
 
-public class DebugInfoHandler
+public final class DebugInfoHandler
 {
-	public static DebugInfoHandler INSTANCE;
-
-	private static final DecimalFormat saturationDF = new DecimalFormat("#.##");
-	private static final DecimalFormat exhaustionValDF = new DecimalFormat("0.00");
-	private static final DecimalFormat exhaustionMaxDF = new DecimalFormat("#.##");
+	private static final DecimalFormat SATURATION_DF = new DecimalFormat("#.##");
+	private static final DecimalFormat EXHAUSTION_VAL_DF = new DecimalFormat("0.00");
+	private static final DecimalFormat EXHAUSTION_MAX_DF = new DecimalFormat("#.##");
+	public static DebugInfoHandler instance;
 
 	public static void init()
 	{
-		INSTANCE = new DebugInfoHandler();
+		instance = new DebugInfoHandler();
 	}
 
 	public void onTextRender(List<String> leftDebugInfo)
@@ -28,7 +27,7 @@ public class DebugInfoHandler
 		if (leftDebugInfo == null)
 			return;
 
-		if (!ModConfig.INSTANCE.showFoodDebugInfo)
+		if (!ModConfig.instance.showFoodDebugInfo)
 			return;
 
 		MinecraftClient mc = MinecraftClient.getInstance();
@@ -41,6 +40,6 @@ public class DebugInfoHandler
 		HungerManager stats = mc.player.getHungerManager();
 		float curExhaustion = ExhaustionHelper.getExhaustion(mc.player);
 		float maxExhaustion = FoodHelper.MAX_EXHAUSTION;
-		leftDebugInfo.add("hunger: " + stats.getFoodLevel() + ", sat: " + saturationDF.format(stats.getSaturationLevel()) + ", exh: " + exhaustionValDF.format(curExhaustion) + "/" + exhaustionMaxDF.format(maxExhaustion));
+		leftDebugInfo.add("hunger: " + stats.getFoodLevel() + ", sat: " + SATURATION_DF.format(stats.getSaturationLevel()) + ", exh: " + EXHAUSTION_VAL_DF.format(curExhaustion) + "/" + EXHAUSTION_MAX_DF.format(maxExhaustion));
 	}
 }

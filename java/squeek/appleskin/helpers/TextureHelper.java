@@ -1,11 +1,15 @@
 package squeek.appleskin.helpers;
 
 import net.minecraft.util.Identifier;
+import squeek.appleskin.AppleSkin;
 
-public class TextureHelper
+public final class TextureHelper
 {
-	public static final Identifier MOD_ICONS = Identifier.of("appleskin", "textures/icons.png");
-	public static final Identifier HUNGER_OUTLINE_SPRITE = Identifier.of("appleskin", "tooltip_hunger_outline");
+	public static final Identifier MOD_ICONS = Identifier.of(AppleSkin.MOD_ID, "textures/icons.png");
+	public static final Identifier HUNGER_OUTLINE_SPRITE = Identifier.of(AppleSkin.MOD_ID, "tooltip_hunger_outline");
+	private TextureHelper() {
+		throw new UnsupportedOperationException();
+	}
 
 	// Hunger
 	public static final Identifier FOOD_EMPTY_HUNGER_TEXTURE = Identifier.ofVanilla("hud/food_empty_hunger");

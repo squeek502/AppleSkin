@@ -10,26 +10,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import squeek.appleskin.client.HUDOverlayHandler;
 
 @Mixin(InGameHud.class)
-public class InGameHudMixin
+public final class InGameHudMixin
 {
 	@Inject(at = @At("HEAD"), method = "renderFood")
 	private void renderFoodPre(DrawContext context, PlayerEntity player, int top, int right, CallbackInfo info)
 	{
-		if (HUDOverlayHandler.INSTANCE != null)
-			HUDOverlayHandler.INSTANCE.onPreRenderFood(context, player, top, right);
+		if (HUDOverlayHandler.instance != null)
+			HUDOverlayHandler.instance.onPreRenderFood(context, player, top, right);
 	}
 
 	@Inject(at = @At("RETURN"), method = "renderFood")
 	private void renderFoodPost(DrawContext context, PlayerEntity player, int top, int right, CallbackInfo info)
 	{
-		if (HUDOverlayHandler.INSTANCE != null)
-			HUDOverlayHandler.INSTANCE.onRenderFood(context, player, top, right);
+		if (HUDOverlayHandler.instance != null)
+			HUDOverlayHandler.instance.onRenderFood(context, player, top, right);
 	}
 
 	@Inject(at = @At("RETURN"), method = "renderHealthBar")
-	private void renderHealthPost(DrawContext context, PlayerEntity player, int left, int top, int lines, int regeneratingHeartIndex, float maxHealth, int lastHealth, int health, int absorption, boolean blinking, CallbackInfo info)
+	private void renderHealthPost(final DrawContext context, final PlayerEntity player, final int x, final int y, final int lines, final int regeneratingHeartIndex, final float maxHealth, final int lastHealth, final int health, final int absorption, final boolean blinking, final CallbackInfo ci)
 	{
-		if (HUDOverlayHandler.INSTANCE != null)
-			HUDOverlayHandler.INSTANCE.onRenderHealth(context, player, left, top, lines, regeneratingHeartIndex, maxHealth, lastHealth, health, absorption, blinking);
+		if (HUDOverlayHandler.instance != null)
+			HUDOverlayHandler.instance.onRenderHealth(context, player, x, y);
 	}
 }

@@ -10,12 +10,12 @@ import squeek.appleskin.client.DebugInfoHandler;
 import java.util.List;
 
 @Mixin(DebugHud.class)
-public class DebugHudMixin
+public final class DebugHudMixin
 {
 	@Inject(at = @At("RETURN"), method = "getLeftText")
-	protected void getLeftText(CallbackInfoReturnable<List<String>> info)
+    private void getLeftText(CallbackInfoReturnable<List<String>> info)
 	{
-		if (DebugInfoHandler.INSTANCE != null)
-			DebugInfoHandler.INSTANCE.onTextRender(info.getReturnValue());
+		if (DebugInfoHandler.instance != null)
+			DebugInfoHandler.instance.onTextRender(info.getReturnValue());
 	}
 }

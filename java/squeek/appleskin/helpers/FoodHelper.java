@@ -10,14 +10,14 @@ import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.consume.ApplyEffectsConsumeEffect;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import squeek.appleskin.api.event.FoodValuesEvent;
 import squeek.appleskin.network.ClientSyncHandler;
 
-public class FoodHelper
+public final class FoodHelper
 {
+	public static final FoodComponent EMPTY_FOOD_COMPONENT = new FoodComponent.Builder().build();
+
 	public static boolean isFood(ItemStack itemStack)
 	{
 		return itemStack.contains(DataComponentTypes.FOOD) && itemStack.contains(DataComponentTypes.CONSUMABLE);
@@ -27,9 +27,8 @@ public class FoodHelper
 	{
 		return player.canConsume(foodComponent.canAlwaysEat());
 	}
-
-	public static FoodComponent EMPTY_FOOD_COMPONENT = new FoodComponent.Builder().build();
-	public static ConsumableComponent DEFAULT_CONSUMABLE_COMPONENT = ConsumableComponents.FOOD;
+	public static final ConsumableComponent DEFAULT_CONSUMABLE_COMPONENT = ConsumableComponents.FOOD;
+	public static final float REGEN_EXHAUSTION_INCREMENT = 6.0F;
 
 	/**
 	 * Assumes itemStack is known to be a food, always returns a non-null ConsumableFood
@@ -86,6 +85,11 @@ public class FoodHelper
 		}
 		return false;
 	}
+	public static final float MAX_EXHAUSTION = 4.0F;
+
+	private FoodHelper() {
+		throw new UnsupportedOperationException();
+	}
 
 	public static float getEstimatedHealthIncrement(PlayerEntity player, ConsumableFood consumableFood)
 	{
@@ -100,7 +104,7 @@ public class FoodHelper
 		// health for natural regen
 		if (foodLevel >= 18.0F && ClientSyncHandler.naturalRegeneration)
 		{
-			float saturationLevel = Math.min(stats.getSaturationLevel() + consumableFood.food().saturation(), (float) foodLevel);
+			float saturationLevel = Math.min(stats.getSaturationLevel() + consumableFood.food().saturation(), foodLevel);
 			float exhaustionLevel = ExhaustionHelper.getExhaustion(player);
 			healthIncrement = getEstimatedHealthIncrement(foodLevel, saturationLevel, exhaustionLevel);
 		}
@@ -119,7 +123,7 @@ public class FoodHelper
 
 					// Refer: https://minecraft.fandom.com/wiki/Regeneration
 					// Refer: net.minecraft.entity.effect.StatusEffect.canApplyUpdateEffect
-					healthIncrement += (float) Math.floor(duration / Math.max(50 >> amplifier, 1));
+					healthIncrement += (float) Math.floor((double) duration / Math.max(50 >> amplifier, 1));
 					break;
 				}
 			}
@@ -127,9 +131,6 @@ public class FoodHelper
 
 		return healthIncrement;
 	}
-
-	public static float REGEN_EXHAUSTION_INCREMENT = 6.0F;
-	public static float MAX_EXHAUSTION = 4.0F;
 
 	public static float getEstimatedHealthIncrement(int foodLevel, float saturationLevel, float exhaustionLevel)
 	{

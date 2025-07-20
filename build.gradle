@@ -3,8 +3,7 @@ plugins {
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_21
-targetCompatibility = JavaVersion.VERSION_21
+java.sourceCompatibility = java.targetCompatibility = JavaVersion.VERSION_21
 
 group = project.maven_group
 archivesBaseName = project.archives_base_name
@@ -54,7 +53,8 @@ java {
 	withSourcesJar()
 }
 
-task apiJar(type: Jar, dependsOn: classes) {
+tasks.register('apiJar', Jar) {
+	dependsOn classes
 	archiveClassifier.set "api"
 
 	from sourceSets.main.output

@@ -9,11 +9,16 @@ import net.minecraft.component.type.ConsumableComponent;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipData;
 import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.text.*;
+import net.minecraft.text.CharacterVisitor;
+import net.minecraft.text.OrderedText;
+import net.minecraft.text.PlainTextContent;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.text.TextContent;
+import net.minecraft.text.TextVisitFactory;
 import net.minecraft.util.Identifier;
 import org.joml.Matrix3x2fStack;
 import squeek.appleskin.ModConfig;
@@ -27,31 +32,13 @@ import squeek.appleskin.helpers.TextureHelper.FoodType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TooltipOverlayHandler
+public final class TooltipOverlayHandler
 {
-	public static TooltipOverlayHandler INSTANCE;
+	public static TooltipOverlayHandler instance;
 
-	static abstract class EmptyText implements Text
+	public static void init()
 	{
-		@Override
-		public Style getStyle()
-		{
-			return Style.EMPTY;
-		}
-
-		@Override
-		public TextContent getContent()
-		{
-			return PlainTextContent.EMPTY;
-		}
-
-		static List<Text> emptySiblings = new ArrayList<Text>();
-
-		@Override
-		public List<Text> getSiblings()
-		{
-			return emptySiblings;
-		}
+		instance = new TooltipOverlayHandler();
 	}
 
 	// Bind to text line, because food overlay must apply line offset of all case.
@@ -77,95 +64,11 @@ public class TooltipOverlayHandler
 		}
 	}
 
-	public static class FoodOverlay implements TooltipComponent, TooltipData
-	{
-		private FoodComponent defaultFood;
-		private FoodComponent modifiedFood;
-		private ConsumableComponent consumableComponent;
-
-		private int biggestHunger;
-		private float biggestSaturationIncrement;
-
-		private int hungerBars;
-		private String hungerBarsText;
-
-		private int saturationBars;
-		private String saturationBarsText;
-
-		private ItemStack itemStack;
-
-		FoodOverlay(ItemStack itemStack, FoodComponent defaultFood, FoodComponent modifiedFood, ConsumableComponent consumableComponent, PlayerEntity player)
-		{
-			this.itemStack = itemStack;
-			this.defaultFood = defaultFood;
-			this.modifiedFood = modifiedFood;
-			this.consumableComponent = consumableComponent;
-
-			biggestHunger = Math.max(defaultFood.nutrition(), modifiedFood.nutrition());
-			biggestSaturationIncrement = Math.max(defaultFood.saturation(), modifiedFood.saturation());
-
-			hungerBars = (int) Math.ceil(Math.abs(biggestHunger) / 2f);
-			if (hungerBars > 10)
-			{
-				hungerBarsText = "x" + ((biggestHunger < 0 ? -1 : 1) * hungerBars);
-				hungerBars = 1;
-			}
-
-			saturationBars = (int) Math.ceil(Math.abs(biggestSaturationIncrement) / 2f);
-			if (saturationBars > 10 || saturationBars == 0)
-			{
-				saturationBarsText = "x" + ((biggestSaturationIncrement < 0 ? -1 : 1) * saturationBars);
-				saturationBars = 1;
-			}
-		}
-
-		boolean shouldRenderHungerBars()
-		{
-			return hungerBars > 0;
-		}
-
-		@Override
-		public int getHeight(TextRenderer textRenderer)
-		{
-			// hunger + spacing + saturation + arbitrary spacing,
-			// for some reason 3 extra looks best
-			return 9 + 1 + 7 + 3;
-		}
-
-		@Override
-		public int getWidth(TextRenderer textRenderer)
-		{
-			int hungerBarLength = hungerBars * 9;
-			if (hungerBarsText != null)
-			{
-				hungerBarLength += textRenderer.getWidth(hungerBarsText);
-			}
-			int saturationBarLength = saturationBars * 7;
-			if (saturationBarsText != null)
-			{
-				saturationBarLength += textRenderer.getWidth(saturationBarsText);
-			}
-			return Math.max(hungerBarLength, saturationBarLength);
-		}
-
-		@Override
-		public void drawItems(TextRenderer textRenderer, int x, int y, int width, int height, DrawContext context)
-		{
-			if (TooltipOverlayHandler.INSTANCE != null)
-				TooltipOverlayHandler.INSTANCE.onRenderTooltip(context, this, x, y, textRenderer);
-		}
-	}
-
-	public static void init()
-	{
-		INSTANCE = new TooltipOverlayHandler();
-	}
-
-	public void onItemTooltip(ItemStack hoveredStack, PlayerEntity player, Item.TooltipContext context, TooltipType type, List tooltip)
+	public void onItemTooltip(ItemStack hoveredStack, PlayerEntity player, TooltipType type, List<Text> tooltip)
 	{
 		// When hoveredStack or tooltip is null an unknown exception occurs.
 		// If ModConfig.INSTANCE is null then we're probably still in the init phase
-		if (hoveredStack == null || tooltip == null || ModConfig.INSTANCE == null)
+		if (hoveredStack == null || tooltip == null || ModConfig.instance == null)
 			return;
 
 		if (!shouldShowTooltip(hoveredStack, type))
@@ -184,7 +87,7 @@ public class TooltipOverlayHandler
 		if (prerenderEvent.isCanceled)
 			return;
 
-		FoodOverlay foodOverlay = new FoodOverlay(prerenderEvent.itemStack, defaultFood, modifiedFood, queriedFoodResult.consumableComponent, player);
+		FoodOverlay foodOverlay = new FoodOverlay(prerenderEvent.itemStack, defaultFood, modifiedFood, queriedFoodResult.consumableComponent);
 		if (foodOverlay.shouldRenderHungerBars())
 		{
 			try
@@ -200,46 +103,33 @@ public class TooltipOverlayHandler
 		}
 	}
 
-	enum FoodOutline
+	private boolean shouldShowTooltip(ItemStack hoveredStack, TooltipType type)
 	{
-		NEGATIVE,
-		EXTRA,
-		NORMAL,
-		PARTIAL,
-		MISSING;
-
-		public int argb()
+		if (hoveredStack.isEmpty())
 		{
-			return switch (this)
-			{
-				case NEGATIVE -> ColorHelper.argbFromRGBA(1.0f, 1.0f, 1.0f, 1.0f);
-				case EXTRA -> ColorHelper.argbFromRGBA(0.06f, 0.32f, 0.02f, 1.0f);
-				case NORMAL -> ColorHelper.argbFromRGBA(0.0f, 0.0f, 0.0f, 1.0f);
-				case PARTIAL -> ColorHelper.argbFromRGBA(0.53f, 0.21f, 0.08f, 1.0f);
-				case MISSING -> ColorHelper.argbFromRGBA(0.62f, 0.0f, 0.0f, 0.5f);
-			};
+			return false;
 		}
 
-		public static FoodOutline get(int modifiedFoodHunger, int defaultFoodHunger, int i)
+		// Note: The intention here is to match the logic in ItemStack.getTooltip
+		if (!type.isCreative() && hoveredStack.getOrDefault(DataComponentTypes.TOOLTIP_DISPLAY, TooltipDisplayComponent.DEFAULT).hideTooltip())
 		{
-			if (modifiedFoodHunger < 0)
-				return NEGATIVE;
-			else if (modifiedFoodHunger > defaultFoodHunger && defaultFoodHunger <= i)
-				return EXTRA;
-			else if (modifiedFoodHunger > i + 1 || defaultFoodHunger == modifiedFoodHunger)
-				return NORMAL;
-			else if (modifiedFoodHunger == i + 1)
-				return PARTIAL;
-			else
-				return MISSING;
+			return false;
 		}
-	}
+
+		boolean shouldShowTooltip = (ModConfig.instance.showFoodValuesInTooltip && KeyHelper.isShiftKeyDown()) || ModConfig.instance.showFoodValuesInTooltipAlways;
+		if (!shouldShowTooltip)
+		{
+			return false;
+		}
+
+        return FoodHelper.isFood(hoveredStack);
+    }
 
 	public void onRenderTooltip(DrawContext context, FoodOverlay foodOverlay, int toolTipX, int toolTipY, TextRenderer textRenderer)
 	{
 		// When matrixStack or tooltip is null an unknown exception occurs.
 		// If ModConfig.INSTANCE is null then we're probably still in the init phase
-		if (context == null || ModConfig.INSTANCE == null)
+		if (context == null || ModConfig.instance == null)
 			return;
 
 		// Not found overlay text lines, maybe some mods removed it.
@@ -339,30 +229,140 @@ public class TooltipOverlayHandler
 		}
 	}
 
-	private boolean shouldShowTooltip(ItemStack hoveredStack, TooltipType type)
+	enum FoodOutline
 	{
-		if (hoveredStack.isEmpty())
+		NEGATIVE,
+		EXTRA,
+		NORMAL,
+		PARTIAL,
+		MISSING;
+
+		public int argb()
 		{
-			return false;
+			return switch (this)
+			{
+				case NEGATIVE -> ColorHelper.argbFromRGBA(1.0f, 1.0f, 1.0f, 1.0f);
+				case EXTRA -> ColorHelper.argbFromRGBA(0.06f, 0.32f, 0.02f, 1.0f);
+				case NORMAL -> ColorHelper.argbFromRGBA(0.0f, 0.0f, 0.0f, 1.0f);
+				case PARTIAL -> ColorHelper.argbFromRGBA(0.53f, 0.21f, 0.08f, 1.0f);
+				case MISSING -> ColorHelper.argbFromRGBA(0.62f, 0.0f, 0.0f, 0.5f);
+			};
 		}
 
-		// Note: The intention here is to match the logic in ItemStack.getTooltip
-		if (!type.isCreative() && hoveredStack.getOrDefault(DataComponentTypes.TOOLTIP_DISPLAY, TooltipDisplayComponent.DEFAULT).hideTooltip())
+		public static FoodOutline get(int modifiedFoodHunger, int defaultFoodHunger, int i)
 		{
-			return false;
+			if (modifiedFoodHunger < 0)
+				return NEGATIVE;
+			else if (modifiedFoodHunger > defaultFoodHunger && defaultFoodHunger <= i)
+				return EXTRA;
+			else if (modifiedFoodHunger > i + 1 || defaultFoodHunger == modifiedFoodHunger)
+				return NORMAL;
+			else if (modifiedFoodHunger == i + 1)
+				return PARTIAL;
+			else
+				return MISSING;
+		}
+	}
+
+	static abstract class EmptyText implements Text
+	{
+		@Override
+		public Style getStyle()
+		{
+			return Style.EMPTY;
 		}
 
-		boolean shouldShowTooltip = (ModConfig.INSTANCE.showFoodValuesInTooltip && KeyHelper.isShiftKeyDown()) || ModConfig.INSTANCE.showFoodValuesInTooltipAlways;
-		if (!shouldShowTooltip)
+		@Override
+		public TextContent getContent()
 		{
-			return false;
+			return PlainTextContent.EMPTY;
 		}
 
-		if (!FoodHelper.isFood(hoveredStack))
+		static List<Text> emptySiblings = new ArrayList<>();
+
+		@Override
+		public List<Text> getSiblings()
 		{
-			return false;
+			return emptySiblings;
+		}
+	}
+
+	public static class FoodOverlay implements TooltipComponent, TooltipData
+	{
+		private FoodComponent defaultFood;
+		private FoodComponent modifiedFood;
+		private ConsumableComponent consumableComponent;
+
+		private int biggestHunger;
+		private float biggestSaturationIncrement;
+
+		private int hungerBars;
+		private String hungerBarsText;
+
+		private int saturationBars;
+		private String saturationBarsText;
+
+		private ItemStack itemStack;
+
+		FoodOverlay(ItemStack itemStack, FoodComponent defaultFood, FoodComponent modifiedFood, ConsumableComponent consumableComponent)
+		{
+			this.itemStack = itemStack;
+			this.defaultFood = defaultFood;
+			this.modifiedFood = modifiedFood;
+			this.consumableComponent = consumableComponent;
+
+			biggestHunger = Math.max(defaultFood.nutrition(), modifiedFood.nutrition());
+			biggestSaturationIncrement = Math.max(defaultFood.saturation(), modifiedFood.saturation());
+
+			hungerBars = (int) Math.ceil(Math.abs(biggestHunger) / 2f);
+			if (hungerBars > 10)
+			{
+				hungerBarsText = "x" + ((biggestHunger < 0 ? -1 : 1) * hungerBars);
+				hungerBars = 1;
+			}
+
+			saturationBars = (int) Math.ceil(Math.abs(biggestSaturationIncrement) / 2f);
+			if (saturationBars > 10 || saturationBars == 0)
+			{
+				saturationBarsText = "x" + ((biggestSaturationIncrement < 0 ? -1 : 1) * saturationBars);
+				saturationBars = 1;
+			}
 		}
 
-		return true;
+		boolean shouldRenderHungerBars()
+		{
+			return hungerBars > 0;
+		}
+
+		@Override
+		public int getHeight(TextRenderer textRenderer)
+		{
+			// hunger + spacing + saturation + arbitrary spacing,
+			// for some reason 3 extra looks best
+			return 9 + 1 + 7 + 3;
+		}
+
+		@Override
+		public int getWidth(TextRenderer textRenderer)
+		{
+			int hungerBarLength = hungerBars * 9;
+			if (hungerBarsText != null)
+			{
+				hungerBarLength += textRenderer.getWidth(hungerBarsText);
+			}
+			int saturationBarLength = saturationBars * 7;
+			if (saturationBarsText != null)
+			{
+				saturationBarLength += textRenderer.getWidth(saturationBarsText);
+			}
+			return Math.max(hungerBarLength, saturationBarLength);
+		}
+
+		@Override
+		public void drawItems(TextRenderer textRenderer, int x, int y, int width, int height, DrawContext context)
+		{
+			if (TooltipOverlayHandler.instance != null)
+				TooltipOverlayHandler.instance.onRenderTooltip(context, this, x, y, textRenderer);
+		}
 	}
 }

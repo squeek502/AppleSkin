@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import squeek.appleskin.network.SyncHandler;
 
 @Mixin(PlayerManager.class)
-public class PlayerManagerMixin
+public final class PlayerManagerMixin
 {
 	@Inject(at = @At("TAIL"), method = "onPlayerConnect")
 	private void onPlayerConnect(ClientConnection conn, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo info)

@@ -1,7 +1,6 @@
 package squeek.appleskin.util;
 
-public class IntPoint
+public final class IntPoint
 {
-	public int x;
-	public int y;
+	public int x, y;
 }

@@ -8,12 +8,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import squeek.appleskin.client.HUDOverlayHandler;
 
 @Mixin(MinecraftClient.class)
-public class MinecraftClientMixin
+public final class MinecraftClientMixin
 {
 	@Inject(at = @At("HEAD"), method = "tick")
 	void onTick(CallbackInfo info)
 	{
-		if (HUDOverlayHandler.INSTANCE != null)
-			HUDOverlayHandler.INSTANCE.onClientTick();
+		if (HUDOverlayHandler.instance != null)
+			HUDOverlayHandler.instance.onClientTick();
 	}
 }

@@ -4,11 +4,12 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
+import squeek.appleskin.AppleSkin;
 
 public record NaturalRegenerationSyncPayload(boolean naturalRegeneration) implements CustomPayload
 {
 	public static final PacketCodec<PacketByteBuf, NaturalRegenerationSyncPayload> CODEC = CustomPayload.codecOf(NaturalRegenerationSyncPayload::write, NaturalRegenerationSyncPayload::new);
-	public static final CustomPayload.Id<NaturalRegenerationSyncPayload> ID = new Id<>(Identifier.of("appleskin", "natural_regeneration"));
+	public static final CustomPayload.Id<NaturalRegenerationSyncPayload> ID = new Id<>(Identifier.of(AppleSkin.MOD_ID, "natural_regeneration"));
 
 	public NaturalRegenerationSyncPayload(PacketByteBuf buf)
 	{

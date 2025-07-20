@@ -11,7 +11,7 @@ public class HUDOverlayEvent
 	/**
 	 * If cancelled, will stop all rendering of the exhaustion meter.
 	 */
-	public static class Exhaustion extends HUDOverlayEvent
+	public static final class Exhaustion extends HUDOverlayEvent
 	{
 		public Exhaustion(float exhaustion, int x, int y, DrawContext context)
 		{
@@ -21,13 +21,13 @@ public class HUDOverlayEvent
 
 		public final float exhaustion;
 
-		public static Event<EventHandler<Exhaustion>> EVENT = EventHandler.createArrayBacked();
+		public static final Event<EventHandler<Exhaustion>> EVENT = EventHandler.createArrayBacked();
 	}
 
 	/**
 	 * If cancelled, will stop all rendering of the saturation overlay.
 	 */
-	public static class Saturation extends HUDOverlayEvent
+	public static final class Saturation extends HUDOverlayEvent
 	{
 		public Saturation(float saturationLevel, int x, int y, DrawContext context)
 		{
@@ -37,13 +37,13 @@ public class HUDOverlayEvent
 
 		public final float saturationLevel;
 
-		public static Event<EventHandler<Saturation>> EVENT = EventHandler.createArrayBacked();
+		public static final Event<EventHandler<Saturation>> EVENT = EventHandler.createArrayBacked();
 	}
 
 	/**
 	 * If cancelled, will stop all rendering of the hunger restored overlay.
 	 */
-	public static class HungerRestored extends HUDOverlayEvent
+	public static final class HungerRestored extends HUDOverlayEvent
 	{
 		public HungerRestored(int foodLevel, ItemStack itemStack, FoodComponent foodComponent, int x, int y, DrawContext context)
 		{
@@ -57,13 +57,13 @@ public class HUDOverlayEvent
 		public final ItemStack itemStack;
 		public final int currentFoodLevel;
 
-		public static Event<EventHandler<HungerRestored>> EVENT = EventHandler.createArrayBacked();
+		public static final Event<EventHandler<HungerRestored>> EVENT = EventHandler.createArrayBacked();
 	}
 
 	/**
 	 * If cancelled, will stop all rendering of the estimated health overlay.
 	 */
-	public static class HealthRestored extends HUDOverlayEvent
+	public static final class HealthRestored extends HUDOverlayEvent
 	{
 		public HealthRestored(float modifiedHealth, ItemStack itemStack, FoodComponent foodComponent, int x, int y, DrawContext context)
 		{
@@ -77,7 +77,7 @@ public class HUDOverlayEvent
 		public final ItemStack itemStack;
 		public final float modifiedHealth;
 
-		public static Event<EventHandler<HealthRestored>> EVENT = EventHandler.createArrayBacked();
+		public static final Event<EventHandler<HealthRestored>> EVENT = EventHandler.createArrayBacked();
 	}
 
 	private HUDOverlayEvent(int x, int y, DrawContext context)
@@ -90,5 +90,5 @@ public class HUDOverlayEvent
 	public int x;
 	public int y;
 	public DrawContext context;
-	public boolean isCanceled = false;
+	public boolean isCanceled;
 }

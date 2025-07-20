@@ -10,7 +10,7 @@ import squeek.appleskin.api.handler.EventHandler;
  * Can be used to customize the displayed hunger/saturation values of foods.
  * Called whenever the food values of items are being determined.
  */
-public class FoodValuesEvent
+public final class FoodValuesEvent
 {
 	public FoodValuesEvent(PlayerEntity player, ItemStack itemStack, FoodComponent defaultFoodValues, FoodComponent modifiedFoodComponent)
 	{
@@ -25,5 +25,5 @@ public class FoodValuesEvent
 	public final ItemStack itemStack;
 	public final PlayerEntity player;
 
-	public static Event<EventHandler<FoodValuesEvent>> EVENT = EventHandler.createArrayBacked();
+	public static final Event<EventHandler<FoodValuesEvent>> EVENT = EventHandler.createArrayBacked();
 }

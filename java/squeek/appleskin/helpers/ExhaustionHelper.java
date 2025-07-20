@@ -2,8 +2,12 @@ package squeek.appleskin.helpers;
 
 import net.minecraft.entity.player.PlayerEntity;
 
-public class ExhaustionHelper
+public final class ExhaustionHelper
 {
+	private ExhaustionHelper() {
+		throw new UnsupportedOperationException();
+	}
+
 	public interface ExhaustionManipulator
 	{
 		float getExhaustion();
