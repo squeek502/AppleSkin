@@ -1,0 +1,26 @@
+{
+  "text.autoconfig.appleskin.title": "AppleSkin",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltip": "ツールチップに食料値を表示",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltip.@Tooltip": "有効な場合、SHIFTキーを押した時に、食料のツールチップに空腹度と満腹度の値を表示します",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways": "常に食料値をツールチップに表示",
+  "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways.@Tooltip": "有効な場合、SHIFTキーを押さずとも、食料のツールチップに空腹度と満腹度の値を自動的に表示します",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay": "所持している食料の回復量を表示",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlay.@Tooltip": "有効な場合、現在、手に持っている食料で回復する空腹度（showSaturationHudOverlayが有効な場合は満腹度も）を表示します",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlayWhenOffhand": "オフハンドの食料にもオーバーレイを表示",
+  "text.autoconfig.appleskin.option.showFoodValuesHudOverlayWhenOffhand.@Tooltip": "有効な場合、オフハンドの食料も空腹度・満腹度・体力のオーバーレイ表示を有効にします",
+  "text.autoconfig.appleskin.option.showFoodHealthHudOverlay": "予測される体力回復を表示",
+  "text.autoconfig.appleskin.option.showFoodHealthHudOverlay.@Tooltip": "有効な場合、食料によって回復する体力値を体力バーに表示します",
+  "text.autoconfig.appleskin.option.showFoodExhaustionHudUnderlay": "疲労度のアンダーレイ表示",
+  "text.autoconfig.appleskin.option.showFoodExhaustionHudUnderlay.@Tooltip": "有効な場合、空腹度バーの下に疲労度を進捗バーとして表示します",
+  "text.autoconfig.appleskin.option.showSaturationHudOverlay": "満腹度オーバーレイを表示",
+  "text.autoconfig.appleskin.option.showSaturationHudOverlay.@Tooltip": "有効な場合、現在の満腹度を空腹度バーに重ねて表示します",
+  "text.autoconfig.appleskin.option.showFoodDebugInfo": "デバッグ画面に食料値を表示",
+  "text.autoconfig.appleskin.option.showFoodDebugInfo.@Tooltip":"有効な場合、デバッグ画面で空腹度・満腹度・疲労度を表示します",
+  "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay": "HUDアイコンをバニラのアニメーションに合わせて動かす",
+  "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay.@Tooltip": "有効な場合、体力や空腹度のオーバーレイがMinecraftのアイコンアニメーションに合わせて揺れます",
+  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "HUDアイコンの最大フラッシュ透明度",
+  "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha.@Tooltip": "アイコンが点滅する際の最大の不透明度（1.0=不透明, 0.0=透明）",
+
+  "modmenu.summaryTranslation.appleskin": "食料関連のHUDを改善するMOD",
+  "modmenu.descriptionTranslation.appleskin": "食料関連のHUDを様々に改善します"
+}
