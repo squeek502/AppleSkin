@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.10-SNAPSHOT'
+	id 'fabric-loom' version '1.11-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -32,7 +32,7 @@ dependencies {
 	}
 	include "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}"
 
-	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:19.0.806"
+	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:20.0.811"
 }
 
 processResources {

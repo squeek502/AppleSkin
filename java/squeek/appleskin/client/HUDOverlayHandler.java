@@ -256,7 +256,7 @@ public class HUDOverlayHandler
 		var alphaColor = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, alpha);
 
 		int fixedModifiedHealth = (int) Math.ceil(modifiedHealth);
-		boolean isHardcore = mc.player.getWorld() != null && mc.player.getWorld().getLevelProperties().isHardcore();
+		boolean isHardcore = mc.player.getEntityWorld() != null && mc.player.getEntityWorld().getLevelProperties().isHardcore();
 
 		int startHealthBars = (int) Math.max(0, (Math.ceil(health) / 2.0F));
 		int endHealthBars = (int) Math.max(0, Math.ceil(modifiedHealth / 2.0F));
@@ -359,7 +359,7 @@ public class HUDOverlayHandler
 		HungerManager stats = player.getHungerManager();
 
 		// in the `PEACEFUL` mode, health will restore faster
-		if (player.getWorld().getDifficulty() == Difficulty.PEACEFUL)
+		if (player.getEntityWorld().getDifficulty() == Difficulty.PEACEFUL)
 			return false;
 
 		// when player has any changes health amount by any case can't show estimated health
