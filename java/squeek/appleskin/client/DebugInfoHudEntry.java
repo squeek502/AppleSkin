@@ -14,9 +14,10 @@ import squeek.appleskin.helpers.FoodHelper;
 
 import java.text.DecimalFormat;
 
-public class DebugInfoHandler implements DebugHudEntry
+public class DebugInfoHudEntry implements DebugHudEntry
 {
 	public static final Identifier ENTRY_ID = Identifier.of("appleskin", "debuginfo");
+	// adds the debug info alongside position information
 	public static final Identifier SECTION_ID = Identifier.ofVanilla("position");
 
 	private static final DecimalFormat saturationDF = new DecimalFormat("#.##");
