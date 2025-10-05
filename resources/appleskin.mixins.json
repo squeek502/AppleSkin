@@ -12,7 +12,7 @@
     "MinecraftClientMixin",
     "ItemStackMixin",
     "TooltipComponentMixin",
-    "MixinDebugHudEntries"
+    "DebugHudEntriesMixin"
   ],
   "injectors": {
     "defaultRequire": 1,

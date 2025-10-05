@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Mixin(DebugHudEntries.class)
-public abstract class MixinDebugHudEntries {
+public abstract class DebugHudEntriesMixin {
 
     @Shadow
     @Final
