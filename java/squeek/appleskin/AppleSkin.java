@@ -2,9 +2,11 @@ package squeek.appleskin;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.gui.hud.debug.DebugHudEntries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import squeek.appleskin.api.AppleSkinApi;
+import squeek.appleskin.client.DebugInfoHudEntry;
 import squeek.appleskin.client.HUDOverlayHandler;
 import squeek.appleskin.client.TooltipOverlayHandler;
 import squeek.appleskin.network.ClientSyncHandler;
@@ -30,5 +32,6 @@ public class AppleSkin implements ClientModInitializer
 				LOGGER.error("Failed to load entrypoint for mod {}", entrypoint.getProvider().getMetadata().getId(), e);
 			}
 		});
+		DebugHudEntries.register(DebugInfoHudEntry.ENTRY_ID, new DebugInfoHudEntry());
 	}
 }

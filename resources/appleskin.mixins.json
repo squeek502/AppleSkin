@@ -11,8 +11,7 @@
     "InGameHudMixin",
     "MinecraftClientMixin",
     "ItemStackMixin",
-    "TooltipComponentMixin",
-    "DebugHudEntriesMixin"
+    "TooltipComponentMixin"
   ],
   "injectors": {
     "defaultRequire": 1,

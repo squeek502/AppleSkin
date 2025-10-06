@@ -16,9 +16,8 @@ import java.text.DecimalFormat;
 
 public class DebugInfoHudEntry implements DebugHudEntry
 {
-	public static final Identifier ENTRY_ID = Identifier.of("appleskin", "debuginfo");
-	// adds the debug info alongside position information
-	public static final Identifier SECTION_ID = Identifier.ofVanilla("position");
+	public static final Identifier ENTRY_ID = Identifier.of("appleskin", "food_stats");
+	public static final Identifier SECTION_ID = Identifier.of("appleskin", "debug_info");
 
 	private static final DecimalFormat saturationDF = new DecimalFormat("#.##");
 	private static final DecimalFormat exhaustionValDF = new DecimalFormat("0.00");
@@ -46,9 +45,4 @@ public class DebugInfoHudEntry implements DebugHudEntry
 			lines.addLineToSection(SECTION_ID, "hunger: " + stats.getFoodLevel() + ", sat: " + saturationDF.format(stats.getSaturationLevel()) + ", exh: " + exhaustionValDF.format(curExhaustion) + "/" + exhaustionMaxDF.format(maxExhaustion));
 		}
 	}
-
-	@Override
-	public boolean canShow(boolean reducedDebugInfo) {
-        return ModConfig.INSTANCE.showFoodDebugInfo;
-    }
 }
