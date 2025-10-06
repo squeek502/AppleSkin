@@ -50,10 +50,6 @@ public class ModConfig implements ConfigData
 	public boolean showFoodHealthHudOverlay = true;
 
 	@ConfigEntry.Gui.Tooltip()
-	@Comment("If true, shows your hunger, saturation, and exhaustion level in Debug Screen")
-	public boolean showFoodDebugInfo = true;
-
-	@ConfigEntry.Gui.Tooltip()
 	@Comment("If true, health/hunger overlay will shake to match Minecraft's icon animations")
 	public boolean showVanillaAnimationsOverlay = true;
 
