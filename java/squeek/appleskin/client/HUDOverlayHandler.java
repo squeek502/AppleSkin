@@ -29,7 +29,6 @@ import squeek.appleskin.util.IntPoint;
 
 import java.util.Vector;
 
-@OnlyIn(Dist.CLIENT)
 public class HUDOverlayHandler
 {
 	private static float unclampedFlashAlpha = 0f;

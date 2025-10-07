@@ -49,12 +49,6 @@ public class ModConfig
 	private static final String SHOW_FOOD_EXHAUSTION_UNDERLAY_COMMENT =
 		"If true, shows your food exhaustion as a progress bar behind the hunger bars";
 
-	public static final ModConfigSpec.BooleanValue SHOW_FOOD_DEBUG_INFO;
-	public static boolean SHOW_FOOD_DEBUG_INFO_DEFAULT = true;
-	private static final String SHOW_FOOD_DEBUG_INFO_NAME = "showFoodStatsInDebugOverlay";
-	private static final String SHOW_FOOD_DEBUG_INFO_COMMENT =
-		"If true, adds a line that shows your hunger, saturation, and exhaustion level in the F3 debug overlay";
-
 	public static final ModConfigSpec.BooleanValue SHOW_FOOD_HEALTH_HUD_OVERLAY;
 	public static boolean SHOW_FOOD_HEALTH_HUD_OVERLAY_DEFAULT = true;
 	private static final String SHOW_FOOD_HEALTH_HUD_OVERLAY_NAME = "showFoodHealthHudOverlay";
@@ -94,9 +88,6 @@ public class ModConfig
 		SHOW_FOOD_EXHAUSTION_UNDERLAY = BUILDER
 			.comment(SHOW_FOOD_EXHAUSTION_UNDERLAY_COMMENT)
 			.define(SHOW_FOOD_EXHAUSTION_UNDERLAY_NAME, SHOW_FOOD_EXHAUSTION_UNDERLAY_DEFAULT);
-		SHOW_FOOD_DEBUG_INFO = BUILDER
-			.comment(SHOW_FOOD_DEBUG_INFO_COMMENT)
-			.define(SHOW_FOOD_DEBUG_INFO_NAME, SHOW_FOOD_DEBUG_INFO_DEFAULT);
 		SHOW_FOOD_HEALTH_HUD_OVERLAY = BUILDER
 			.comment(SHOW_FOOD_HEALTH_HUD_OVERLAY_COMMENT)
 			.define(SHOW_FOOD_HEALTH_HUD_OVERLAY_NAME, SHOW_FOOD_HEALTH_HUD_OVERLAY_DEFAULT);

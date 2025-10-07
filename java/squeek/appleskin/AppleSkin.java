@@ -26,7 +26,7 @@ public class AppleSkin
 	public AppleSkin(IEventBus modEventBus, ModContainer container)
 	{
 		modEventBus.addListener(this::onRegisterPayloadHandler);
-		if (FMLEnvironment.dist.isClient())
+		if (FMLEnvironment.getDist().isClient())
 		{
 			modEventBus.addListener(this::preInitClient);
 			modEventBus.addListener(this::onRegisterHudHandler);
@@ -36,7 +36,7 @@ public class AppleSkin
 			net.neoforged.fml.config.ModConfig.Type.CLIENT,
 			ModConfig.SPEC
 		);
-		if (FMLEnvironment.dist.isClient())
+		if (FMLEnvironment.getDist().isClient())
 		{
 			container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 		}

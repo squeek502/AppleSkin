@@ -31,7 +31,6 @@ import squeek.appleskin.helpers.FoodHelper;
 import squeek.appleskin.helpers.KeyHelper;
 import squeek.appleskin.helpers.TextureHelper;
 
-@OnlyIn(Dist.CLIENT)
 public class TooltipOverlayHandler
 {
 	public static void init()

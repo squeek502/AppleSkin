@@ -3,7 +3,7 @@ plugins {
 	id 'eclipse'
 	id 'idea'
 	id 'maven-publish'
-	id 'net.neoforged.gradle.userdev' version '7.0.185'
+	id 'net.neoforged.gradle.userdev' version '7.0.192'
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
