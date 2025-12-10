@@ -1,19 +1,19 @@
 package squeek.appleskin.helpers;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class TextureHelper
 {
-	public static final ResourceLocation MOD_ICONS = ResourceLocation.fromNamespaceAndPath("appleskin", "textures/icons.png");
-	public static final ResourceLocation HUNGER_OUTLINE_SPRITE = ResourceLocation.fromNamespaceAndPath("appleskin", "tooltip_hunger_outline");
+	public static final Identifier MOD_ICONS = Identifier.fromNamespaceAndPath("appleskin", "textures/icons.png");
+	public static final Identifier HUNGER_OUTLINE_SPRITE = Identifier.fromNamespaceAndPath("appleskin", "tooltip_hunger_outline");
 
 	// Hunger
-	public static final ResourceLocation FOOD_EMPTY_HUNGER_TEXTURE = ResourceLocation.withDefaultNamespace("hud/food_empty_hunger");
-	public static final ResourceLocation FOOD_HALF_HUNGER_TEXTURE = ResourceLocation.withDefaultNamespace("hud/food_half_hunger");
-	public static final ResourceLocation FOOD_FULL_HUNGER_TEXTURE = ResourceLocation.withDefaultNamespace("hud/food_full_hunger");
-	public static final ResourceLocation FOOD_EMPTY_TEXTURE = ResourceLocation.withDefaultNamespace("hud/food_empty");
-	public static final ResourceLocation FOOD_HALF_TEXTURE = ResourceLocation.withDefaultNamespace("hud/food_half");
-	public static final ResourceLocation FOOD_FULL_TEXTURE = ResourceLocation.withDefaultNamespace("hud/food_full");
+	public static final Identifier FOOD_EMPTY_HUNGER_TEXTURE = Identifier.withDefaultNamespace("hud/food_empty_hunger");
+	public static final Identifier FOOD_HALF_HUNGER_TEXTURE = Identifier.withDefaultNamespace("hud/food_half_hunger");
+	public static final Identifier FOOD_FULL_HUNGER_TEXTURE = Identifier.withDefaultNamespace("hud/food_full_hunger");
+	public static final Identifier FOOD_EMPTY_TEXTURE = Identifier.withDefaultNamespace("hud/food_empty");
+	public static final Identifier FOOD_HALF_TEXTURE = Identifier.withDefaultNamespace("hud/food_half");
+	public static final Identifier FOOD_FULL_TEXTURE = Identifier.withDefaultNamespace("hud/food_full");
 
 	public enum FoodType
 	{
@@ -22,7 +22,7 @@ public class TextureHelper
 		FULL,
 	}
 
-	public static ResourceLocation getFoodTexture(boolean isRotten, FoodType type)
+	public static Identifier getFoodTexture(boolean isRotten, FoodType type)
 	{
 		return switch (type)
 		{
@@ -33,12 +33,12 @@ public class TextureHelper
 	}
 
 	// Hearts
-	public static final ResourceLocation HEART_CONTAINER = ResourceLocation.withDefaultNamespace("hud/heart/container");
-	public static final ResourceLocation HEART_HARDCORE_CONTAINER = ResourceLocation.withDefaultNamespace("hud/heart/container_hardcore");
-	public static final ResourceLocation HEART_FULL = ResourceLocation.withDefaultNamespace("hud/heart/full");
-	public static final ResourceLocation HEART_HARDCORE_FULL = ResourceLocation.withDefaultNamespace("hud/heart/hardcore_full");
-	public static final ResourceLocation HEART_HALF = ResourceLocation.withDefaultNamespace("hud/heart/half");
-	public static final ResourceLocation HEART_HARDCORE_HALF = ResourceLocation.withDefaultNamespace("hud/heart/hardcore_half");
+	public static final Identifier HEART_CONTAINER = Identifier.withDefaultNamespace("hud/heart/container");
+	public static final Identifier HEART_HARDCORE_CONTAINER = Identifier.withDefaultNamespace("hud/heart/container_hardcore");
+	public static final Identifier HEART_FULL = Identifier.withDefaultNamespace("hud/heart/full");
+	public static final Identifier HEART_HARDCORE_FULL = Identifier.withDefaultNamespace("hud/heart/hardcore_full");
+	public static final Identifier HEART_HALF = Identifier.withDefaultNamespace("hud/heart/half");
+	public static final Identifier HEART_HARDCORE_HALF = Identifier.withDefaultNamespace("hud/heart/hardcore_half");
 
 	public enum HeartType
 	{
@@ -47,7 +47,7 @@ public class TextureHelper
 		HALF,
 	}
 
-	public static ResourceLocation getHeartTexture(boolean hardcore, HeartType type)
+	public static Identifier getHeartTexture(boolean hardcore, HeartType type)
 	{
 		return switch (type)
 		{

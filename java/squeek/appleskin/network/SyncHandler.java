@@ -1,7 +1,7 @@
 package squeek.appleskin.network;
 
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -84,7 +84,7 @@ public class SyncHandler
 	@SubscribeEvent
 	public void onServerWorldTick(ServerTickEvent.Post event)
 	{
-		var cur = event.getServer().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
+		var cur = event.getServer().getWorldData().getGameRules().get(GameRules.NATURAL_HEALTH_REGENERATION);
 		if (naturalRegeneration != cur) {
 			PacketDistributor.sendToAllPlayers(new MessageNaturalRegenerationSync(cur));
 			naturalRegeneration = cur;

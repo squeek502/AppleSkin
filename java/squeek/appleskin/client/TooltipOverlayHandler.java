@@ -1,6 +1,5 @@
 package squeek.appleskin.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -8,17 +7,14 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.Consumable;
 import net.minecraft.world.item.component.TooltipDisplay;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
@@ -156,13 +152,13 @@ public class TooltipOverlayHandler
 				}
 
 				boolean isDefaultHalf = defaultHunger - 1 == i;
-				ResourceLocation defaultFoodIcon = TextureHelper.getFoodTexture(isRotten, isDefaultHalf ? TextureHelper.FoodType.HALF : TextureHelper.FoodType.FULL);
+				Identifier defaultFoodIcon = TextureHelper.getFoodTexture(isRotten, isDefaultHalf ? TextureHelper.FoodType.HALF : TextureHelper.FoodType.FULL);
 				guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, defaultFoodIcon, offsetX, offsetY, 9, 9, ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, 0.25F));
 
 				if (modifiedHunger > i)
 				{
 					boolean isModifiedHalf = modifiedHunger - 1 == i;
-					ResourceLocation modifiedFoodIcon = TextureHelper.getFoodTexture(isRotten, isModifiedHalf ? TextureHelper.FoodType.HALF : TextureHelper.FoodType.FULL);
+					Identifier modifiedFoodIcon = TextureHelper.getFoodTexture(isRotten, isModifiedHalf ? TextureHelper.FoodType.HALF : TextureHelper.FoodType.FULL);
 					guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, modifiedFoodIcon, offsetX, offsetY, 9, 9);
 				}
 

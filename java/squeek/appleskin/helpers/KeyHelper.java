@@ -1,7 +1,7 @@
 package squeek.appleskin.helpers;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
 

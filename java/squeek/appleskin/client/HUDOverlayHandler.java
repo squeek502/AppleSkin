@@ -4,7 +4,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffects;
@@ -13,8 +13,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.gui.GuiLayer;
@@ -48,12 +46,12 @@ public class HUDOverlayHandler
 		// before they get modified during the rendering of the health/food HUD
 		event.registerBelow(
 			VanillaGuiLayers.PLAYER_HEALTH,
-			ResourceLocation.fromNamespaceAndPath(ModInfo.MODID, "health_offset"),
+			Identifier.fromNamespaceAndPath(ModInfo.MODID, "health_offset"),
 			(guiGraphics, deltaTracker) -> healthIconsOffset = Minecraft.getInstance().gui.leftHeight
 		);
 		event.registerBelow(
 			VanillaGuiLayers.FOOD_LEVEL,
-			ResourceLocation.fromNamespaceAndPath(ModInfo.MODID, "food_offset"),
+			Identifier.fromNamespaceAndPath(ModInfo.MODID, "food_offset"),
 			(guiGraphics, deltaTracker) -> foodIconsOffset = Minecraft.getInstance().gui.rightHeight
 		);
 
@@ -94,7 +92,7 @@ public class HUDOverlayHandler
 	// TODO: missing healthBlinkTime, see net.minecraft.client.gui.Gui#renderHealthLevel
 	public static class HealthOverlay extends Overlay
 	{
-		public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(ModInfo.MODID, "health_restored");
+		public static final Identifier ID = Identifier.fromNamespaceAndPath(ModInfo.MODID, "health_restored");
 
 		@Override
 		public void render(Minecraft mc, Player player, GuiGraphics guiGraphics, int left, int right, int top, int guiTicks)
@@ -143,7 +141,7 @@ public class HUDOverlayHandler
 
 	public static class HungerOverlay extends Overlay
 	{
-		public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(ModInfo.MODID, "hunger_restored");
+		public static final Identifier ID = Identifier.fromNamespaceAndPath(ModInfo.MODID, "hunger_restored");
 
 		@Override
 		public void render(Minecraft mc, Player player, GuiGraphics guiGraphics, int left, int right, int top, int guiTicks)
@@ -185,7 +183,7 @@ public class HUDOverlayHandler
 
 	public static class SaturationOverlay extends Overlay
 	{
-		public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(ModInfo.MODID, "saturation_level");
+		public static final Identifier ID = Identifier.fromNamespaceAndPath(ModInfo.MODID, "saturation_level");
 
 		@Override
 		public void render(Minecraft mc, Player player, GuiGraphics guiGraphics, int left, int right, int top, int guiTicks)
@@ -230,7 +228,7 @@ public class HUDOverlayHandler
 
 	public static class ExhaustionOverlay extends Overlay
 	{
-		public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(ModInfo.MODID, "exhaustion_level");
+		public static final Identifier ID = Identifier.fromNamespaceAndPath(ModInfo.MODID, "exhaustion_level");
 
 		@Override
 		public void render(Minecraft mc, Player player, GuiGraphics guiGraphics, int left, int right, int top, int guiTicks)
@@ -329,14 +327,14 @@ public class HUDOverlayHandler
 			int x = right + offset.x;
 			int y = top + offset.y;
 
-			ResourceLocation backgroundSprite = TextureHelper.getFoodTexture(useRottenTextures, TextureHelper.FoodType.EMPTY);
+			Identifier backgroundSprite = TextureHelper.getFoodTexture(useRottenTextures, TextureHelper.FoodType.EMPTY);
 
 			// very faint background
 			var bgColor = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, alpha * 0.25F);
 			guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, backgroundSprite, x, y, iconSize, iconSize, bgColor);
 
 			boolean isHalf = i * 2 + 1 == modifiedFood;
-			ResourceLocation iconSprite = TextureHelper.getFoodTexture(useRottenTextures, isHalf ? TextureHelper.FoodType.HALF : TextureHelper.FoodType.FULL);
+			Identifier iconSprite = TextureHelper.getFoodTexture(useRottenTextures, isHalf ? TextureHelper.FoodType.HALF : TextureHelper.FoodType.FULL);
 
 			guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, iconSprite, x, y, iconSize, iconSize, alphaColor);
 		}
@@ -368,14 +366,14 @@ public class HUDOverlayHandler
 			int x = right + offset.x;
 			int y = top + offset.y;
 
-			ResourceLocation backgroundSprite = TextureHelper.getHeartTexture(isHardcore, TextureHelper.HeartType.CONTAINER);
+			Identifier backgroundSprite = TextureHelper.getHeartTexture(isHardcore, TextureHelper.HeartType.CONTAINER);
 
 			// very faint background
 			var bgColor = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, alpha * 0.25F);
 			guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, backgroundSprite, x, y, iconSize, iconSize, bgColor);
 
 			boolean isHalf = i * 2 + 1 == fixedModifiedHealth;
-			ResourceLocation iconSprite = TextureHelper.getHeartTexture(isHardcore, isHalf ? TextureHelper.HeartType.HALF : TextureHelper.HeartType.FULL);
+			Identifier iconSprite = TextureHelper.getHeartTexture(isHardcore, isHalf ? TextureHelper.HeartType.HALF : TextureHelper.HeartType.FULL);
 
 			guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, iconSprite, x, y, iconSize, iconSize, alphaColor);
 		}

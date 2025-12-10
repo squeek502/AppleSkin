@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.debug.DebugScreenDisplayer;
 import net.minecraft.client.gui.components.debug.DebugScreenEntries;
 import net.minecraft.client.gui.components.debug.DebugScreenEntry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -19,7 +19,7 @@ public class DebugInfoHandler
 	private static final DecimalFormat exhaustionValDF = new DecimalFormat("0.00");
 	private static final DecimalFormat exhaustionMaxDF = new DecimalFormat("#.##");
 
-	public static final ResourceLocation SECTION_ID = ResourceLocation.fromNamespaceAndPath("appleskin", "debug_info");
+	public static final Identifier SECTION_ID = Identifier.fromNamespaceAndPath("appleskin", "debug_info");
 
 	public static void init()
 	{
@@ -28,7 +28,7 @@ public class DebugInfoHandler
 
 	public static class FoodStatsDebugEntry implements DebugScreenEntry
 	{
-		public static final ResourceLocation ENTRY_ID = ResourceLocation.fromNamespaceAndPath("appleskin", "food_stats");
+		public static final Identifier ENTRY_ID = Identifier.fromNamespaceAndPath("appleskin", "food_stats");
 
 		@Override
 		public void display(DebugScreenDisplayer displayer, @Nullable Level level, @Nullable LevelChunk clientChunk, @Nullable LevelChunk serverChunk)

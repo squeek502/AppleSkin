@@ -3,7 +3,7 @@ plugins {
 	id 'eclipse'
 	id 'idea'
 	id 'maven-publish'
-	id 'net.neoforged.gradle.userdev' version '7.0.192'
+	id 'net.neoforged.gradle.userdev' version '7.1.11'
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -32,8 +32,11 @@ runs {
 	}
 }
 
+base {
+	archivesName = project.archives_base_name
+}
+
 group = project.maven_group
-archivesBaseName = project.archives_base_name
 version = "mc" + project.minecraft_version + "-" + project.mod_version
 def semver_version = project.mod_version + "+mc" + project.minecraft_version
 
@@ -85,7 +88,7 @@ publishing {
 	publications {
 		mavenJava(MavenPublication) {
 			groupId = group
-			artifactId = archivesBaseName
+			artifactId = project.archives_base_name
 
 			// add all the jars that should be included when publishing to maven
 			artifact(jar)
