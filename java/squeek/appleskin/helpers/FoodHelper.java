@@ -10,8 +10,6 @@ import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.consume.ApplyEffectsConsumeEffect;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import squeek.appleskin.api.event.FoodValuesEvent;
 import squeek.appleskin.network.ClientSyncHandler;

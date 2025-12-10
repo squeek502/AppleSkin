@@ -5,7 +5,7 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.GameRules;
+import net.minecraft.world.rule.GameRules;
 import squeek.appleskin.helpers.ExhaustionHelper;
 
 import java.util.HashMap;
@@ -62,7 +62,7 @@ public class SyncHandler
 
 	public static void onServerWorldTick(ServerWorld world)
 	{
-		var cur = world.getGameRules().getBoolean(GameRules.NATURAL_REGENERATION);
+		var cur = world.getGameRules().getValue(GameRules.NATURAL_HEALTH_REGENERATION);
 		if (naturalRegeneration != cur) {
 			for (ServerPlayerEntity player : world.getPlayers()) {
 				ServerPlayNetworking.send(player, new NaturalRegenerationSyncPayload(cur));

@@ -1,13 +1,13 @@
 plugins {
-	id 'fabric-loom' version '1.11-SNAPSHOT'
+	id 'fabric-loom' version '1.14-SNAPSHOT'
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_21
-targetCompatibility = JavaVersion.VERSION_21
+base {
+	archivesName = project.archives_base_name
+}
 
 group = project.maven_group
-archivesBaseName = project.archives_base_name
 version = "mc" + project.minecraft_version + "-" + project.mod_version
 def semver_version = project.mod_version + "+mc" + project.minecraft_version
 
@@ -32,7 +32,7 @@ dependencies {
 	}
 	include "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}"
 
-	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:20.0.811"
+	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:21.9.812"
 }
 
 processResources {
@@ -52,6 +52,9 @@ java {
 	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
 	// if it is present.
 	withSourcesJar()
+
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 }
 
 task apiJar(type: Jar, dependsOn: classes) {
@@ -77,7 +80,7 @@ publishing {
 	publications {
 		mavenJava(MavenPublication) {
 			groupId = group
-			artifactId = archivesBaseName
+			artifactId = project.archives_base_name
 
 			// add all the jars that should be included when publishing to maven
 			artifact(remapJar) {
