@@ -1,6 +1,7 @@
 plugins {
 	id 'fabric-loom' version '1.14-SNAPSHOT'
 	id 'maven-publish'
+	id "com.gradleup.shadow" version "9.2.2"
 }
 
 base {
@@ -27,10 +28,11 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-	modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}") {
+	modCompileOnlyApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}") {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
-	include "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}"
+
+	implementation (shadow "blue.endless:jankson:1.2.3")
 
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:21.9.812"
 }
@@ -64,7 +66,18 @@ task apiJar(type: Jar, dependsOn: classes) {
 	include "squeek/appleskin/api/**"
 }
 
-jar {
+shadowJar {
+	relocate "blue.endless.jankson", "${project.maven_group}.shadowed.blue.endless.jankson"
+	configurations = [project.configurations.shadow]
+	archiveClassifier = "shadow"
+
+	destinationDirectory = layout.buildDirectory.dir('shadowlibs')
+}
+
+remapJar {
+	input.set(shadowJar.archiveFile)
+	dependsOn(shadowJar)
+
 	from("LICENSE") {
 		rename { "${it}_${project.base.archivesName.get()}"}
 	}
