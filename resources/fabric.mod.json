@@ -30,7 +30,11 @@
     ]
   },
   "mixins": [
-    "appleskin.mixins.json"
+    "appleskin.mixins.json",
+    {
+      "config": "appleskin.jei.mixins.json",
+      "environment": "client"
+    }
   ],
 
   "depends": {
