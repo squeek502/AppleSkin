@@ -18,6 +18,8 @@ sourceSets.main.resources.srcDirs += 'resources'
 repositories {
 	maven { url "https://maven.shedaniel.me/" }
 	maven { url "https://maven.terraformersmc.com/" }
+	maven { url "https://maven.blamejared.com/" }
+	maven { url "https://modmaven.dev" }
 }
 
 dependencies {
@@ -35,6 +37,7 @@ dependencies {
 	implementation (shadow "blue.endless:jankson:1.2.3")
 
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+	modCompileOnly "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}"
 }
 
 processResources {
