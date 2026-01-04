@@ -34,7 +34,7 @@ dependencies {
 
 	implementation (shadow "blue.endless:jankson:1.2.3")
 
-	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:21.9.812"
+	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 }
 
 processResources {
