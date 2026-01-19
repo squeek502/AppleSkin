@@ -78,8 +78,9 @@ public class SyncHandler
 		lastSaturationLevels.remove(event.getEntity().getUUID());
 		lastExhaustionLevels.remove(event.getEntity().getUUID());
 		// Assumed to be true by default, so we only need to update the client if it's actually false
-		if (!naturalRegeneration) {
-			PacketDistributor.sendToPlayer((ServerPlayer)event.getEntity(), new MessageNaturalRegenerationSync(false));
+		if (!naturalRegeneration)
+		{
+			sendOptionalPayloadToPlayer((ServerPlayer) event.getEntity(), new MessageNaturalRegenerationSync(false));
 		}
 	}
 
@@ -87,8 +88,9 @@ public class SyncHandler
 	public void onServerWorldTick(ServerTickEvent.Post event)
 	{
 		var cur = event.getServer().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
-		if (naturalRegeneration != cur) {
-			PacketDistributor.sendToAllPlayers(new MessageNaturalRegenerationSync(cur));
+		if (naturalRegeneration != cur)
+		{
+			sendOptionalPayloadToAllPlayers(event.getServer(), new MessageNaturalRegenerationSync(cur));
 			naturalRegeneration = cur;
 		}
 	}
