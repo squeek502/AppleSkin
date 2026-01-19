@@ -1,5 +1,7 @@
 package squeek.appleskin.network;
 
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameRules;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -54,7 +56,7 @@ public class SyncHandler
 		if (lastSaturationLevel == null || lastSaturationLevel != player.getFoodData().getSaturationLevel())
 		{
 			var msg = new MessageSaturationSync(player.getFoodData().getSaturationLevel());
-			PacketDistributor.sendToPlayer(player, msg);
+			sendOptionalPayloadToPlayer(player, msg);
 			lastSaturationLevels.put(player.getUUID(), player.getFoodData().getSaturationLevel());
 		}
 
@@ -62,7 +64,7 @@ public class SyncHandler
 		if (lastExhaustionLevel == null || Math.abs(lastExhaustionLevel - exhaustionLevel) >= 0.01f)
 		{
 			var msg = new MessageExhaustionSync(exhaustionLevel);
-			PacketDistributor.sendToPlayer(player, msg);
+			sendOptionalPayloadToPlayer(player, msg);
 			lastExhaustionLevels.put(player.getUUID(), exhaustionLevel);
 		}
 	}
@@ -88,6 +90,23 @@ public class SyncHandler
 		if (naturalRegeneration != cur) {
 			PacketDistributor.sendToAllPlayers(new MessageNaturalRegenerationSync(cur));
 			naturalRegeneration = cur;
+		}
+	}
+
+	private static void sendOptionalPayloadToPlayer(ServerPlayer player, CustomPacketPayload payload)
+	{
+		// Need to actually check this here since NetworkRegister.checkPacket will throw UnsupportedOperationException
+		// if hasChannel is false. It seems like PayloadRegistrar.optional() would be relevant for this use case,
+		// but apparently not. It's unclear what PayloadRegistrar.optional() is actually meant to do.
+		if (!player.connection.hasChannel(payload.type().id())) return;
+		PacketDistributor.sendToPlayer(player, payload);
+	}
+
+	private static void sendOptionalPayloadToAllPlayers(MinecraftServer server, CustomPacketPayload payload)
+	{
+		for (var player : server.getPlayerList().getPlayers())
+		{
+			sendOptionalPayloadToPlayer(player, payload);
 		}
 	}
 }
