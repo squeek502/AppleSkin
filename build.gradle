@@ -20,6 +20,7 @@ repositories {
 	maven { url "https://maven.terraformersmc.com/" }
 	maven { url "https://maven.blamejared.com/" }
 	maven { url "https://modmaven.dev" }
+	maven { url "https://cursemaven.com" }
 }
 
 dependencies {
@@ -30,9 +31,10 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-	modCompileOnlyApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}") {
+	modCompileOnly("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}") {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
+	modCompileOnly "curse.maven:configured-457570:7332058"
 
 	implementation (shadow "blue.endless:jankson:1.2.3")
 

@@ -47,5 +47,13 @@
 
   "breaks": {
     "roughlyenoughitems": "<6.0.306-alpha"
+  },
+
+  "custom": {
+    "configured": {
+      "providers": [
+        "squeek.appleskin.gui.ConfiguredConfigProvider"
+      ]
+    }
   }
 }

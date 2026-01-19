@@ -2,7 +2,7 @@ package squeek.appleskin.gui;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.AutoConfigClient;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
@@ -15,8 +15,8 @@ public class ModMenuIntegration implements ModMenuApi
 	{
 		if (FabricLoader.getInstance().isModLoaded("cloth-config"))
 		{
-			return parent -> AutoConfig.getConfigScreen(AutoConfigIntegration.class, parent).get();
+			return parent -> AutoConfigClient.getConfigScreen(AutoConfigIntegration.class, parent).get();
 		}
-		return screen -> null;
+		throw new RuntimeException("cloth-config not loaded");
 	}
 }
