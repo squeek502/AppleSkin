@@ -98,10 +98,4 @@ modLocalRuntime("squeek.appleskin:appleskin-fabric:<version>") {
 }
 ```
 
-while replacing `<version>` as mentioned above. You will also need to add the Maven repository for Cloth to your `build.gradle`, since AppleSkin depends on it:
-
-```groovy
-repositories {
-	maven { url "https://maven.shedaniel.me/" }
-}
-```
+while replacing `<version>` as mentioned above.
