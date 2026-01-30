@@ -236,20 +236,28 @@ public class HUDOverlayHandler
 
         enableAlpha(alpha);
 
-        float modifiedSaturation = Math.max(0, Math.min(saturationLevel + saturationGained, 20));
+        float modifiedSaturation = saturationLevel + saturationGained;
+        int iconSize = 9;
+
+        int currentLayer = (int) (modifiedSaturation / 20);
+
+        float layerSaturation = modifiedSaturation % 20;
+        if (layerSaturation == 0 && modifiedSaturation > 0)
+            layerSaturation = 20;
 
         int startSaturationBar = 0;
-        int endSaturationBar = (int) Math.ceil(modifiedSaturation / 2.0F);
+        int endSaturationBar = 10;
 
-        // when require rendering the gained saturation, start should relocation to current saturation tail.
         if (saturationGained != 0)
-            startSaturationBar = (int) Math.max(saturationLevel / 2.0F, 0);
-
-        int iconSize = 9;
+        {
+            float currentSaturationInLayer = saturationLevel % 20;
+            if (currentSaturationInLayer == 0 && saturationLevel > 0)
+                currentSaturationInLayer = 20;
+            startSaturationBar = (int) (currentSaturationInLayer / 2.0F);
+        }
 
         for (int i = startSaturationBar; i < endSaturationBar; ++i)
         {
-            // gets the offset that needs to be render of icon
             IntPoint offset = foodBarOffsets.get(i);
             if (offset == null)
                 continue;
@@ -257,24 +265,59 @@ public class HUDOverlayHandler
             int x = right + offset.x;
             int y = top + offset.y;
 
-            int v = 0;
+            float effectiveSaturationOfBar = (layerSaturation / 2.0F) - i;
+
             int u = 0;
-
-            float effectiveSaturationOfBar = (modifiedSaturation / 2.0F) - i;
-
             if (effectiveSaturationOfBar >= 1)
                 u = 3 * iconSize;
-            else if (effectiveSaturationOfBar > .5)
+            else if (effectiveSaturationOfBar >= 0.5)
                 u = 2 * iconSize;
-            else if (effectiveSaturationOfBar > .25)
+            else if (effectiveSaturationOfBar > 0.25)
                 u = 1 * iconSize;
 
-            guiGraphics.blit(TextureHelper.MOD_ICONS, x, y, u, v, iconSize, iconSize);
+            int currentColor = getLayerColor(currentLayer, alpha);
+
+            if (currentLayer > 0)
+            {
+                int previousColor = getLayerColor(currentLayer - 1, alpha);
+
+                RenderSystem.setShaderColor(
+                        ((previousColor >> 16) & 0xFF) / 255f,
+                        ((previousColor >> 8) & 0xFF) / 255f,
+                        (previousColor & 0xFF) / 255f,
+                        ((previousColor >> 24) & 0xFF) / 255f
+                );
+
+                guiGraphics.blit(TextureHelper.MOD_ICONS, x, y, 3 * iconSize, 0, iconSize, iconSize);
+            }
+
+            RenderSystem.setShaderColor(
+                    ((currentColor >> 16) & 0xFF) / 255f,
+                    ((currentColor >> 8) & 0xFF) / 255f,
+                    (currentColor & 0xFF) / 255f,
+                    ((currentColor >> 24) & 0xFF) / 255f
+            );
+
+            guiGraphics.blit(TextureHelper.MOD_ICONS, x, y, u, 0, iconSize, iconSize);
         }
 
-        // rebind default icons
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, TextureHelper.MC_ICONS);
         disableAlpha(alpha);
+    }
+
+    private static int getLayerColor(int layer, float alpha)
+    {
+        int alphaValue = (int) (alpha * 255) << 24;
+
+        return switch (layer) {
+            case 0 -> alphaValue | 0xFFFF99;
+            case 1 -> alphaValue | 0xFFCC00;
+            case 2 -> alphaValue | 0xFF9900;
+            case 3 -> alphaValue | 0xFF6600;
+            case 4 -> alphaValue | 0xFF3300;
+            default -> alphaValue | 0xFF0000;
+        };
     }
 
     public static void drawHungerOverlay(int hungerRestored, int foodLevel, Minecraft mc, GuiGraphics guiGraphics, int right, int top, float alpha, boolean useRottenTextures)
