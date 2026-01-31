@@ -3,7 +3,9 @@ package squeek.appleskin.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,6 +21,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
+import org.slf4j.Logger;
+import squeek.appleskin.AppleSkin;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.api.event.FoodValuesEvent;
 import squeek.appleskin.api.event.HUDOverlayEvent;
@@ -28,12 +32,13 @@ import squeek.appleskin.helpers.HungerHelper;
 import squeek.appleskin.helpers.TextureHelper;
 import squeek.appleskin.util.IntPoint;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
 @OnlyIn(Dist.CLIENT)
-public class HUDOverlayHandler
-{
+public class HUDOverlayHandler {
     private static float unclampedFlashAlpha = 0f;
     private static float flashAlpha = 0f;
     private static byte alphaDir = 1;
@@ -44,8 +49,7 @@ public class HUDOverlayHandler
 
     private static final Random random = new Random();
 
-    public static void init()
-    {
+    public static void init() {
         MinecraftForge.EVENT_BUS.register(new HUDOverlayHandler());
     }
 
@@ -53,46 +57,36 @@ public class HUDOverlayHandler
     static ResourceLocation PLAYER_HEALTH_ELEMENT = new ResourceLocation("minecraft", "player_health");
 
     @SubscribeEvent
-    public void onRenderGuiOverlayPre(RenderGuiOverlayEvent.Pre event)
-    {
-        if (event.getOverlay() == GuiOverlayManager.findOverlay(FOOD_LEVEL_ELEMENT))
-        {
+    public void onRenderGuiOverlayPre(RenderGuiOverlayEvent.Pre event) {
+        if (event.getOverlay() == GuiOverlayManager.findOverlay(FOOD_LEVEL_ELEMENT)) {
             Minecraft mc = Minecraft.getInstance();
             ForgeGui gui = (ForgeGui) mc.gui;
             boolean isMounted = mc.player.getVehicle() instanceof LivingEntity;
-            if (!isMounted && !mc.options.hideGui && gui.shouldDrawSurvivalElements())
-            {
+            if (!isMounted && !mc.options.hideGui && gui.shouldDrawSurvivalElements()) {
                 renderExhaustion(gui, event.getGuiGraphics(), event.getPartialTick(), event.getWindow().getScreenWidth(), event.getWindow().getScreenHeight());
             }
         }
     }
 
     @SubscribeEvent
-    public void onRenderGuiOverlayPost(RenderGuiOverlayEvent.Post event)
-    {
-        if (event.getOverlay() == GuiOverlayManager.findOverlay(FOOD_LEVEL_ELEMENT))
-        {
+    public void onRenderGuiOverlayPost(RenderGuiOverlayEvent.Post event) {
+        if (event.getOverlay() == GuiOverlayManager.findOverlay(FOOD_LEVEL_ELEMENT)) {
             Minecraft mc = Minecraft.getInstance();
             ForgeGui gui = (ForgeGui) mc.gui;
             boolean isMounted = mc.player.getVehicle() instanceof LivingEntity;
-            if (!isMounted && !mc.options.hideGui && gui.shouldDrawSurvivalElements())
-            {
+            if (!isMounted && !mc.options.hideGui && gui.shouldDrawSurvivalElements()) {
                 renderFoodOrHealthOverlay(gui, event.getGuiGraphics(), event.getPartialTick(), event.getWindow().getScreenWidth(), event.getWindow().getScreenHeight(), RenderOverlayType.FOOD);
             }
-        }
-        else if (event.getOverlay() == GuiOverlayManager.findOverlay(PLAYER_HEALTH_ELEMENT))
-        {
+        } else if (event.getOverlay() == GuiOverlayManager.findOverlay(PLAYER_HEALTH_ELEMENT)) {
             Minecraft mc = Minecraft.getInstance();
             ForgeGui gui = (ForgeGui) mc.gui;
-            if (!mc.options.hideGui && gui.shouldDrawSurvivalElements())
-            {
+            if (!mc.options.hideGui && gui.shouldDrawSurvivalElements()) {
                 renderFoodOrHealthOverlay(gui, event.getGuiGraphics(), event.getPartialTick(), event.getWindow().getScreenWidth(), event.getWindow().getScreenHeight(), RenderOverlayType.HEALTH);
             }
         }
     }
 
-    public static void renderExhaustion(ForgeGui gui, GuiGraphics guiGraphics, float partialTicks, int screenWidth, int screenHeight)
-    {
+    public static void renderExhaustion(ForgeGui gui, GuiGraphics guiGraphics, float partialTicks, int screenWidth, int screenHeight) {
         foodIconsOffset = gui.rightHeight;
 
         if (!ModConfig.SHOW_FOOD_EXHAUSTION_UNDERLAY.get())
@@ -113,14 +107,12 @@ public class HUDOverlayHandler
             drawExhaustionOverlay(renderEvent, mc, 1f);
     }
 
-    enum RenderOverlayType
-    {
+    enum RenderOverlayType {
         HEALTH,
         FOOD,
     }
 
-    public static void renderFoodOrHealthOverlay(ForgeGui gui, GuiGraphics guiGraphics, float partialTicks, int screenWidth, int screenHeight, RenderOverlayType type)
-    {
+    public static void renderFoodOrHealthOverlay(ForgeGui gui, GuiGraphics guiGraphics, float partialTicks, int screenWidth, int screenHeight, RenderOverlayType type) {
         if (!shouldRenderAnyOverlays())
             return;
 
@@ -139,8 +131,7 @@ public class HUDOverlayHandler
             generateHungerBarOffsets(top, left, right, mc.gui.getGuiTicks(), player);
 
         HUDOverlayEvent.Saturation saturationRenderEvent = null;
-        if (type == RenderOverlayType.FOOD)
-        {
+        if (type == RenderOverlayType.FOOD) {
             saturationRenderEvent = new HUDOverlayEvent.Saturation(stats.getSaturationLevel(), right, top, guiGraphics);
 
             // cancel render overlay event when configuration disabled.
@@ -162,8 +153,7 @@ public class HUDOverlayHandler
             heldItem = player.getOffhandItem();
 
         boolean shouldRenderHeldItemValues = !heldItem.isEmpty() && FoodHelper.canConsume(heldItem, player);
-        if (!shouldRenderHeldItemValues)
-        {
+        if (!shouldRenderHeldItemValues) {
             resetFlash();
             return;
         }
@@ -173,10 +163,9 @@ public class HUDOverlayHandler
         MinecraftForge.EVENT_BUS.post(foodValuesEvent);
         modifiedFoodValues = foodValuesEvent.modifiedFoodValues;
 
-        if (type == RenderOverlayType.HEALTH)
-        {
+        if (type == RenderOverlayType.HEALTH) {
             // Offsets size is set to zero intentionally to disable rendering when health is infinite.
-            if (healthBarOffsets.size() == 0)
+            if (healthBarOffsets.isEmpty())
                 return;
 
             if (!shouldShowEstimatedHealth(heldItem, modifiedFoodValues))
@@ -197,9 +186,7 @@ public class HUDOverlayHandler
 
             if (healthRenderEvent != null && !healthRenderEvent.isCanceled())
                 drawHealthOverlay(healthRenderEvent, mc, flashAlpha);
-        }
-        else if (type == RenderOverlayType.FOOD)
-        {
+        } else if (type == RenderOverlayType.FOOD) {
             if (!ModConfig.SHOW_FOOD_VALUES_OVERLAY.get())
                 return;
 
@@ -217,9 +204,7 @@ public class HUDOverlayHandler
             drawHungerOverlay(renderRenderEvent, mc, foodHunger, flashAlpha, FoodHelper.isRotten(heldItem, player));
 
             // The render saturation overlay event maybe cancelled by other mods
-            assert saturationRenderEvent != null;
-            if (!saturationRenderEvent.isCanceled())
-            {
+            if (!saturationRenderEvent.isCanceled()) {
                 int newFoodValue = stats.getFoodLevel() + foodHunger;
                 float newSaturationValue = stats.getSaturationLevel() + foodSaturationIncrement;
                 float saturationGained = newSaturationValue > newFoodValue ? newFoodValue - stats.getSaturationLevel() : foodSaturationIncrement;
@@ -229,99 +214,84 @@ public class HUDOverlayHandler
         }
     }
 
-    public static void drawSaturationOverlay(float saturationGained, float saturationLevel, Minecraft mc, GuiGraphics guiGraphics, int right, int top, float alpha)
-    {
-        if (saturationLevel + saturationGained < 0)
-            return;
+    public static void drawSaturationOverlay(float saturationGained, float saturationLevel, Minecraft mc, GuiGraphics guiGraphics, int right, int top, float alpha) {
+        float totalSaturation = saturationLevel + saturationGained;
+        if (totalSaturation <= 0) return;
 
-        enableAlpha(alpha);
-
-        float modifiedSaturation = saturationLevel + saturationGained;
         int iconSize = 9;
+        int maxBars = 10;
+        float saturationPerLayer = 20f;
+        float saturationPerBar = saturationPerLayer / maxBars;
 
-        int currentLayer = (int) (modifiedSaturation / 20);
+        int[] colors = ModConfig.SATURATION_HUD_OVERLAY_COLORS.get()
+                .stream()
+                .mapToInt(color -> {
+                    try {
+                        return Integer.decode(color);
+                    } catch (NumberFormatException e) {
+                        AppleSkin.Log.warn("Invalid color value in config: {}", color);
+                        return 0xFFD500; // fallback (yellow)
+                    }
+                })
+                .toArray();
 
-        float layerSaturation = modifiedSaturation % 20;
-        if (layerSaturation == 0 && modifiedSaturation > 0)
-            layerSaturation = 20;
 
-        int startSaturationBar = 0;
-        int endSaturationBar = 10;
+        int fullLayers = (int) (totalSaturation / saturationPerLayer);
+        float remainder = totalSaturation % saturationPerLayer;
 
-        if (saturationGained != 0)
-        {
-            float currentSaturationInLayer = saturationLevel % 20;
-            if (currentSaturationInLayer == 0 && saturationLevel > 0)
-                currentSaturationInLayer = 20;
-            startSaturationBar = (int) (currentSaturationInLayer / 2.0F);
+        // Draw all full layers
+        for (int layer = 0; layer < fullLayers; layer++) {
+            int color = (int) alpha | colors[layer % colors.length];
+            for (int i = 0; i < maxBars; i++) {
+                IntPoint offset = foodBarOffsets.get(i);
+                if (offset == null) continue;
+
+                int x = right + offset.x;
+                int y = top + offset.y;
+                drawIconTinted(guiGraphics, x, y, 7 * iconSize, iconSize, iconSize, color);
+            }
         }
 
-        for (int i = startSaturationBar; i < endSaturationBar; ++i)
-        {
-            IntPoint offset = foodBarOffsets.get(i);
-            if (offset == null)
-                continue;
+        // Draw partial layer if there is remaining saturation
+        if (remainder > 0) {
+            int color = (int) alpha | colors[fullLayers % colors.length];
+            int fullBars = (int) (remainder / saturationPerBar);
+            float lastBarFraction = remainder % saturationPerBar;
 
-            int x = right + offset.x;
-            int y = top + offset.y;
-
-            float effectiveSaturationOfBar = (layerSaturation / 2.0F) - i;
-
-            int u = 0;
-            if (effectiveSaturationOfBar >= 1)
-                u = 3 * iconSize;
-            else if (effectiveSaturationOfBar >= 0.5)
-                u = 2 * iconSize;
-            else if (effectiveSaturationOfBar > 0.25)
-                u = 1 * iconSize;
-
-            int currentColor = getLayerColor(currentLayer, alpha);
-
-            if (currentLayer > 0)
-            {
-                int previousColor = getLayerColor(currentLayer - 1, alpha);
-
-                RenderSystem.setShaderColor(
-                        ((previousColor >> 16) & 0xFF) / 255f,
-                        ((previousColor >> 8) & 0xFF) / 255f,
-                        (previousColor & 0xFF) / 255f,
-                        ((previousColor >> 24) & 0xFF) / 255f
-                );
-
-                guiGraphics.blit(TextureHelper.MOD_ICONS, x, y, 3 * iconSize, 0, iconSize, iconSize);
+            for (int i = 0; i < fullBars; i++) {
+                IntPoint offset = foodBarOffsets.get(i);
+                if (offset == null) continue;
+                int x = right + offset.x;
+                int y = top + offset.y;
+                drawIconTinted(guiGraphics, x, y, 7 * iconSize, iconSize, iconSize, color);
             }
 
-            RenderSystem.setShaderColor(
-                    ((currentColor >> 16) & 0xFF) / 255f,
-                    ((currentColor >> 8) & 0xFF) / 255f,
-                    (currentColor & 0xFF) / 255f,
-                    ((currentColor >> 24) & 0xFF) / 255f
-            );
-
-            guiGraphics.blit(TextureHelper.MOD_ICONS, x, y, u, 0, iconSize, iconSize);
+            if (lastBarFraction > 0) {
+                IntPoint offset = foodBarOffsets.get(fullBars);
+                if (offset != null) {
+                    int x = right + offset.x;
+                    int y = top + offset.y;
+                    int u = lastBarFraction >= 1.5f ? 6 * iconSize
+                            : lastBarFraction >= 1f ? 5 * iconSize
+                            : lastBarFraction > .5f ? 4 * iconSize
+                            : 0;
+                    drawIconTinted(guiGraphics, x, y, u, iconSize, iconSize, color);
+                }
+            }
         }
-
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.setShaderTexture(0, TextureHelper.MC_ICONS);
-        disableAlpha(alpha);
     }
 
-    private static int getLayerColor(int layer, float alpha)
-    {
-        int alphaValue = (int) (alpha * 255) << 24;
+    private static void drawIconTinted(GuiGraphics guiGraphics, int x, int y, int u, int width, int height, int color) {
+        float r = FastColor.ARGB32.red(color) / 255f;
+        float g = FastColor.ARGB32.green(color) / 255f;
+        float b = FastColor.ARGB32.blue(color) / 255f;
+        float a = FastColor.ARGB32.alpha(color) / 255f;
 
-        return switch (layer) {
-            case 0 -> alphaValue | 0xFFFF99;
-            case 1 -> alphaValue | 0xFFCC00;
-            case 2 -> alphaValue | 0xFF9900;
-            case 3 -> alphaValue | 0xFF6600;
-            case 4 -> alphaValue | 0xFF3300;
-            default -> alphaValue | 0xFF0000;
-        };
+        guiGraphics.setColor(r, g, b, a);
+        guiGraphics.blit(TextureHelper.MOD_ICONS, x, y, u, 0, width, height);
     }
 
-    public static void drawHungerOverlay(int hungerRestored, int foodLevel, Minecraft mc, GuiGraphics guiGraphics, int right, int top, float alpha, boolean useRottenTextures)
-    {
+    public static void drawHungerOverlay(int hungerRestored, int foodLevel, Minecraft mc, GuiGraphics guiGraphics, int right, int top, float alpha, boolean useRottenTextures) {
         if (hungerRestored <= 0)
             return;
 
@@ -335,8 +305,7 @@ public class HUDOverlayHandler
         int iconStartOffset = 16;
         int iconSize = 9;
 
-        for (int i = startFoodBars; i < endFoodBars; ++i)
-        {
+        for (int i = startFoodBars; i < endFoodBars; ++i) {
             // gets the offset that needs to be render of icon
             IntPoint offset = foodBarOffsets.get(i);
             if (offset == null)
@@ -351,8 +320,7 @@ public class HUDOverlayHandler
             int ub = iconStartOffset + 1 * iconSize;
 
             // relocation to rotten food
-            if (useRottenTextures)
-            {
+            if (useRottenTextures) {
                 u += 4 * iconSize;
                 ub += 12 * iconSize;
             }
@@ -372,8 +340,7 @@ public class HUDOverlayHandler
         disableAlpha(alpha);
     }
 
-    public static void drawHealthOverlay(float health, float modifiedHealth, Minecraft mc, GuiGraphics guiGraphics, int right, int top, float alpha)
-    {
+    public static void drawHealthOverlay(float health, float modifiedHealth, Minecraft mc, GuiGraphics guiGraphics, int right, int top, float alpha) {
         if (modifiedHealth <= health)
             return;
 
@@ -388,8 +355,7 @@ public class HUDOverlayHandler
         int iconStartOffset = 16;
         int iconSize = 9;
 
-        for (int i = startHealthBars; i < endHealthBars; ++i)
-        {
+        for (int i = startHealthBars; i < endHealthBars; ++i) {
             // gets the offset that needs to be render of icon
             IntPoint offset = healthBarOffsets.get(i);
             if (offset == null)
@@ -429,8 +395,7 @@ public class HUDOverlayHandler
         disableAlpha(alpha);
     }
 
-    public static void drawExhaustionOverlay(float exhaustion, Minecraft mc, GuiGraphics guiGraphics, int right, int top, float alpha)
-    {
+    public static void drawExhaustionOverlay(float exhaustion, Minecraft mc, GuiGraphics guiGraphics, int right, int top, float alpha) {
         float maxExhaustion = HungerHelper.getMaxExhaustion(mc.player);
         // clamp between 0 and 1
         float ratio = Math.min(1, Math.max(0, exhaustion / maxExhaustion));
@@ -446,70 +411,57 @@ public class HUDOverlayHandler
     }
 
 
-    public static void enableAlpha(float alpha)
-    {
+    public static void enableAlpha(float alpha) {
         RenderSystem.enableBlend();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    public static void disableAlpha(float alpha)
-    {
+    public static void disableAlpha(float alpha) {
         RenderSystem.disableBlend();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     @SubscribeEvent
-    public void onClientTick(TickEvent.ClientTickEvent event)
-    {
+    public void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END)
             return;
 
         unclampedFlashAlpha += alphaDir * 0.125f;
-        if (unclampedFlashAlpha >= 1.5f)
-        {
+        if (unclampedFlashAlpha >= 1.5f) {
             alphaDir = -1;
-        }
-        else if (unclampedFlashAlpha <= -0.5f)
-        {
+        } else if (unclampedFlashAlpha <= -0.5f) {
             alphaDir = 1;
         }
         flashAlpha = Math.max(0F, Math.min(1F, unclampedFlashAlpha)) * Math.max(0F, Math.min(1F, ModConfig.MAX_HUD_OVERLAY_FLASH_ALPHA.get().floatValue()));
     }
 
-    public static void resetFlash()
-    {
+    public static void resetFlash() {
         unclampedFlashAlpha = flashAlpha = 0f;
         alphaDir = 1;
     }
 
-    private static void drawSaturationOverlay(HUDOverlayEvent.Saturation event, Minecraft mc, float saturationGained, float alpha)
-    {
+    private static void drawSaturationOverlay(HUDOverlayEvent.Saturation event, Minecraft mc, float saturationGained, float alpha) {
         drawSaturationOverlay(saturationGained, event.saturationLevel, mc, event.guiGraphics, event.x, event.y, alpha);
     }
 
-    private static void drawHungerOverlay(HUDOverlayEvent.HungerRestored event, Minecraft mc, int hunger, float alpha, boolean useRottenTextures)
-    {
+    private static void drawHungerOverlay(HUDOverlayEvent.HungerRestored event, Minecraft mc, int hunger, float alpha, boolean useRottenTextures) {
         drawHungerOverlay(hunger, event.currentFoodLevel, mc, event.guiGraphics, event.x, event.y, alpha, useRottenTextures);
     }
 
-    private static void drawHealthOverlay(HUDOverlayEvent.HealthRestored event, Minecraft mc, float alpha)
-    {
+    private static void drawHealthOverlay(HUDOverlayEvent.HealthRestored event, Minecraft mc, float alpha) {
         drawHealthOverlay(mc.player.getHealth(), event.modifiedHealth, mc, event.guiGraphics, event.x, event.y, alpha);
     }
 
-    private static void drawExhaustionOverlay(HUDOverlayEvent.Exhaustion event, Minecraft mc, float alpha)
-    {
+    private static void drawExhaustionOverlay(HUDOverlayEvent.Exhaustion event, Minecraft mc, float alpha) {
         drawExhaustionOverlay(event.exhaustion, mc, event.guiGraphics, event.x, event.y, alpha);
     }
 
-    private static boolean shouldRenderAnyOverlays()
-    {
+    private static boolean shouldRenderAnyOverlays() {
         return ModConfig.SHOW_FOOD_VALUES_OVERLAY.get() || ModConfig.SHOW_SATURATION_OVERLAY.get() || ModConfig.SHOW_FOOD_HEALTH_HUD_OVERLAY.get();
     }
 
-    private static boolean shouldShowEstimatedHealth(ItemStack hoveredStack, FoodValues modifiedFoodValues)
-    {
+    private static boolean shouldShowEstimatedHealth(ItemStack hoveredStack, FoodValues modifiedFoodValues) {
         // then configuration cancel the render event
         if (!ModConfig.SHOW_FOOD_HEALTH_HUD_OVERLAY.get())
             return false;
@@ -539,8 +491,7 @@ public class HUDOverlayHandler
         return true;
     }
 
-    private static void generateHealthBarOffsets(int top, int left, int right, int ticks, Player player)
-    {
+    private static void generateHealthBarOffsets(int top, int left, int right, int ticks, Player player) {
         // hard code in `InGameHUD`
         random.setSeed((long) (ticks * 312871L));
 
@@ -567,8 +518,7 @@ public class HUDOverlayHandler
         boolean shouldAnimatedHealth = false;
 
         // when some mods using custom render, we need to least provide an option to cancel animation
-        if (ModConfig.SHOW_VANILLA_ANIMATION_OVERLAY.get())
-        {
+        if (ModConfig.SHOW_VANILLA_ANIMATION_OVERLAY.get()) {
             // in vanilla health is too low (below 5) will show heartbeat animation
             // when regeneration will also show heartbeat animation, but we don't need now
             shouldAnimatedHealth = Math.ceil(player.getHealth()) <= 4;
@@ -579,8 +529,7 @@ public class HUDOverlayHandler
             healthBarOffsets.setSize(healthBars);
 
         // left alignment, multiple rows, reverse
-        for (int i = healthBars - 1; i >= 0; --i)
-        {
+        for (int i = healthBars - 1; i >= 0; --i) {
             int row = (int) Math.ceil((float) (i + 1) / (float) preferHealthBars) - 1;
             int x = left + i % preferHealthBars * 8;
             int y = top - row * healthRowHeight;
@@ -590,8 +539,7 @@ public class HUDOverlayHandler
 
             // reuse the point object to reduce memory usage
             IntPoint point = healthBarOffsets.get(i);
-            if (point == null)
-            {
+            if (point == null) {
                 point = new IntPoint();
                 healthBarOffsets.set(i, point);
             }
@@ -601,15 +549,13 @@ public class HUDOverlayHandler
         }
     }
 
-    private static void generateHungerBarOffsets(int top, int left, int right, int ticks, Player player)
-    {
+    private static void generateHungerBarOffsets(int top, int left, int right, int ticks, Player player) {
         final int preferFoodBars = 10;
 
         boolean shouldAnimatedFood = false;
 
         // when some mods using custom render, we need to least provide an option to cancel animation
-        if (ModConfig.SHOW_VANILLA_ANIMATION_OVERLAY.get())
-        {
+        if (ModConfig.SHOW_VANILLA_ANIMATION_OVERLAY.get()) {
             FoodData stats = player.getFoodData();
 
             // in vanilla saturation level is zero will show hunger animation
@@ -622,8 +568,7 @@ public class HUDOverlayHandler
             foodBarOffsets.setSize(preferFoodBars);
 
         // right alignment, single row
-        for (int i = 0; i < preferFoodBars; ++i)
-        {
+        for (int i = 0; i < preferFoodBars; ++i) {
             int x = right - i * 8 - 9;
             int y = top;
 
@@ -633,8 +578,7 @@ public class HUDOverlayHandler
 
             // reuse the point object to reduce memory usage
             IntPoint point = foodBarOffsets.get(i);
-            if (point == null)
-            {
+            if (point == null) {
                 point = new IntPoint();
                 foodBarOffsets.set(i, point);
             }

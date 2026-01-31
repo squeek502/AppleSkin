@@ -5,6 +5,8 @@ import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 
 public class ModConfig
 {
@@ -89,6 +91,21 @@ public class ModConfig
 	private static final String MAX_HUD_OVERLAY_FLASH_ALPHA_COMMENT =
 		"Alpha value of the flashing icons at their most visible point (1.0 = fully opaque, 0.0 = fully transparent)";
 
+	public static final ForgeConfigSpec.ConfigValue<List<? extends String>> SATURATION_HUD_OVERLAY_COLORS;
+	public static List<String> SATURATION_HUD_OVERLAY_COLORS_DEFAULT = Arrays.asList(
+			"#FFD500",
+			"#FF0000",
+			"#0000FF",
+			"#E600FF",
+			"#FF8B3D",
+			"#00FFFF",
+			"#45018F",
+			"#00FF00"
+	);
+	private static final String SATURATION_HUD_OVERLAY_COLORS_NAME = "saturationHudOverlayColors";
+	private static final String SATURATION_HUD_OVERLAY_COLORS_COMMENT =
+			"The colors to use for the saturation HUD overlay. The colors are in ARGB hex format.";
+
 	static
 	{
 		BUILDER.push(CATEGORY_CLIENT);
@@ -122,6 +139,9 @@ public class ModConfig
 		MAX_HUD_OVERLAY_FLASH_ALPHA = BUILDER
 			.comment(MAX_HUD_OVERLAY_FLASH_ALPHA_COMMENT)
 			.defineInRange(MAX_HUD_OVERLAY_FLASH_ALPHA_NAME, MAX_HUD_OVERLAY_FLASH_ALPHA_DEFAULT, 0D, 1D);
+		SATURATION_HUD_OVERLAY_COLORS = BUILDER
+			.comment(SATURATION_HUD_OVERLAY_COLORS_COMMENT)
+			.defineList(SATURATION_HUD_OVERLAY_COLORS_NAME, SATURATION_HUD_OVERLAY_COLORS_DEFAULT, o -> o instanceof String);
 		BUILDER.pop();
 	}
 
