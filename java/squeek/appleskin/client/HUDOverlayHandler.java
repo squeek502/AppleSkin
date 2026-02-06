@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
 public class HUDOverlayHandler
@@ -44,6 +45,9 @@ public class HUDOverlayHandler
 	private static float flashAlpha = 0f;
 	private static byte alphaDir = 1;
 	protected static int foodIconsOffset;
+
+	private static List<String> lastSaturationHudOverlayColorsConfig;
+	private static int[] cachedSaturationHudOverlayColors;
 
 	public static final Vector<IntPoint> healthBarOffsets = new Vector<>();
 	public static final Vector<IntPoint> foodBarOffsets = new Vector<>();
@@ -230,18 +234,23 @@ public class HUDOverlayHandler
 		float saturationPerLayer = 20f;
 		float saturationPerBar = saturationPerLayer / maxBars;
 
-		int[] colors = ModConfig.SATURATION_HUD_OVERLAY_COLORS.get().stream().mapToInt(color -> {
-			try
-			{
-				return Integer.decode(color);
-			}
-			catch (NumberFormatException e)
-			{
-				AppleSkin.Log.warn("Invalid color value in config: {}", color);
-				return 0xFFD500; // fallback (yellow)
-			}
-		}).toArray();
-
+		List<? extends String> currentColorsConfig = ModConfig.SATURATION_HUD_OVERLAY_COLORS.get();
+		if (cachedSaturationHudOverlayColors == null || !currentColorsConfig.equals(lastSaturationHudOverlayColorsConfig))
+		{
+			cachedSaturationHudOverlayColors = currentColorsConfig.stream().mapToInt(color -> {
+				try
+				{
+					return Integer.decode(color);
+				}
+				catch (NumberFormatException e)
+				{
+					AppleSkin.Log.warn("Invalid color value in config: {}", color);
+					return 0xFFD500; // fallback (yellow)
+				}
+			}).toArray();
+			lastSaturationHudOverlayColorsConfig = new ArrayList<>(currentColorsConfig);
+		}
+		int[] colors = cachedSaturationHudOverlayColors;
 
 		int fullLayers = (int) (totalSaturation / saturationPerLayer);
 		float remainder = totalSaturation % saturationPerLayer;
@@ -250,6 +259,12 @@ public class HUDOverlayHandler
 		for (int layer = 0; layer < fullLayers; layer++)
 		{
 			int color = (int) alpha | colors[layer % colors.length];
+			float r = ((color >> 16) & 255) / 255f;
+			float g = ((color >> 8) & 255) / 255f;
+			float b = (color & 255) / 255f;
+			float a = ((color >> 24) & 255) / 255f;
+			guiGraphics.setColor(r, g, b, a);
+
 			for (int i = 0; i < maxBars; i++)
 			{
 				IntPoint offset = foodBarOffsets.get(i);
@@ -257,7 +272,7 @@ public class HUDOverlayHandler
 
 				int x = right + offset.x;
 				int y = top + offset.y;
-				drawIconTinted(guiGraphics, x, y, 7 * iconSize, iconSize, iconSize, color);
+				guiGraphics.blit(TextureHelper.MOD_ICONS, x, y, 7 * iconSize, 0, iconSize, iconSize);
 			}
 		}
 
@@ -265,6 +280,12 @@ public class HUDOverlayHandler
 		if (remainder > 0)
 		{
 			int color = (int) alpha | colors[fullLayers % colors.length];
+			float r = ((color >> 16) & 255) / 255f;
+			float g = ((color >> 8) & 255) / 255f;
+			float b = (color & 255) / 255f;
+			float a = ((color >> 24) & 255) / 255f;
+			guiGraphics.setColor(r, g, b, a);
+
 			int fullBars = (int) (remainder / saturationPerBar);
 			float lastBarFraction = remainder % saturationPerBar;
 
@@ -274,7 +295,7 @@ public class HUDOverlayHandler
 				if (offset == null) continue;
 				int x = right + offset.x;
 				int y = top + offset.y;
-				drawIconTinted(guiGraphics, x, y, 7 * iconSize, iconSize, iconSize, color);
+				guiGraphics.blit(TextureHelper.MOD_ICONS, x, y, 7 * iconSize, 0, iconSize, iconSize);
 			}
 
 			if (lastBarFraction > 0)
@@ -285,21 +306,12 @@ public class HUDOverlayHandler
 					int x = right + offset.x;
 					int y = top + offset.y;
 					int u = lastBarFraction >= 1.5f ? 6 * iconSize : lastBarFraction >= 1f ? 5 * iconSize : lastBarFraction > .5f ? 4 * iconSize : 0;
-					drawIconTinted(guiGraphics, x, y, u, iconSize, iconSize, color);
+					guiGraphics.blit(TextureHelper.MOD_ICONS, x, y, u, 0, iconSize, iconSize);
 				}
 			}
 		}
-	}
 
-	private static void drawIconTinted(GuiGraphics guiGraphics, int x, int y, int u, int width, int height, int color)
-	{
-		float r = FastColor.ARGB32.red(color) / 255f;
-		float g = FastColor.ARGB32.green(color) / 255f;
-		float b = FastColor.ARGB32.blue(color) / 255f;
-		float a = FastColor.ARGB32.alpha(color) / 255f;
-
-		guiGraphics.setColor(r, g, b, a);
-		guiGraphics.blit(TextureHelper.MOD_ICONS, x, y, u, 0, width, height);
+		guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 	}
 
 	public static void drawHungerOverlay(int hungerRestored, int foodLevel, Minecraft mc, GuiGraphics guiGraphics, int right, int top, float alpha, boolean useRottenTextures)
