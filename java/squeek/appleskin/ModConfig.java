@@ -3,6 +3,7 @@ package squeek.appleskin;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -143,6 +144,53 @@ public class ModConfig
 			.comment(SATURATION_HUD_OVERLAY_COLORS_COMMENT)
 			.defineList(SATURATION_HUD_OVERLAY_COLORS_NAME, SATURATION_HUD_OVERLAY_COLORS_DEFAULT, o -> o instanceof String);
 		BUILDER.pop();
+	}
+
+	public static int[] SATURATION_HUD_OVERLAY_COLORS_CACHE = SATURATION_HUD_OVERLAY_COLORS_DEFAULT.stream().mapToInt(color -> {
+		try
+		{
+			return Integer.decode(color);
+		}
+		catch (NumberFormatException e)
+		{
+			return 0xFFD500; // fallback (yellow)
+		}
+	}).toArray();
+
+	public static void onConfigReloading(ModConfigEvent.Reloading event)
+	{
+		if (event.getConfig().getSpec() == SPEC)
+		{
+			SATURATION_HUD_OVERLAY_COLORS_CACHE = SATURATION_HUD_OVERLAY_COLORS.get().stream().mapToInt(color -> {
+				try
+				{
+					return Integer.decode(color);
+				}
+				catch (NumberFormatException e)
+				{
+					AppleSkin.Log.warn("Invalid color value in config: {}", color);
+					return 0xFFD500; // fallback (yellow)
+				}
+			}).toArray();
+		}
+	}
+
+	public static void onConfigLoading(ModConfigEvent.Loading event)
+	{
+		if (event.getConfig().getSpec() == SPEC)
+		{
+			SATURATION_HUD_OVERLAY_COLORS_CACHE = SATURATION_HUD_OVERLAY_COLORS.get().stream().mapToInt(color -> {
+				try
+				{
+					return Integer.decode(color);
+				}
+				catch (NumberFormatException e)
+				{
+					AppleSkin.Log.warn("Invalid color value in config: {}", color);
+					return 0xFFD500; // fallback (yellow)
+				}
+			}).toArray();
+		}
 	}
 
 	public static final ForgeConfigSpec SPEC = BUILDER.build();

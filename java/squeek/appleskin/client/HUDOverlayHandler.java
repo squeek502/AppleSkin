@@ -3,9 +3,7 @@ package squeek.appleskin.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,8 +19,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
-import org.slf4j.Logger;
-import squeek.appleskin.AppleSkin;
 import squeek.appleskin.ModConfig;
 import squeek.appleskin.api.event.FoodValuesEvent;
 import squeek.appleskin.api.event.HUDOverlayEvent;
@@ -32,11 +28,8 @@ import squeek.appleskin.helpers.HungerHelper;
 import squeek.appleskin.helpers.TextureHelper;
 import squeek.appleskin.util.IntPoint;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.Vector;
-import java.util.stream.Collectors;
 
 @OnlyIn(Dist.CLIENT)
 public class HUDOverlayHandler
@@ -45,9 +38,6 @@ public class HUDOverlayHandler
 	private static float flashAlpha = 0f;
 	private static byte alphaDir = 1;
 	protected static int foodIconsOffset;
-
-	private static List<String> lastSaturationHudOverlayColorsConfig;
-	private static int[] cachedSaturationHudOverlayColors;
 
 	public static final Vector<IntPoint> healthBarOffsets = new Vector<>();
 	public static final Vector<IntPoint> foodBarOffsets = new Vector<>();
@@ -234,23 +224,7 @@ public class HUDOverlayHandler
 		float saturationPerLayer = 20f;
 		float saturationPerBar = saturationPerLayer / maxBars;
 
-		List<? extends String> currentColorsConfig = ModConfig.SATURATION_HUD_OVERLAY_COLORS.get();
-		if (cachedSaturationHudOverlayColors == null || !currentColorsConfig.equals(lastSaturationHudOverlayColorsConfig))
-		{
-			cachedSaturationHudOverlayColors = currentColorsConfig.stream().mapToInt(color -> {
-				try
-				{
-					return Integer.decode(color);
-				}
-				catch (NumberFormatException e)
-				{
-					AppleSkin.Log.warn("Invalid color value in config: {}", color);
-					return 0xFFD500; // fallback (yellow)
-				}
-			}).toArray();
-			lastSaturationHudOverlayColorsConfig = new ArrayList<>(currentColorsConfig);
-		}
-		int[] colors = cachedSaturationHudOverlayColors;
+		int[] colors = ModConfig.SATURATION_HUD_OVERLAY_COLORS_CACHE;
 
 		int fullLayers = (int) (totalSaturation / saturationPerLayer);
 		float remainder = totalSaturation % saturationPerLayer;
