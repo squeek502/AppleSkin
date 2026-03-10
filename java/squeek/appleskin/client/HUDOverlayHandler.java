@@ -223,34 +223,37 @@ public class HUDOverlayHandler
 		int maxBars = 10;
 		float saturationPerLayer = 20f;
 		float saturationPerBar = saturationPerLayer / maxBars;
-
 		int[] colors = ModConfig.SATURATION_HUD_OVERLAY_COLORS_CACHE;
 
 		int fullLayers = (int) (totalSaturation / saturationPerLayer);
 		float remainder = totalSaturation % saturationPerLayer;
 
-		// Draw all full layers
-		for (int layer = 0; layer < fullLayers; layer++)
+		// FIX: Only draw the top-most full layer.
+		// Drawing layers 0 through fullLayers-2 is a waste of GPU cycles.
+		if (fullLayers > 0)
 		{
-			int color = (int) alpha | colors[layer % colors.length];
+			// If there is a remainder, the "full" layer below it is at index fullLayers - 1
+			// If there is NO remainder, the top-most full layer is also fullLayers - 1
+			int topFullLayerIndex = fullLayers - 1;
+
+			int color = (int) alpha | colors[topFullLayerIndex % colors.length];
 			float r = ((color >> 16) & 255) / 255f;
 			float g = ((color >> 8) & 255) / 255f;
 			float b = (color & 255) / 255f;
 			float a = ((color >> 24) & 255) / 255f;
 			guiGraphics.setColor(r, g, b, a);
 
+			// Draw only the 10 bars for this specific layer
 			for (int i = 0; i < maxBars; i++)
 			{
 				IntPoint offset = foodBarOffsets.get(i);
-				if (offset == null) continue;
-
-				int x = right + offset.x;
-				int y = top + offset.y;
-				guiGraphics.blit(TextureHelper.MOD_ICONS, x, y, 7 * iconSize, 0, iconSize, iconSize);
+				if (offset != null) {
+					guiGraphics.blit(TextureHelper.MOD_ICONS, right + offset.x, top + offset.y, 7 * iconSize, 0, iconSize, iconSize);
+				}
 			}
 		}
 
-		// Draw partial layer if there is remaining saturation
+		// Draw the partial layer (the very top)
 		if (remainder > 0)
 		{
 			int color = (int) alpha | colors[fullLayers % colors.length];
@@ -266,21 +269,18 @@ public class HUDOverlayHandler
 			for (int i = 0; i < fullBars; i++)
 			{
 				IntPoint offset = foodBarOffsets.get(i);
-				if (offset == null) continue;
-				int x = right + offset.x;
-				int y = top + offset.y;
-				guiGraphics.blit(TextureHelper.MOD_ICONS, x, y, 7 * iconSize, 0, iconSize, iconSize);
+				if (offset != null) {
+					guiGraphics.blit(TextureHelper.MOD_ICONS, right + offset.x, top + offset.y, 7 * iconSize, 0, iconSize, iconSize);
+				}
 			}
 
-			if (lastBarFraction > 0)
+			if (lastBarFraction > 0 && fullBars < maxBars)
 			{
 				IntPoint offset = foodBarOffsets.get(fullBars);
 				if (offset != null)
 				{
-					int x = right + offset.x;
-					int y = top + offset.y;
 					int u = lastBarFraction >= 1.5f ? 6 * iconSize : lastBarFraction >= 1f ? 5 * iconSize : lastBarFraction > .5f ? 4 * iconSize : 0;
-					guiGraphics.blit(TextureHelper.MOD_ICONS, x, y, u, 0, iconSize, iconSize);
+					guiGraphics.blit(TextureHelper.MOD_ICONS, right + offset.x, top + offset.y, u, 0, iconSize, iconSize);
 				}
 			}
 		}
