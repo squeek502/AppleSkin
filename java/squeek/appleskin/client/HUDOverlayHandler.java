@@ -223,6 +223,7 @@ public class HUDOverlayHandler
 		int maxBars = 10;
 		float saturationPerLayer = 20f;
 		float saturationPerBar = saturationPerLayer / maxBars;
+
 		int[] colors = ModConfig.SATURATION_HUD_OVERLAY_COLORS_CACHE;
 
 		int fullLayers = (int) (totalSaturation / saturationPerLayer);
@@ -236,7 +237,7 @@ public class HUDOverlayHandler
 			// If there is NO remainder, the top-most full layer is also fullLayers - 1
 			int topFullLayerIndex = fullLayers - 1;
 
-			int color = (int) alpha | colors[topFullLayerIndex % colors.length];
+			int color = ((int) (alpha * 255) << 24) | colors[topFullLayerIndex % colors.length];
 			float r = ((color >> 16) & 255) / 255f;
 			float g = ((color >> 8) & 255) / 255f;
 			float b = (color & 255) / 255f;
@@ -256,7 +257,7 @@ public class HUDOverlayHandler
 		// Draw the partial layer (the very top)
 		if (remainder > 0)
 		{
-			int color = (int) alpha | colors[fullLayers % colors.length];
+			int color = ((int) (alpha * 255) << 24) | colors[fullLayers % colors.length];
 			float r = ((color >> 16) & 255) / 255f;
 			float g = ((color >> 8) & 255) / 255f;
 			float b = (color & 255) / 255f;
@@ -286,6 +287,20 @@ public class HUDOverlayHandler
 		}
 
 		guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+
+		if (ModConfig.SHOW_SATURATION_TEXT_OVERLAY.get())
+		{
+			String text;
+			if(totalSaturation % 20 == 0) {
+				text = "" + fullLayers;
+			} else {
+				text = "" + (fullLayers + 1);
+			}
+			int x = right + 2;
+			int y = top + 1;
+			int textColor = ((int) (alpha * 255) << 24) | 0xFFFFFF;
+			guiGraphics.drawString(mc.font, text, x, y, textColor, true);
+		}
 	}
 
 	public static void drawHungerOverlay(int hungerRestored, int foodLevel, Minecraft mc, GuiGraphics guiGraphics, int right, int top, float alpha, boolean useRottenTextures)

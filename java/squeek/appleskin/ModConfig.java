@@ -50,6 +50,12 @@ public class ModConfig
 	private static final String SHOW_SATURATION_OVERLAY_COMMENT =
 		"If true, shows your current saturation level overlayed on the hunger bar";
 
+	public static final ForgeConfigSpec.BooleanValue SHOW_SATURATION_TEXT_OVERLAY;
+	public static boolean SHOW_SATURATION_TEXT_OVERLAY_DEFAULT = true;
+	private static final String SHOW_SATURATION_TEXT_OVERLAY_NAME = "showSaturationTextHudOverlay";
+	private static final String SHOW_SATURATION_TEXT_OVERLAY_COMMENT =
+		"If true, shows the numerical value of your current saturation level";
+
 	public static final ForgeConfigSpec.BooleanValue SHOW_FOOD_VALUES_OVERLAY;
 	public static boolean SHOW_FOOD_VALUES_OVERLAY_DEFAULT = true;
 	private static final String SHOW_FOOD_VALUES_OVERLAY_NAME = "showFoodValuesHudOverlay";
@@ -119,6 +125,9 @@ public class ModConfig
 		SHOW_SATURATION_OVERLAY = BUILDER
 			.comment(SHOW_SATURATION_OVERLAY_COMMENT)
 			.define(SHOW_SATURATION_OVERLAY_NAME, SHOW_SATURATION_OVERLAY_DEFAULT);
+		SHOW_SATURATION_TEXT_OVERLAY = BUILDER
+			.comment(SHOW_SATURATION_TEXT_OVERLAY_COMMENT)
+			.define(SHOW_SATURATION_TEXT_OVERLAY_NAME, SHOW_SATURATION_TEXT_OVERLAY_DEFAULT);
 		SHOW_FOOD_VALUES_OVERLAY = BUILDER
 			.comment(SHOW_FOOD_VALUES_OVERLAY_COMMENT)
 			.define(SHOW_FOOD_VALUES_OVERLAY_NAME, SHOW_FOOD_VALUES_OVERLAY_DEFAULT);
