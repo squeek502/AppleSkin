@@ -33,6 +33,8 @@ public class AppleSkin
 			net.minecraftforge.fml.config.ModConfig.Type.CLIENT,
 			ModConfig.SPEC
 		);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(ModConfig::onConfigReloading);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(ModConfig::onConfigLoading);
 		ModConfig.init(FMLPaths.CONFIGDIR.get().resolve(ModInfo.MODID + "-client.toml"));
 
 		// Register ourselves for server and other game events we are interested in

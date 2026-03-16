@@ -3,8 +3,11 @@ package squeek.appleskin;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 
 public class ModConfig
 {
@@ -46,6 +49,12 @@ public class ModConfig
 	private static final String SHOW_SATURATION_OVERLAY_NAME = "showSaturationHudOverlay";
 	private static final String SHOW_SATURATION_OVERLAY_COMMENT =
 		"If true, shows your current saturation level overlayed on the hunger bar";
+
+	public static final ForgeConfigSpec.BooleanValue SHOW_SATURATION_TEXT_OVERLAY;
+	public static boolean SHOW_SATURATION_TEXT_OVERLAY_DEFAULT = true;
+	private static final String SHOW_SATURATION_TEXT_OVERLAY_NAME = "showSaturationTextHudOverlay";
+	private static final String SHOW_SATURATION_TEXT_OVERLAY_COMMENT =
+		"If true, shows the numerical value of your current saturation level";
 
 	public static final ForgeConfigSpec.BooleanValue SHOW_FOOD_VALUES_OVERLAY;
 	public static boolean SHOW_FOOD_VALUES_OVERLAY_DEFAULT = true;
@@ -89,6 +98,21 @@ public class ModConfig
 	private static final String MAX_HUD_OVERLAY_FLASH_ALPHA_COMMENT =
 		"Alpha value of the flashing icons at their most visible point (1.0 = fully opaque, 0.0 = fully transparent)";
 
+	public static final ForgeConfigSpec.ConfigValue<List<? extends String>> SATURATION_HUD_OVERLAY_COLORS;
+	public static List<String> SATURATION_HUD_OVERLAY_COLORS_DEFAULT = Arrays.asList(
+			"#FFD500",
+			"#FF0000",
+			"#0000FF",
+			"#E600FF",
+			"#FF8B3D",
+			"#00FFFF",
+			"#45018F",
+			"#00FF00"
+	);
+	private static final String SATURATION_HUD_OVERLAY_COLORS_NAME = "saturationHudOverlayColors";
+	private static final String SATURATION_HUD_OVERLAY_COLORS_COMMENT =
+			"The colors to use for the saturation HUD overlay. The colors are in ARGB hex format.";
+
 	static
 	{
 		BUILDER.push(CATEGORY_CLIENT);
@@ -101,6 +125,9 @@ public class ModConfig
 		SHOW_SATURATION_OVERLAY = BUILDER
 			.comment(SHOW_SATURATION_OVERLAY_COMMENT)
 			.define(SHOW_SATURATION_OVERLAY_NAME, SHOW_SATURATION_OVERLAY_DEFAULT);
+		SHOW_SATURATION_TEXT_OVERLAY = BUILDER
+			.comment(SHOW_SATURATION_TEXT_OVERLAY_COMMENT)
+			.define(SHOW_SATURATION_TEXT_OVERLAY_NAME, SHOW_SATURATION_TEXT_OVERLAY_DEFAULT);
 		SHOW_FOOD_VALUES_OVERLAY = BUILDER
 			.comment(SHOW_FOOD_VALUES_OVERLAY_COMMENT)
 			.define(SHOW_FOOD_VALUES_OVERLAY_NAME, SHOW_FOOD_VALUES_OVERLAY_DEFAULT);
@@ -122,7 +149,57 @@ public class ModConfig
 		MAX_HUD_OVERLAY_FLASH_ALPHA = BUILDER
 			.comment(MAX_HUD_OVERLAY_FLASH_ALPHA_COMMENT)
 			.defineInRange(MAX_HUD_OVERLAY_FLASH_ALPHA_NAME, MAX_HUD_OVERLAY_FLASH_ALPHA_DEFAULT, 0D, 1D);
+		SATURATION_HUD_OVERLAY_COLORS = BUILDER
+			.comment(SATURATION_HUD_OVERLAY_COLORS_COMMENT)
+			.defineList(SATURATION_HUD_OVERLAY_COLORS_NAME, SATURATION_HUD_OVERLAY_COLORS_DEFAULT, o -> o instanceof String);
 		BUILDER.pop();
+	}
+
+	public static int[] SATURATION_HUD_OVERLAY_COLORS_CACHE = SATURATION_HUD_OVERLAY_COLORS_DEFAULT.stream().mapToInt(color -> {
+		try
+		{
+			return Integer.decode(color);
+		}
+		catch (NumberFormatException e)
+		{
+			return 0xFFD500; // fallback (yellow)
+		}
+	}).toArray();
+
+	public static void onConfigReloading(ModConfigEvent.Reloading event)
+	{
+		if (event.getConfig().getSpec() == SPEC)
+		{
+			SATURATION_HUD_OVERLAY_COLORS_CACHE = SATURATION_HUD_OVERLAY_COLORS.get().stream().mapToInt(color -> {
+				try
+				{
+					return Integer.decode(color);
+				}
+				catch (NumberFormatException e)
+				{
+					AppleSkin.Log.warn("Invalid color value in config: {}", color);
+					return 0xFFD500; // fallback (yellow)
+				}
+			}).toArray();
+		}
+	}
+
+	public static void onConfigLoading(ModConfigEvent.Loading event)
+	{
+		if (event.getConfig().getSpec() == SPEC)
+		{
+			SATURATION_HUD_OVERLAY_COLORS_CACHE = SATURATION_HUD_OVERLAY_COLORS.get().stream().mapToInt(color -> {
+				try
+				{
+					return Integer.decode(color);
+				}
+				catch (NumberFormatException e)
+				{
+					AppleSkin.Log.warn("Invalid color value in config: {}", color);
+					return 0xFFD500; // fallback (yellow)
+				}
+			}).toArray();
+		}
 	}
 
 	public static final ForgeConfigSpec SPEC = BUILDER.build();
