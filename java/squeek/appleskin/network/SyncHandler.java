@@ -3,10 +3,10 @@ package squeek.appleskin.network;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.rule.GameRules;
-import squeek.appleskin.helpers.ExhaustionHelper;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.gamerules.GameRules;
+import squeek.appleskin.helpers.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,55 +16,55 @@ public class SyncHandler
 {
 	public static void init()
 	{
-		PayloadTypeRegistry.playS2C().register(ExhaustionSyncPayload.ID, ExhaustionSyncPayload.CODEC);
-		PayloadTypeRegistry.playS2C().register(SaturationSyncPayload.ID, SaturationSyncPayload.CODEC);
-		PayloadTypeRegistry.playS2C().register(NaturalRegenerationSyncPayload.ID, NaturalRegenerationSyncPayload.CODEC);
-		ServerTickEvents.END_WORLD_TICK.register(SyncHandler::onServerWorldTick);
+		PayloadTypeRegistry.clientboundPlay().register(ExhaustionSyncPayload.ID, ExhaustionSyncPayload.CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(SaturationSyncPayload.ID, SaturationSyncPayload.CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(NaturalRegenerationSyncPayload.ID, NaturalRegenerationSyncPayload.CODEC);
+		ServerTickEvents.END_LEVEL_TICK.register(SyncHandler::onServerWorldTick);
 	}
 
 	/*
 	 * Sync saturation (vanilla MC only syncs when it hits 0)
 	 * Sync exhaustion (vanilla MC does not sync it at all)
 	 */
-	private static final Map<UUID, Float> lastSaturationLevels = new HashMap<UUID, Float>();
-	private static final Map<UUID, Float> lastExhaustionLevels = new HashMap<UUID, Float>();
+	private static final Map<UUID, Float> lastSaturationLevels = new HashMap<>();
+	private static final Map<UUID, Float> lastExhaustionLevels = new HashMap<>();
 	private static boolean naturalRegeneration = true;
 
-	public static void onPlayerUpdate(ServerPlayerEntity player)
+	public static void onPlayerUpdate(ServerPlayer player)
 	{
-		Float lastSaturationLevel = lastSaturationLevels.get(player.getUuid());
-		Float lastExhaustionLevel = lastExhaustionLevels.get(player.getUuid());
+		Float lastSaturationLevel = lastSaturationLevels.get(player.getUUID());
+		Float lastExhaustionLevel = lastExhaustionLevels.get(player.getUUID());
 
-		float saturation = player.getHungerManager().getSaturationLevel();
+		float saturation = player.getFoodData().getSaturationLevel();
 		if (lastSaturationLevel == null || lastSaturationLevel != saturation)
 		{
 			ServerPlayNetworking.send(player, new SaturationSyncPayload(saturation));
-			lastSaturationLevels.put(player.getUuid(), saturation);
+			lastSaturationLevels.put(player.getUUID(), saturation);
 		}
 
-		float exhaustionLevel = ExhaustionHelper.getExhaustion(player);
+		float exhaustionLevel = ExhaustionHelper.getSaturationLevel(player);
 		if (lastExhaustionLevel == null || Math.abs(lastExhaustionLevel - exhaustionLevel) >= 0.01f)
 		{
 			ServerPlayNetworking.send(player, new ExhaustionSyncPayload(exhaustionLevel));
-			lastExhaustionLevels.put(player.getUuid(), exhaustionLevel);
+			lastExhaustionLevels.put(player.getUUID(), exhaustionLevel);
 		}
 	}
 
-	public static void onPlayerLoggedIn(ServerPlayerEntity player)
+	public static void onPlayerLoggedIn(ServerPlayer player)
 	{
-		lastSaturationLevels.remove(player.getUuid());
-		lastExhaustionLevels.remove(player.getUuid());
+		lastSaturationLevels.remove(player.getUUID());
+		lastExhaustionLevels.remove(player.getUUID());
 		// Assumed to be true by default, so we only need to update the client if it's actually false
 		if (!naturalRegeneration) {
 			ServerPlayNetworking.send(player, new NaturalRegenerationSyncPayload(false));
 		}
 	}
 
-	public static void onServerWorldTick(ServerWorld world)
+	public static void onServerWorldTick(ServerLevel world)
 	{
-		var cur = world.getGameRules().getValue(GameRules.NATURAL_HEALTH_REGENERATION);
+		boolean cur = world.getGameRules().get(GameRules.NATURAL_HEALTH_REGENERATION);
 		if (naturalRegeneration != cur) {
-			for (ServerPlayerEntity player : world.getPlayers()) {
+			for (ServerPlayer player : world.players()) {
 				ServerPlayNetworking.send(player, new NaturalRegenerationSyncPayload(cur));
 			}
 			naturalRegeneration = cur;

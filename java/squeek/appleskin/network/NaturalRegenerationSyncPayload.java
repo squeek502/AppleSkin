@@ -1,27 +1,28 @@
 package squeek.appleskin.network;
 
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.NonNull;
 
-public record NaturalRegenerationSyncPayload(boolean naturalRegeneration) implements CustomPayload
+public record NaturalRegenerationSyncPayload(boolean naturalRegeneration) implements CustomPacketPayload
 {
-	public static final PacketCodec<PacketByteBuf, NaturalRegenerationSyncPayload> CODEC = CustomPayload.codecOf(NaturalRegenerationSyncPayload::write, NaturalRegenerationSyncPayload::new);
-	public static final CustomPayload.Id<NaturalRegenerationSyncPayload> ID = new Id<>(Identifier.of("appleskin", "natural_regeneration"));
+	public static final StreamCodec<FriendlyByteBuf, NaturalRegenerationSyncPayload> CODEC = CustomPacketPayload.codec(NaturalRegenerationSyncPayload::write, NaturalRegenerationSyncPayload::new);
+	public static final CustomPacketPayload.Type<NaturalRegenerationSyncPayload> ID = new Type<>(Identifier.fromNamespaceAndPath("appleskin", "natural_regeneration"));
 
-	public NaturalRegenerationSyncPayload(PacketByteBuf buf)
+	public NaturalRegenerationSyncPayload(FriendlyByteBuf buf)
 	{
 		this(buf.readBoolean());
 	}
 
-	public void write(PacketByteBuf buf)
+	public void write(FriendlyByteBuf buf)
 	{
 		buf.writeBoolean(naturalRegeneration);
 	}
 
 	@Override
-	public Id<? extends CustomPayload> getId()
+	public @NonNull Type<? extends CustomPacketPayload> type()
 	{
 		return ID;
 	}

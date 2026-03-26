@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-
 public class ModConfig
 {
 	public static ModConfig INSTANCE;
@@ -59,31 +58,29 @@ public class ModConfig
 	}
 
 	@Comment("If true, shows the hunger and saturation values of food in its tooltip while holding SHIFT")
-	public boolean showFoodValuesInTooltip = true;
+	public final boolean showFoodValuesInTooltip = true;
 
 	@Comment("If true, shows the hunger and saturation values of food in its tooltip automatically (without needing to hold SHIFT)")
-	public boolean showFoodValuesInTooltipAlways = true;
+	public final boolean showFoodValuesInTooltipAlways = true;
 
-	@Comment("If true, shows your current saturation level overlayed on the hunger bar")
-	public boolean showSaturationHudOverlay = true;
+	@Comment("If true, shows your current saturation level overlay on the hunger bar")
+	public final boolean showSaturationHudOverlay = true;
 
 	@Comment("If true, shows the hunger (and saturation if showSaturationHudOverlay is true) that would be restored by food you are currently holding")
-	public boolean showFoodValuesHudOverlay = true;
+	public final boolean showFoodValuesHudOverlay = true;
 
 	@Comment("If true, enables the hunger/saturation/health overlays for food in your off-hand")
-	public boolean showFoodValuesHudOverlayWhenOffhand = true;
+	public final boolean showFoodValuesHudOverlayWhenOffhand = true;
 
 	@Comment("If true, shows your food exhaustion as a progress bar behind the hunger bar")
-	public boolean showFoodExhaustionHudUnderlay = true;
+	public final boolean showFoodExhaustionHudUnderlay = true;
 
 	@Comment("If true, shows estimated health restored by food on the health bar")
-	public boolean showFoodHealthHudOverlay = true;
+	public final boolean showFoodHealthHudOverlay = true;
 
 	@Comment("If true, health/hunger overlay will shake to match Minecraft's icon animations")
-	public boolean showVanillaAnimationsOverlay = true;
+	public final boolean showVanillaAnimationsOverlay = true;
 
 	@Comment("Alpha value of the flashing icons at their most visible point (1.0 = fully opaque, 0.0 = fully transparent)")
-	public float maxHudOverlayFlashAlpha = 0.65f;
+	public final float maxHudOverlayFlashAlpha = 0.65f;
 }
-
-

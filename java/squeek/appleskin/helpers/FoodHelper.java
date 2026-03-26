@@ -1,33 +1,37 @@
 package squeek.appleskin.helpers;
 
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ConsumableComponent;
-import net.minecraft.component.type.ConsumableComponents;
-import net.minecraft.component.type.FoodComponent;
-import net.minecraft.entity.effect.StatusEffectCategory;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.HungerManager;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.consume.ApplyEffectsConsumeEffect;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.Consumable;
+import net.minecraft.world.item.component.Consumables;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.food.FoodData;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gamerules.GameRules;
 import org.jetbrains.annotations.Nullable;
 import squeek.appleskin.api.event.FoodValuesEvent;
 import squeek.appleskin.network.ClientSyncHandler;
 
+import java.io.IOException;
+
 public class FoodHelper
 {
-	public static boolean isFood(ItemStack itemStack)
+	public static boolean isNotFood(ItemStack itemStack)
 	{
-		return itemStack.contains(DataComponentTypes.FOOD) && itemStack.contains(DataComponentTypes.CONSUMABLE);
+		return itemStack.hasNonDefault(DataComponents.FOOD) && itemStack.hasNonDefault(DataComponents.CONSUMABLE);
 	}
 
-	public static boolean canConsume(PlayerEntity player, FoodComponent foodComponent)
+	public static boolean canEat(Player player, FoodProperties foodComponent)
 	{
-		return player.canConsume(foodComponent.canAlwaysEat());
+		return player.canEat(foodComponent.canAlwaysEat());
 	}
 
-	public static FoodComponent EMPTY_FOOD_COMPONENT = new FoodComponent.Builder().build();
-	public static ConsumableComponent DEFAULT_CONSUMABLE_COMPONENT = ConsumableComponents.FOOD;
+	public static final FoodProperties EMPTY_FOOD_COMPONENT = new FoodProperties.Builder().build();
+	public static final Consumable DEFAULT_CONSUMABLE_COMPONENT = Consumables.DEFAULT_FOOD;
 
 	/**
 	 * Assumes itemStack is known to be a food, always returns a non-null ConsumableFood
@@ -35,20 +39,20 @@ public class FoodHelper
 	public static ConsumableFood getDefaultFoodValues(ItemStack itemStack)
 	{
 		return new ConsumableFood(
-			itemStack.getOrDefault(DataComponentTypes.FOOD, EMPTY_FOOD_COMPONENT),
-			itemStack.getOrDefault(DataComponentTypes.CONSUMABLE, DEFAULT_CONSUMABLE_COMPONENT)
+			itemStack.getOrDefault(DataComponents.FOOD, EMPTY_FOOD_COMPONENT),
+			itemStack.getOrDefault(DataComponents.CONSUMABLE, DEFAULT_CONSUMABLE_COMPONENT)
 		);
 	}
 
 	public static class QueriedFoodResult
 	{
-		public FoodComponent defaultFoodComponent;
-		public FoodComponent modifiedFoodComponent;
-		public ConsumableComponent consumableComponent;
+		public final FoodProperties defaultFoodComponent;
+		public final FoodProperties modifiedFoodComponent;
+		public final Consumable consumableComponent;
 
 		public final ItemStack itemStack;
 
-		public QueriedFoodResult(FoodComponent defaultFoodComponent, FoodComponent modifiedFoodComponent, ConsumableComponent consumableComponent, ItemStack itemStack)
+		public QueriedFoodResult(FoodProperties defaultFoodComponent, FoodProperties modifiedFoodComponent, Consumable consumableComponent, ItemStack itemStack)
 		{
 			this.defaultFoodComponent = defaultFoodComponent;
 			this.modifiedFoodComponent = modifiedFoodComponent;
@@ -58,66 +62,67 @@ public class FoodHelper
 	}
 
 	@Nullable
-	public static QueriedFoodResult query(ItemStack itemStack, PlayerEntity player)
+	public static QueriedFoodResult query(ItemStack itemStack, Player player)
 	{
-		if (!isFood(itemStack)) return null;
+		if (isNotFood(itemStack)) return null;
 
 		ConsumableFood defaultFood = FoodHelper.getDefaultFoodValues(itemStack);
 
 		FoodValuesEvent foodValuesEvent = new FoodValuesEvent(player, itemStack, defaultFood.food(), defaultFood.food());
 		FoodValuesEvent.EVENT.invoker().interact(foodValuesEvent);
 
-		return new QueriedFoodResult(foodValuesEvent.defaultFoodComponent, foodValuesEvent.modifiedFoodComponent, defaultFood.consumable(), itemStack);
+		return new QueriedFoodResult(foodValuesEvent.defaultFoodComponent(), foodValuesEvent.modifiedFoodComponent(), defaultFood.consumable(), itemStack);
 	}
 
-	public static boolean isRotten(ConsumableComponent consumableComponent)
+	public static boolean isRotten(Consumable consumableComponent)
 	{
 		for (var effect : consumableComponent.onConsumeEffects())
 		{
-			if (!(effect instanceof ApplyEffectsConsumeEffect)) continue;
+			if (!(effect instanceof ApplyStatusEffectsConsumeEffect)) continue;
 
-			for (var statusEffect : ((ApplyEffectsConsumeEffect) effect).effects())
+			for (var statusEffect : ((ApplyStatusEffectsConsumeEffect) effect).effects())
 			{
-				if (statusEffect.getEffectType().value().getCategory() == StatusEffectCategory.HARMFUL)
+				if (statusEffect.getEffect().value().getCategory() == MobEffectCategory.HARMFUL)
 					return true;
 			}
 		}
 		return false;
 	}
 
-	public static float getEstimatedHealthIncrement(PlayerEntity player, ConsumableFood consumableFood)
+	public static float getEstimatedHealthIncrement(Player player, ConsumableFood consumableFood)
 	{
-		if (!player.canFoodHeal())
-			return 0;
+		try (Level server = player.level()) {
+			if (server.getServer() != null && !server.getServer().getGameRules().get(GameRules.NATURAL_HEALTH_REGENERATION)) return 0;
+		} catch (IOException _) { }
 
-		HungerManager stats = player.getHungerManager();
+		FoodData stats = player.getFoodData();
 
 		int foodLevel = Math.min(stats.getFoodLevel() + consumableFood.food().nutrition(), 20);
 		float healthIncrement = 0;
 
-		// health for natural regen
+		// health for natural regenerate
 		if (foodLevel >= 18.0F && ClientSyncHandler.naturalRegeneration)
 		{
 			float saturationLevel = Math.min(stats.getSaturationLevel() + consumableFood.food().saturation(), (float) foodLevel);
-			float exhaustionLevel = ExhaustionHelper.getExhaustion(player);
+			float exhaustionLevel = ExhaustionHelper.getSaturationLevel(player);
 			healthIncrement = getEstimatedHealthIncrement(foodLevel, saturationLevel, exhaustionLevel);
 		}
 
 		// health for regeneration effect
 		for (var effect : consumableFood.consumable().onConsumeEffects())
 		{
-			if (!(effect instanceof ApplyEffectsConsumeEffect)) continue;
+			if (!(effect instanceof ApplyStatusEffectsConsumeEffect)) continue;
 
-			for (var statusEffect : ((ApplyEffectsConsumeEffect) effect).effects())
+			for (var statusEffect : ((ApplyStatusEffectsConsumeEffect) effect).effects())
 			{
-				if (statusEffect.getEffectType() == StatusEffects.REGENERATION)
+				if (statusEffect.getEffect() == MobEffects.REGENERATION)
 				{
 					int amplifier = statusEffect.getAmplifier();
 					int duration = statusEffect.getDuration();
 
 					// Refer: https://minecraft.fandom.com/wiki/Regeneration
 					// Refer: net.minecraft.entity.effect.StatusEffect.canApplyUpdateEffect
-					healthIncrement += (float) Math.floor(duration / Math.max(50 >> amplifier, 1));
+					healthIncrement += (float) (duration / Math.max(50 >> amplifier, 1));
 					break;
 				}
 			}
@@ -126,8 +131,8 @@ public class FoodHelper
 		return healthIncrement;
 	}
 
-	public static float REGEN_EXHAUSTION_INCREMENT = 6.0F;
-	public static float MAX_EXHAUSTION = 4.0F;
+	public static final float REGEN_EXHAUSTION_INCREMENT = 6.0F;
+	public static final float MAX_EXHAUSTION = 4.0F;
 
 	public static float getEstimatedHealthIncrement(int foodLevel, float saturationLevel, float exhaustionLevel)
 	{
@@ -151,7 +156,7 @@ public class FoodHelper
 			// when it's incremented. This Float.compare makes it so we treat such close-to-zero values as zero.
 			if (foodLevel >= 20 && Float.compare(saturationLevel, Float.MIN_NORMAL) > 0)
 			{
-				// fast regen health
+				// fast regenerate health
 				//
 				// Because only health and exhaustionLevel increase in this branch,
 				// we know that we will enter this branch again and again on each iteration
@@ -183,7 +188,7 @@ public class FoodHelper
 			}
 			else if (foodLevel >= 18)
 			{
-				// slow regen health
+				// slow regenerate health
 				health += 1;
 				exhaustionLevel += REGEN_EXHAUSTION_INCREMENT;
 			}

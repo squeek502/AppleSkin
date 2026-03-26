@@ -8,7 +8,7 @@ public interface EventHandler<IEvent>
 	static <T> Event<EventHandler<T>> createArrayBacked()
 	{
 		return EventFactory.createArrayBacked(EventHandler.class, listeners -> event -> {
-			for (EventHandler listener : listeners)
+			for (EventHandler<T> listener : listeners)
 			{
 				listener.interact(event);
 			}

@@ -1,7 +1,7 @@
 plugins {
-	id 'fabric-loom' version '1.14-SNAPSHOT'
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
-	id "com.gradleup.shadow" version "9.2.2"
+	id 'com.gradleup.shadow' version '9.4.0'
 }
 
 base {
@@ -12,9 +12,6 @@ group = project.maven_group
 version = "mc" + project.minecraft_version + "-" + project.mod_version
 def semver_version = project.mod_version + "+mc" + project.minecraft_version
 
-sourceSets.main.java.srcDirs += 'java'
-sourceSets.main.resources.srcDirs += 'resources'
-
 repositories {
 	maven { url "https://maven.shedaniel.me/" }
 	maven { url "https://maven.terraformersmc.com/" }
@@ -23,27 +20,49 @@ repositories {
 	maven { url "https://cursemaven.com" }
 }
 
-dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-	modCompileOnly("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}") {
-		exclude(group: "net.fabricmc.fabric-api")
+fabricApi {
+	configureDataGeneration {
+		client = true
 	}
-	modCompileOnly "curse.maven:configured-457570:7332058"
+}
 
+dependencies {
+	// To change the versions see the gradle.properties file
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	// Fabric API. This is technically optional, but you probably want it anyway.
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	// Mod Menu(mod)
+	implementation "com.terraformersmc:modmenu:${project.mod_menu_version}"
+
+	// Cloth Config API
+	// compileOnly("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_api_version}") {
+	//	 exclude(group: "net.fabricmc.fabric-api")
+	// }
+
+	// Configured
+	// compileOnly "curse.maven:configured-457570:7332058"
+
+	// Jankson: parsing files
 	implementation (shadow "blue.endless:jankson:1.2.3")
 
-	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
-	modCompileOnly "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}"
+	// REI
+	// compileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+
+	// JEI, code is in progress for 26.1 in Github!
+	// compileOnly "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}"
+
+	// AppleSkin API
+	// compileOnly("squeek.appleskin:appleskin-fabric:${project.minecraft_version}:api") {
+	//	 transitive = false
+	// }
 }
 
 processResources {
-	inputs.property "version", semver_version
+	inputs.property "version", project.version
 
 	filesMatching("fabric.mod.json") {
 		expand "version": semver_version
@@ -52,20 +71,22 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
-	it.options.release = 21
+	it.options.release = 25
 }
 
 java {
 	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
 	// if it is present.
+	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
-task apiJar(type: Jar, dependsOn: classes) {
-	archiveClassifier.set "api"
+tasks.register('apiJar', Jar) {
+	dependsOn classes
+	archiveClassifier.set 'api'
 
 	from sourceSets.main.output
 	include "squeek/appleskin/api/**"
@@ -79,45 +100,39 @@ shadowJar {
 	destinationDirectory = layout.buildDirectory.dir('shadowlibs')
 }
 
-remapJar {
-	input.set(shadowJar.archiveFile)
+jar {
+	inputs.file(shadowJar.archiveFile)
 	dependsOn(shadowJar)
 
 	from("LICENSE") {
-		rename { "${it}_${project.base.archivesName.get()}"}
+		rename { "${it}_${inputs.properties.archivesName}"}
 	}
 }
 
 artifacts {
- 	archives sourcesJar
- 	archives apiJar
+	archives sourcesJar
+	archives apiJar
 }
 
 // configure the maven publication
 publishing {
 	publications {
-		mavenJava(MavenPublication) {
+		create("mavenJava", MavenPublication) {
 			groupId = group
 			artifactId = project.archives_base_name
 
-			// add all the jars that should be included when publishing to maven
-			artifact(remapJar) {
-				builtBy remapJar
-			}
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
+			artifact(jar)
 			artifact(apiJar)
 		}
 	}
 
+	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
 	repositories {
 		maven {
-			url = project.findProperty("maven.url") ?: System.getenv("MAVEN_URL")
-			credentials {
-				username=project.findProperty("maven.user") ?: System.getenv("MAVEN_USER")
-				password=project.findProperty("maven.password") ?: System.getenv("MAVEN_PASSWORD")
-			}
+			url "https://maven.ryanliptak.com/"
 		}
+
+
+
 	}
 }

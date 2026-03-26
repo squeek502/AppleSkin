@@ -1,21 +1,22 @@
 package squeek.appleskin.network;
 
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.NonNull;
 
-public record ExhaustionSyncPayload(float exhaustion) implements CustomPayload
+public record ExhaustionSyncPayload(float exhaustion) implements CustomPacketPayload
 {
-	public static final PacketCodec<PacketByteBuf, ExhaustionSyncPayload> CODEC = CustomPayload.codecOf(ExhaustionSyncPayload::write, ExhaustionSyncPayload::new);
-	public static final CustomPayload.Id<ExhaustionSyncPayload> ID = new Id<>(Identifier.of("appleskin", "exhaustion"));
+	public static final StreamCodec<FriendlyByteBuf, ExhaustionSyncPayload> CODEC = CustomPacketPayload.codec(ExhaustionSyncPayload::write, ExhaustionSyncPayload::new);
+	public static final CustomPacketPayload.Type<ExhaustionSyncPayload> ID = new Type<>(Identifier.fromNamespaceAndPath("appleskin", "exhaustion"));
 
-	public ExhaustionSyncPayload(PacketByteBuf buf)
+	public ExhaustionSyncPayload(FriendlyByteBuf buf)
 	{
 		this(buf.readFloat());
 	}
 
-	public void write(PacketByteBuf buf)
+	public void write(FriendlyByteBuf buf)
 	{
 		buf.writeFloat(exhaustion);
 	}
@@ -26,7 +27,7 @@ public record ExhaustionSyncPayload(float exhaustion) implements CustomPayload
 	}
 
 	@Override
-	public Id<? extends CustomPayload> getId()
+	public @NonNull Type<? extends CustomPacketPayload> type()
 	{
 		return ID;
 	}
