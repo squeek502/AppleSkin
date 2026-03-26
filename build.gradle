@@ -8,6 +8,17 @@ base {
 	archivesName = project.archives_base_name
 }
 
+sourceSets {
+	main {
+		java {
+			srcDirs = ['/java']
+		}
+		resources {
+			srcDirs = ['/resources']
+		}
+	}
+}
+
 group = project.maven_group
 version = "mc" + project.minecraft_version + "-" + project.mod_version
 def semver_version = project.mod_version + "+mc" + project.minecraft_version
@@ -131,8 +142,5 @@ publishing {
 		maven {
 			url "https://maven.ryanliptak.com/"
 		}
-
-
-
 	}
 }
