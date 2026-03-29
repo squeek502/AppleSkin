@@ -1,6 +1,6 @@
 package squeek.appleskin.api.event;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.Event;
@@ -13,7 +13,7 @@ public class HUDOverlayEvent extends Event implements ICancellableEvent
 	 */
 	public static class Exhaustion extends HUDOverlayEvent
 	{
-		public Exhaustion(float exhaustion, int x, int y, GuiGraphics guiGraphics)
+		public Exhaustion(float exhaustion, int x, int y, GuiGraphicsExtractor guiGraphics)
 		{
 			super(x, y, guiGraphics);
 			this.exhaustion = exhaustion;
@@ -27,7 +27,7 @@ public class HUDOverlayEvent extends Event implements ICancellableEvent
 	 */
 	public static class Saturation extends HUDOverlayEvent
 	{
-		public Saturation(float saturationLevel, int x, int y, GuiGraphics guiGraphics)
+		public Saturation(float saturationLevel, int x, int y, GuiGraphicsExtractor guiGraphics)
 		{
 			super(x, y, guiGraphics);
 			this.saturationLevel = saturationLevel;
@@ -41,7 +41,7 @@ public class HUDOverlayEvent extends Event implements ICancellableEvent
 	 */
 	public static class HungerRestored extends HUDOverlayEvent
 	{
-		public HungerRestored(int foodLevel, ItemStack itemStack, FoodProperties foodProperties, int x, int y, GuiGraphics guiGraphics)
+		public HungerRestored(int foodLevel, ItemStack itemStack, FoodProperties foodProperties, int x, int y, GuiGraphicsExtractor guiGraphics)
 		{
 			super(x, y, guiGraphics);
 			this.currentFoodLevel = foodLevel;
@@ -59,7 +59,7 @@ public class HUDOverlayEvent extends Event implements ICancellableEvent
 	 */
 	public static class HealthRestored extends HUDOverlayEvent
 	{
-		public HealthRestored(float modifiedHealth, ItemStack itemStack, FoodProperties foodProperties, int x, int y, GuiGraphics guiGraphics)
+		public HealthRestored(float modifiedHealth, ItemStack itemStack, FoodProperties foodProperties, int x, int y, GuiGraphicsExtractor guiGraphics)
 		{
 			super(x, y, guiGraphics);
 			this.modifiedHealth = modifiedHealth;
@@ -72,7 +72,7 @@ public class HUDOverlayEvent extends Event implements ICancellableEvent
 		public final float modifiedHealth;
 	}
 
-	private HUDOverlayEvent(int x, int y, GuiGraphics guiGraphics)
+	private HUDOverlayEvent(int x, int y, GuiGraphicsExtractor guiGraphics)
 	{
 		this.x = x;
 		this.y = y;
@@ -81,5 +81,5 @@ public class HUDOverlayEvent extends Event implements ICancellableEvent
 
 	public int x;
 	public int y;
-	public GuiGraphics guiGraphics;
+	public GuiGraphicsExtractor guiGraphics;
 }

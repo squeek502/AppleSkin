@@ -2,7 +2,7 @@ package squeek.appleskin.client;
 
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
@@ -67,10 +67,10 @@ public class HUDOverlayHandler
 
 	public static abstract class Overlay implements GuiLayer
 	{
-		public abstract void render(Minecraft mc, Player player, GuiGraphics guiGraphics, int left, int right, int top, int guiTicks);
+		public abstract void render(Minecraft mc, Player player, GuiGraphicsExtractor guiGraphics, int left, int right, int top, int guiTicks);
 
 		@Override
-		public final void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker)
+		public final void render(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker)
 		{
 			Minecraft mc = Minecraft.getInstance();
 			if (mc.player == null || !shouldRenderOverlay(mc, mc.player, guiGraphics, mc.gui.getGuiTicks()))
@@ -83,7 +83,7 @@ public class HUDOverlayHandler
 			render(mc, mc.player, guiGraphics, left, right, top, mc.gui.getGuiTicks());
 		}
 
-		public boolean shouldRenderOverlay(Minecraft mc, Player player, GuiGraphics guiGraphics, int guiTicks)
+		public boolean shouldRenderOverlay(Minecraft mc, Player player, GuiGraphicsExtractor guiGraphics, int guiTicks)
 		{
 			return !mc.options.hideGui && mc.gameMode != null && mc.gameMode.canHurtPlayer();
 		}
@@ -95,7 +95,7 @@ public class HUDOverlayHandler
 		public static final Identifier ID = Identifier.fromNamespaceAndPath(ModInfo.MODID, "health_restored");
 
 		@Override
-		public void render(Minecraft mc, Player player, GuiGraphics guiGraphics, int left, int right, int top, int guiTicks)
+		public void render(Minecraft mc, Player player, GuiGraphicsExtractor guiGraphics, int left, int right, int top, int guiTicks)
 		{
 			FoodHelper.QueriedFoodResult result = heldFood.result(guiTicks, player);
 			if (result == null)
@@ -122,7 +122,7 @@ public class HUDOverlayHandler
 		}
 
 		@Override
-		public boolean shouldRenderOverlay(Minecraft mc, Player player, GuiGraphics guiGraphics, int guiTicks)
+		public boolean shouldRenderOverlay(Minecraft mc, Player player, GuiGraphicsExtractor guiGraphics, int guiTicks)
 		{
 			if (!super.shouldRenderOverlay(mc, player, guiGraphics, guiTicks))
 				return false;
@@ -144,7 +144,7 @@ public class HUDOverlayHandler
 		public static final Identifier ID = Identifier.fromNamespaceAndPath(ModInfo.MODID, "hunger_restored");
 
 		@Override
-		public void render(Minecraft mc, Player player, GuiGraphics guiGraphics, int left, int right, int top, int guiTicks)
+		public void render(Minecraft mc, Player player, GuiGraphicsExtractor guiGraphics, int left, int right, int top, int guiTicks)
 		{
 			FoodData stats = player.getFoodData();
 			FoodHelper.QueriedFoodResult result = heldFood.result(guiTicks, player);
@@ -172,7 +172,7 @@ public class HUDOverlayHandler
 		}
 
 		@Override
-		public boolean shouldRenderOverlay(Minecraft mc, Player player, GuiGraphics guiGraphics, int guiTicks)
+		public boolean shouldRenderOverlay(Minecraft mc, Player player, GuiGraphicsExtractor guiGraphics, int guiTicks)
 		{
 			if (!super.shouldRenderOverlay(mc, player, guiGraphics, guiTicks))
 				return false;
@@ -186,7 +186,7 @@ public class HUDOverlayHandler
 		public static final Identifier ID = Identifier.fromNamespaceAndPath(ModInfo.MODID, "saturation_level");
 
 		@Override
-		public void render(Minecraft mc, Player player, GuiGraphics guiGraphics, int left, int right, int top, int guiTicks)
+		public void render(Minecraft mc, Player player, GuiGraphicsExtractor guiGraphics, int left, int right, int top, int guiTicks)
 		{
 			FoodData stats = player.getFoodData();
 			HUDOverlayEvent.Saturation saturationRenderEvent = new HUDOverlayEvent.Saturation(stats.getSaturationLevel(), right, top - foodIconsOffset, guiGraphics);
@@ -217,7 +217,7 @@ public class HUDOverlayHandler
 		}
 
 		@Override
-		public boolean shouldRenderOverlay(Minecraft mc, Player player, GuiGraphics guiGraphics, int guiTicks)
+		public boolean shouldRenderOverlay(Minecraft mc, Player player, GuiGraphicsExtractor guiGraphics, int guiTicks)
 		{
 			if (!super.shouldRenderOverlay(mc, player, guiGraphics, guiTicks))
 				return false;
@@ -231,7 +231,7 @@ public class HUDOverlayHandler
 		public static final Identifier ID = Identifier.fromNamespaceAndPath(ModInfo.MODID, "exhaustion_level");
 
 		@Override
-		public void render(Minecraft mc, Player player, GuiGraphics guiGraphics, int left, int right, int top, int guiTicks)
+		public void render(Minecraft mc, Player player, GuiGraphicsExtractor guiGraphics, int left, int right, int top, int guiTicks)
 		{
 			float exhaustion = player.getFoodData().exhaustionLevel;
 
@@ -243,7 +243,7 @@ public class HUDOverlayHandler
 		}
 
 		@Override
-		public boolean shouldRenderOverlay(Minecraft mc, Player player, GuiGraphics guiGraphics, int guiTicks)
+		public boolean shouldRenderOverlay(Minecraft mc, Player player, GuiGraphicsExtractor guiGraphics, int guiTicks)
 		{
 			if (!super.shouldRenderOverlay(mc, player, guiGraphics, guiTicks))
 				return false;
@@ -256,7 +256,7 @@ public class HUDOverlayHandler
 		}
 	}
 
-	public static void drawSaturationOverlay(float saturationGained, float saturationLevel, Player player, GuiGraphics guiGraphics, int right, int top, float alpha, int guiTicks)
+	public static void drawSaturationOverlay(float saturationGained, float saturationLevel, Player player, GuiGraphicsExtractor guiGraphics, int right, int top, float alpha, int guiTicks)
 	{
 		if (saturationLevel + saturationGained < 0)
 			return;
@@ -301,7 +301,7 @@ public class HUDOverlayHandler
 		}
 	}
 
-	public static void drawHungerOverlay(int hungerRestored, int foodLevel, Player player, GuiGraphics guiGraphics, int right, int top, float alpha, boolean useRottenTextures, int guiTicks)
+	public static void drawHungerOverlay(int hungerRestored, int foodLevel, Player player, GuiGraphicsExtractor guiGraphics, int right, int top, float alpha, boolean useRottenTextures, int guiTicks)
 	{
 		if (hungerRestored <= 0)
 			return;
@@ -340,7 +340,7 @@ public class HUDOverlayHandler
 		}
 	}
 
-	public static void drawHealthOverlay(float health, float modifiedHealth, Player player, GuiGraphics guiGraphics, int right, int top, float alpha, int guiTicks)
+	public static void drawHealthOverlay(float health, float modifiedHealth, Player player, GuiGraphicsExtractor guiGraphics, int right, int top, float alpha, int guiTicks)
 	{
 		if (modifiedHealth <= health)
 			return;
@@ -379,7 +379,7 @@ public class HUDOverlayHandler
 		}
 	}
 
-	public static void drawExhaustionOverlay(float exhaustion, Player player, GuiGraphics guiGraphics, int right, int top, float alpha)
+	public static void drawExhaustionOverlay(float exhaustion, Player player, GuiGraphicsExtractor guiGraphics, int right, int top, float alpha)
 	{
 		float maxExhaustion = HungerHelper.getMaxExhaustion(player);
 		// clamp between 0 and 1

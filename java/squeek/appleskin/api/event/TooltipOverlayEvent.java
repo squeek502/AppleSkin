@@ -1,6 +1,6 @@
 package squeek.appleskin.api.event;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.Event;
@@ -25,7 +25,7 @@ public class TooltipOverlayEvent extends Event implements ICancellableEvent
 	 */
 	public static class Render extends TooltipOverlayEvent
 	{
-		public Render(ItemStack itemStack, int x, int y, GuiGraphics guiGraphics, FoodProperties defaultFood, FoodProperties modifiedFood)
+		public Render(ItemStack itemStack, int x, int y, GuiGraphicsExtractor guiGraphics, FoodProperties defaultFood, FoodProperties modifiedFood)
 		{
 			super(itemStack, defaultFood, modifiedFood);
 			this.guiGraphics = guiGraphics;
@@ -35,7 +35,7 @@ public class TooltipOverlayEvent extends Event implements ICancellableEvent
 
 		public int x;
 		public int y;
-		public GuiGraphics guiGraphics;
+		public GuiGraphicsExtractor guiGraphics;
 	}
 
 	private TooltipOverlayEvent(ItemStack itemStack, FoodProperties defaultFood, FoodProperties modifiedFood)
