@@ -3,7 +3,7 @@ package squeek.appleskin.client;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -106,7 +106,7 @@ public class TooltipOverlayHandler
 		}
 
 		@Override
-		public void renderImage(Font font, int x, int y, int width, int height, GuiGraphics guiGraphics)
+		public void extractImage(Font font, int x, int y, int width, int height, GuiGraphicsExtractor guiGraphics)
 		{
 			ItemStack itemStack = foodTooltip.itemStack;
 			Minecraft mc = Minecraft.getInstance();
@@ -172,7 +172,7 @@ public class TooltipOverlayHandler
 				poseStack.pushMatrix();
 				poseStack.translate(offsetX, offsetY);
 				poseStack.scale(0.75f, 0.75f);
-				guiGraphics.drawString(font, foodTooltip.hungerBarsText, 2, 2, 0xFFAAAAAA);
+				guiGraphics.text(font, foodTooltip.hungerBarsText, 2, 2, 0xFFAAAAAA);
 				poseStack.popMatrix();
 			}
 
@@ -202,7 +202,7 @@ public class TooltipOverlayHandler
 				poseStack.pushMatrix();
 				poseStack.translate(offsetX, offsetY);
 				poseStack.scale(0.75f, 0.75f);
-				guiGraphics.drawString(font, foodTooltip.saturationBarsText, 2, 1, 0xFFAAAAAA);
+				guiGraphics.text(font, foodTooltip.saturationBarsText, 2, 1, 0xFFAAAAAA);
 				poseStack.popMatrix();
 			}
 		}

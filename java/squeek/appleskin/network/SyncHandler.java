@@ -87,7 +87,7 @@ public class SyncHandler
 	@SubscribeEvent
 	public void onServerWorldTick(ServerTickEvent.Post event)
 	{
-		var cur = event.getServer().getWorldData().getGameRules().get(GameRules.NATURAL_HEALTH_REGENERATION);
+		var cur = event.getServer().getGameRules().get(GameRules.NATURAL_HEALTH_REGENERATION);
 		if (naturalRegeneration != cur)
 		{
 			sendOptionalPayloadToAllPlayers(event.getServer(), new MessageNaturalRegenerationSync(cur));
