@@ -19,11 +19,11 @@ public interface ClientTooltipComponentMixin extends ClientTooltipComponent
 		method = "create(Lnet/minecraft/util/FormattedCharSequence;)Lnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipComponent;",
 		cancellable = true
 	)
-	private static void AppleSkin_of(FormattedCharSequence text, CallbackInfoReturnable<ClientTooltipComponent> info)
+	private static void AppleSkin_of(FormattedCharSequence charSequence, CallbackInfoReturnable<ClientTooltipComponent> info)
 	{
-		if (text instanceof TooltipOverlayHandler.FoodOverlayTextComponent)
+		if (charSequence instanceof TooltipOverlayHandler.FoodOverlayTextComponent)
 		{
-			info.setReturnValue(((TooltipOverlayHandler.FoodOverlayTextComponent) text).foodOverlay);
+			info.setReturnValue(((TooltipOverlayHandler.FoodOverlayTextComponent) charSequence).foodOverlay);
 		}
 	}
 
@@ -34,11 +34,11 @@ public interface ClientTooltipComponentMixin extends ClientTooltipComponent
 		method = "create(Lnet/minecraft/world/inventory/tooltip/TooltipComponent;)Lnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipComponent;",
 		cancellable = true
 	)
-	private static void AppleSkin_ofData(TooltipComponent data, CallbackInfoReturnable<ClientTooltipComponent> info)
+	private static void AppleSkin_ofData(TooltipComponent component, CallbackInfoReturnable<ClientTooltipComponent> info)
 	{
-		if (data instanceof TooltipOverlayHandler.FoodOverlay)
+		if (component instanceof TooltipOverlayHandler.FoodOverlay)
 		{
-			info.setReturnValue((TooltipOverlayHandler.FoodOverlay) data);
+			info.setReturnValue((TooltipOverlayHandler.FoodOverlay) component);
 		}
 	}
 }

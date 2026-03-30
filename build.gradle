@@ -50,12 +50,12 @@ dependencies {
 	implementation "com.terraformersmc:modmenu:${project.mod_menu_version}"
 
 	// Cloth Config API
-	// compileOnly("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_api_version}") {
-	//	 exclude(group: "net.fabricmc.fabric-api")
-	// }
+	compileOnly ("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_api_version}") {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
 
 	// Configured
-	// compileOnly "curse.maven:configured-457570:7332058"
+	compileOnly "curse.maven:configured-457570:7820635"
 
 	// Jankson: parsing files
 	implementation (shadow "blue.endless:jankson:1.2.3")
@@ -68,7 +68,7 @@ dependencies {
 
 	// AppleSkin API
 	// compileOnly("squeek.appleskin:appleskin-fabric:${project.minecraft_version}:api") {
-	//	 transitive = false
+	//     transitive = false
 	// }
 }
 

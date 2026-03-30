@@ -58,29 +58,29 @@ public class ModConfig
 	}
 
 	@Comment("If true, shows the hunger and saturation values of food in its tooltip while holding SHIFT")
-	public final boolean showFoodValuesInTooltip = true;
+	public boolean showFoodValuesInTooltip = true;
 
 	@Comment("If true, shows the hunger and saturation values of food in its tooltip automatically (without needing to hold SHIFT)")
-	public final boolean showFoodValuesInTooltipAlways = true;
+	public boolean showFoodValuesInTooltipAlways = true;
 
 	@Comment("If true, shows your current saturation level overlay on the hunger bar")
-	public final boolean showSaturationHudOverlay = true;
+	public boolean showSaturationHudOverlay = true;
 
 	@Comment("If true, shows the hunger (and saturation if showSaturationHudOverlay is true) that would be restored by food you are currently holding")
-	public final boolean showFoodValuesHudOverlay = true;
+	public boolean showFoodValuesHudOverlay = true;
 
 	@Comment("If true, enables the hunger/saturation/health overlays for food in your off-hand")
-	public final boolean showFoodValuesHudOverlayWhenOffhand = true;
+	public boolean showFoodValuesHudOverlayWhenOffhand = true;
 
 	@Comment("If true, shows your food exhaustion as a progress bar behind the hunger bar")
-	public final boolean showFoodExhaustionHudUnderlay = true;
+	public boolean showFoodExhaustionHudUnderlay = true;
 
 	@Comment("If true, shows estimated health restored by food on the health bar")
-	public final boolean showFoodHealthHudOverlay = true;
+	public boolean showFoodHealthHudOverlay = true;
 
 	@Comment("If true, health/hunger overlay will shake to match Minecraft's icon animations")
-	public final boolean showVanillaAnimationsOverlay = true;
+	public boolean showVanillaAnimationsOverlay = true;
 
 	@Comment("Alpha value of the flashing icons at their most visible point (1.0 = fully opaque, 0.0 = fully transparent)")
-	public final float maxHudOverlayFlashAlpha = 0.65f;
+	public float maxHudOverlayFlashAlpha = 0.65f;
 }

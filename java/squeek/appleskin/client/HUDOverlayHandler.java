@@ -175,7 +175,7 @@ public class HUDOverlayHandler
 
 		var alphaColor = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, alpha);
 
-		float modifiedSaturation = Math.max(0, Math.min(saturationLevel + saturationGained, 20));
+		float modifiedSaturation = Math.clamp(saturationLevel + saturationGained, 0, 20);
 
 		int startSaturationBar = 0;
 		int endSaturationBar = (int) Math.ceil(modifiedSaturation / 2.0F);
@@ -220,7 +220,7 @@ public class HUDOverlayHandler
 
 		var alphaColor = ColorHelper.argbFromRGBA(1.0F, 1.0F, 1.0F, alpha);
 
-		int modifiedFood = Math.max(0, Math.min(20, foodLevel + hungerRestored));
+		int modifiedFood = Math.clamp(foodLevel + hungerRestored, 0, 20);
 
 		int startFoodBars = Math.max(0, foodLevel / 2);
 		int endFoodBars = (int) Math.ceil(modifiedFood / 2.0F);
@@ -301,7 +301,7 @@ public class HUDOverlayHandler
 	{
 		float maxExhaustion = FoodHelper.MAX_EXHAUSTION;
 		// clamp between 0 and 1
-		float ratio = Math.min(1, Math.max(0, exhaustion / maxExhaustion));
+		float ratio = Math.clamp(exhaustion / maxExhaustion, 0, 1);
 		int width = (int) (ratio * 81);
 		int height = 9;
 
@@ -349,7 +349,7 @@ public class HUDOverlayHandler
 		{
 			alphaDir = 1;
 		}
-		flashAlpha = Math.max(0F, Math.min(1F, unclampedFlashAlpha)) * Math.max(0F, Math.min(1F, ModConfig.INSTANCE.maxHudOverlayFlashAlpha));
+		flashAlpha = Math.clamp(unclampedFlashAlpha, 0F, 1F) * Math.min(1F, ModConfig.INSTANCE.maxHudOverlayFlashAlpha);
 	}
 
 	public void resetFlash()

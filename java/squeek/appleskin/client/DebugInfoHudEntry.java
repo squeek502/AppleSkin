@@ -1,6 +1,5 @@
 package squeek.appleskin.client;
 
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.debug.*;
 import net.minecraft.world.food.FoodData;

@@ -14,7 +14,7 @@ import squeek.appleskin.network.SyncHandler;
 public class PlayerListMixin
 {
 	@Inject(at = @At("TAIL"), method = "placeNewPlayer")
-	private void onPlayerConnect(Connection conn, ServerPlayer player, CommonListenerCookie clientData, CallbackInfo info)
+	private void onPlayerConnect(Connection connection, ServerPlayer player, CommonListenerCookie cookie, CallbackInfo info)
 	{
 		SyncHandler.onPlayerLoggedIn(player);
 	}

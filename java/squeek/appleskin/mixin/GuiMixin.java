@@ -13,17 +13,17 @@ import squeek.appleskin.client.HUDOverlayHandler;
 public class GuiMixin
 {
 	@Inject(at = @At("HEAD"), method = "extractFood")
-	private void renderFoodPre(GuiGraphicsExtractor graphics, Player player, int top, int right, CallbackInfo info)
+	private void renderFoodPre(GuiGraphicsExtractor graphics, Player player, int yLineBase, int xRight, CallbackInfo info)
 	{
 		if (HUDOverlayHandler.INSTANCE != null)
-			HUDOverlayHandler.INSTANCE.onPreRenderFood(graphics, player, top, right);
+			HUDOverlayHandler.INSTANCE.onPreRenderFood(graphics, player, yLineBase, xRight);
 	}
 
 	@Inject(at = @At("RETURN"), method = "extractFood")
-	private void renderFoodPost(GuiGraphicsExtractor graphics, Player player, int top, int right, CallbackInfo info)
+	private void renderFoodPost(GuiGraphicsExtractor graphics, Player player, int yLineBase, int xRight, CallbackInfo info)
 	{
 		if (HUDOverlayHandler.INSTANCE != null)
-			HUDOverlayHandler.INSTANCE.onRenderFood(graphics, player, top, right);
+			HUDOverlayHandler.INSTANCE.onRenderFood(graphics, player, yLineBase, xRight);
 	}
 
 	@Inject(at = @At("RETURN"), method = "extractHearts")
