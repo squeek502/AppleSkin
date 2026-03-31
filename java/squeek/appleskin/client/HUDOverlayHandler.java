@@ -206,6 +206,10 @@ public class HUDOverlayHandler
 				return;
 
 			drawSaturationOverlay(saturationRenderEvent, player, 0, 1f, guiTicks);
+
+			if (!ModConfig.SHOW_FOOD_VALUES_OVERLAY.get())
+				return;
+
 			FoodHelper.QueriedFoodResult result = heldFood.result(guiTicks, player);
 			if (result == null)
 				return;
