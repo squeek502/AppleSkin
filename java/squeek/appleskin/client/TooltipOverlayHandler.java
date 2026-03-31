@@ -1,7 +1,7 @@
 package squeek.appleskin.client;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.component.DataComponents;
@@ -155,7 +155,7 @@ public class TooltipOverlayHandler
 		}
 
 		@Override
-		public void renderImage(Font textRenderer, int x, int y, int width, int height, GuiGraphics context)
+		public void extractImage(Font textRenderer, int x, int y, int width, int height, GuiGraphicsExtractor context)
 		{
 			if (TooltipOverlayHandler.INSTANCE != null)
 				TooltipOverlayHandler.INSTANCE.onRenderTooltip(context, this, x, y, textRenderer);
@@ -241,7 +241,7 @@ public class TooltipOverlayHandler
 		}
 	}
 
-	public void onRenderTooltip(GuiGraphics context, FoodOverlay foodOverlay, int toolTipX, int toolTipY, Font textRenderer)
+	public void onRenderTooltip(GuiGraphicsExtractor context, FoodOverlay foodOverlay, int toolTipX, int toolTipY, Font textRenderer)
 	{
 		// When matrixStack or tooltip is null an unknown exception occurs.
 		// If ModConfig.INSTANCE is null then we're probably still in the init phase
@@ -311,7 +311,7 @@ public class TooltipOverlayHandler
 			matrixStack.pushMatrix();
 			matrixStack.translate(x, y);
 			matrixStack.scale(0.75f, 0.75f);
-			context.drawString(textRenderer, foodOverlay.hungerBarsText, 2, 2, 0xFFAAAAAA);
+			context.text(textRenderer, foodOverlay.hungerBarsText, 2, 2, 0xFFAAAAAA);
 			matrixStack.popMatrix();
 		}
 
@@ -340,7 +340,7 @@ public class TooltipOverlayHandler
 			matrixStack.pushMatrix();
 			matrixStack.translate(x, y);
 			matrixStack.scale(0.75f, 0.75f);
-			context.drawString(textRenderer, foodOverlay.saturationBarsText, 2, 1, 0xFFAAAAAA);
+			context.text(textRenderer, foodOverlay.saturationBarsText, 2, 1, 0xFFAAAAAA);
 			matrixStack.popMatrix();
 		}
 	}

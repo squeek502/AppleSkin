@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.14-SNAPSHOT'
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
 	id "com.gradleup.shadow" version "9.2.2"
 }
@@ -25,21 +25,21 @@ repositories {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-	modCompileOnly("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}") {
+	implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+    compileOnly("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}") {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
-	modCompileOnly "curse.maven:configured-457570:7332058"
+	compileOnly "curse.maven:configured-457570:7820635"
 
-	implementation (shadow "blue.endless:jankson:1.2.3")
+    implementation (shadow "blue.endless:jankson:1.2.3")
 
-	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
-	modCompileOnly "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}"
+    // TODO: Reinstate once REI for 26.1 is released
+    // compileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+	compileOnly "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}"
 }
 
 processResources {
@@ -52,7 +52,7 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
-	it.options.release = 21
+	it.options.release = 25
 }
 
 java {
@@ -60,8 +60,8 @@ java {
 	// if it is present.
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 task apiJar(type: Jar, dependsOn: classes) {
@@ -79,8 +79,8 @@ shadowJar {
 	destinationDirectory = layout.buildDirectory.dir('shadowlibs')
 }
 
-remapJar {
-	input.set(shadowJar.archiveFile)
+jar {
+	inputs.file(shadowJar.archiveFile)
 	dependsOn(shadowJar)
 
 	from("LICENSE") {
@@ -101,11 +101,11 @@ publishing {
 			artifactId = project.archives_base_name
 
 			// add all the jars that should be included when publishing to maven
-			artifact(remapJar) {
-				builtBy remapJar
+			artifact(jar) {
+				builtBy jar
 			}
 			artifact(sourcesJar) {
-				builtBy remapSourcesJar
+				builtBy sourcesJar
 			}
 			artifact(apiJar)
 		}

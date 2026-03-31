@@ -1,7 +1,7 @@
 package squeek.appleskin.api.event;
 
 import net.fabricmc.fabric.api.event.Event;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import squeek.appleskin.api.handler.EventHandler;
@@ -13,7 +13,7 @@ public class HUDOverlayEvent
 	 */
 	public static class Exhaustion extends HUDOverlayEvent
 	{
-		public Exhaustion(float exhaustion, int x, int y, GuiGraphics context)
+		public Exhaustion(float exhaustion, int x, int y, GuiGraphicsExtractor context)
 		{
 			super(x, y, context);
 			this.exhaustion = exhaustion;
@@ -29,7 +29,7 @@ public class HUDOverlayEvent
 	 */
 	public static class Saturation extends HUDOverlayEvent
 	{
-		public Saturation(float saturationLevel, int x, int y, GuiGraphics context)
+		public Saturation(float saturationLevel, int x, int y, GuiGraphicsExtractor context)
 		{
 			super(x, y, context);
 			this.saturationLevel = saturationLevel;
@@ -45,7 +45,7 @@ public class HUDOverlayEvent
 	 */
 	public static class HungerRestored extends HUDOverlayEvent
 	{
-		public HungerRestored(int foodLevel, ItemStack itemStack, FoodProperties foodComponent, int x, int y, GuiGraphics context)
+		public HungerRestored(int foodLevel, ItemStack itemStack, FoodProperties foodComponent, int x, int y, GuiGraphicsExtractor context)
 		{
 			super(x, y, context);
 			this.currentFoodLevel = foodLevel;
@@ -65,7 +65,7 @@ public class HUDOverlayEvent
 	 */
 	public static class HealthRestored extends HUDOverlayEvent
 	{
-		public HealthRestored(float modifiedHealth, ItemStack itemStack, FoodProperties foodComponent, int x, int y, GuiGraphics context)
+		public HealthRestored(float modifiedHealth, ItemStack itemStack, FoodProperties foodComponent, int x, int y, GuiGraphicsExtractor context)
 		{
 			super(x, y, context);
 			this.modifiedHealth = modifiedHealth;
@@ -80,7 +80,7 @@ public class HUDOverlayEvent
 		public static Event<EventHandler<HealthRestored>> EVENT = EventHandler.createArrayBacked();
 	}
 
-	private HUDOverlayEvent(int x, int y, GuiGraphics context)
+	private HUDOverlayEvent(int x, int y, GuiGraphicsExtractor context)
 	{
 		this.x = x;
 		this.y = y;
@@ -89,6 +89,6 @@ public class HUDOverlayEvent
 
 	public int x;
 	public int y;
-	public GuiGraphics context;
+	public GuiGraphicsExtractor context;
 	public boolean isCanceled = false;
 }

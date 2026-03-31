@@ -16,10 +16,10 @@ public class SyncHandler
 {
 	public static void init()
 	{
-		PayloadTypeRegistry.playS2C().register(ExhaustionSyncPayload.ID, ExhaustionSyncPayload.CODEC);
-		PayloadTypeRegistry.playS2C().register(SaturationSyncPayload.ID, SaturationSyncPayload.CODEC);
-		PayloadTypeRegistry.playS2C().register(NaturalRegenerationSyncPayload.ID, NaturalRegenerationSyncPayload.CODEC);
-		ServerTickEvents.END_WORLD_TICK.register(SyncHandler::onServerWorldTick);
+		PayloadTypeRegistry.clientboundPlay().register(ExhaustionSyncPayload.ID, ExhaustionSyncPayload.CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(SaturationSyncPayload.ID, SaturationSyncPayload.CODEC);
+		PayloadTypeRegistry.clientboundPlay().register(NaturalRegenerationSyncPayload.ID, NaturalRegenerationSyncPayload.CODEC);
+		ServerTickEvents.END_LEVEL_TICK.register(SyncHandler::onServerWorldTick);
 	}
 
 	/*

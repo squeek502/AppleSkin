@@ -1,7 +1,7 @@
 package squeek.appleskin.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.Difficulty;
@@ -37,7 +37,7 @@ public class HUDOverlayHandler
 		INSTANCE = new HUDOverlayHandler();
 	}
 
-	public void onPreRenderFood(GuiGraphics context, Player player, int top, int right)
+	public void onPreRenderFood(GuiGraphicsExtractor context, Player player, int top, int right)
 	{
 		// If ModConfig.INSTANCE is null then we're probably still in the init phase
 		if (ModConfig.INSTANCE == null)
@@ -59,7 +59,7 @@ public class HUDOverlayHandler
 		}
 	}
 
-	public void onRenderFood(GuiGraphics context, Player player, int top, int right)
+	public void onRenderFood(GuiGraphicsExtractor context, Player player, int top, int right)
 	{
 		// If ModConfig.INSTANCE is null then we're probably still in the init phase
 		if (ModConfig.INSTANCE == null)
@@ -123,7 +123,7 @@ public class HUDOverlayHandler
 		}
 	}
 
-	public void onRenderHealth(GuiGraphics context, Player player, int left, int top, int lines, int regeneratingHeartIndex, float maxHealth, int lastHealth, int health, int absorption, boolean blinking)
+	public void onRenderHealth(GuiGraphicsExtractor context, Player player, int left, int top, int lines, int regeneratingHeartIndex, float maxHealth, int lastHealth, int health, int absorption, boolean blinking)
 	{
 		// If ModConfig.INSTANCE is null then we're probably still in the init phase
 		if (ModConfig.INSTANCE == null)
@@ -164,7 +164,7 @@ public class HUDOverlayHandler
 		}
 	}
 
-	public void drawSaturationOverlay(GuiGraphics context, float saturationGained, float saturationLevel, Minecraft mc, int right, int top, float alpha, int guiTicks)
+	public void drawSaturationOverlay(GuiGraphicsExtractor context, float saturationGained, float saturationLevel, Minecraft mc, int right, int top, float alpha, int guiTicks)
 	{
 		if (saturationLevel + saturationGained < 0)
 			return;
@@ -209,7 +209,7 @@ public class HUDOverlayHandler
 		}
 	}
 
-	public void drawHungerOverlay(GuiGraphics context, int hungerRestored, int foodLevel, Minecraft mc, int right, int top, float alpha, boolean useRottenTextures, int guiTicks)
+	public void drawHungerOverlay(GuiGraphicsExtractor context, int hungerRestored, int foodLevel, Minecraft mc, int right, int top, float alpha, boolean useRottenTextures, int guiTicks)
 	{
 		if (hungerRestored <= 0)
 			return;
@@ -247,7 +247,7 @@ public class HUDOverlayHandler
 		}
 	}
 
-	public void drawHealthOverlay(GuiGraphics context, float health, float modifiedHealth, Minecraft mc, int right, int top, float alpha, int guiTicks)
+	public void drawHealthOverlay(GuiGraphicsExtractor context, float health, float modifiedHealth, Minecraft mc, int right, int top, float alpha, int guiTicks)
 	{
 		if (modifiedHealth <= health)
 			return;
@@ -286,7 +286,7 @@ public class HUDOverlayHandler
 		}
 	}
 
-	public void drawExhaustionOverlay(GuiGraphics context, float exhaustion, int right, int top, float alpha)
+	public void drawExhaustionOverlay(GuiGraphicsExtractor context, float exhaustion, int right, int top, float alpha)
 	{
 		float maxExhaustion = FoodHelper.MAX_EXHAUSTION;
 		// clamp between 0 and 1
