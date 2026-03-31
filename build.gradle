@@ -56,39 +56,52 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
 	withSourcesJar()
 
 	sourceCompatibility = JavaVersion.VERSION_25
 	targetCompatibility = JavaVersion.VERSION_25
 }
 
-task apiJar(type: Jar, dependsOn: classes) {
-	archiveClassifier.set "api"
+tasks.register('apiJar', Jar) {
+    dependsOn classes
+    archiveClassifier.set "api"
 
-	from sourceSets.main.output
-	include "squeek/appleskin/api/**"
+    from sourceSets.main.output
+    include "squeek/appleskin/api/**"
 }
+
+// shadowJar is the main jar now since there's no remapping needed anymore.
+jar.enabled = false
+
+import net.fabricmc.loom.task.service.JarManifestService
+import net.fabricmc.loom.task.ManifestModificationAction
 
 shadowJar {
-	relocate "blue.endless.jankson", "${project.maven_group}.shadowed.blue.endless.jankson"
-	configurations = [project.configurations.shadow]
-	archiveClassifier = "shadow"
+    archiveClassifier = null
+    configurations = [project.configurations.shadow]
 
-	destinationDirectory = layout.buildDirectory.dir('shadowlibs')
+    relocate "blue.endless.jankson", "${project.maven_group}.shadowed.blue.endless.jankson"
+
+    from("LICENSE") {
+        rename { "${it}_${project.base.archivesName.get()}"}
+    }
+
+    // Not really sure it matters, but with the loss of remapJar in 26.1, the Loom-added
+    // MANIFEST properties don't end up in the jar. This is a hacky way of getting them back,
+    // with some hardcoded values for areEnvironmentSourcesSplit and clientOnlyEntries
+    // that are correct for AppleSkin but not correct for all mods.
+    // Taken from Loom's NonRemappedJarTaskConfiguration.
+    final Provider<JarManifestService> manifestServiceProvider = JarManifestService.get(project)
+    doLast(new ManifestModificationAction(manifestServiceProvider, "official", provider{ false }, provider{ [] }))
+    usesService(manifestServiceProvider)
 }
 
-jar {
-	inputs.file(shadowJar.archiveFile)
-	dependsOn(shadowJar)
-
-	from("LICENSE") {
-		rename { "${it}_${project.base.archivesName.get()}"}
-	}
+build {
+    dependsOn(tasks.shadowJar)
 }
 
 artifacts {
+    archives shadowJar
  	archives sourcesJar
  	archives apiJar
 }
@@ -101,8 +114,8 @@ publishing {
 			artifactId = project.archives_base_name
 
 			// add all the jars that should be included when publishing to maven
-			artifact(jar) {
-				builtBy jar
+			artifact(shadowJar) {
+				builtBy shadowJar
 			}
 			artifact(sourcesJar) {
 				builtBy sourcesJar
