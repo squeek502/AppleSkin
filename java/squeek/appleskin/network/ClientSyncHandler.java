@@ -18,7 +18,7 @@ public class ClientSyncHandler
 		});
 		ClientPlayNetworking.registerGlobalReceiver(SaturationSyncPayload.ID, (payload, context) -> {
 			context.client().execute(() -> {
-				context.client().player.getHungerManager().setSaturationLevel(payload.getSaturation());
+				context.client().player.getFoodData().setSaturation(payload.getSaturation());
 			});
 		});
 		ClientPlayNetworking.registerGlobalReceiver(NaturalRegenerationSyncPayload.ID, (payload, context) -> {

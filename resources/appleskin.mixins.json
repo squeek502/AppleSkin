@@ -3,15 +3,15 @@
   "package": "squeek.appleskin.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ServerPlayerEntityMixin",
-    "PlayerManagerMixin",
-    "HungerManagerMixin"
+    "ServerPlayerMixin",
+    "PlayerListMixin",
+    "FoodDataMixin"
   ],
   "client": [
-    "InGameHudMixin",
-    "MinecraftClientMixin",
+    "GuiMixin",
+    "MinecraftMixin",
     "ItemStackMixin",
-    "TooltipComponentMixin"
+    "ClientTooltipComponentMixin"
   ],
   "injectors": {
     "defaultRequire": 1,

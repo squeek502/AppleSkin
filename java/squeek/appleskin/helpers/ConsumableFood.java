@@ -1,8 +1,8 @@
 package squeek.appleskin.helpers;
 
-import net.minecraft.component.type.ConsumableComponent;
-import net.minecraft.component.type.FoodComponent;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.component.Consumable;
 
-public record ConsumableFood(FoodComponent food, ConsumableComponent consumable)
+public record ConsumableFood(FoodProperties food, Consumable consumable)
 {
 }

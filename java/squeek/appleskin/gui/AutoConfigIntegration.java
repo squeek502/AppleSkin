@@ -5,7 +5,7 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.autoconfig.serializer.DummyConfigSerializer;
-import net.minecraft.util.ActionResult;
+import net.minecraft.world.InteractionResult;
 import squeek.appleskin.ModConfig;
 
 import java.io.IOException;
@@ -29,7 +29,7 @@ public class AutoConfigIntegration implements ConfigData
 			try
 			{
 				ModConfig.INSTANCE.save();
-				return ActionResult.SUCCESS;
+				return InteractionResult.SUCCESS;
 			}
 			catch (IOException e)
 			{
@@ -46,7 +46,7 @@ public class AutoConfigIntegration implements ConfigData
 			data.showSaturationHudOverlay = ModConfig.INSTANCE.showSaturationHudOverlay;
 			data.showVanillaAnimationsOverlay = ModConfig.INSTANCE.showVanillaAnimationsOverlay;
 			data.showFoodValuesHudOverlayWhenOffhand = ModConfig.INSTANCE.showFoodValuesHudOverlayWhenOffhand;
-			return ActionResult.SUCCESS;
+			return InteractionResult.SUCCESS;
 		});
 		holder.load();
 	}

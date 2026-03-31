@@ -1,15 +1,15 @@
 package squeek.appleskin.helpers;
 
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ConsumableComponent;
-import net.minecraft.component.type.ConsumableComponents;
-import net.minecraft.component.type.FoodComponent;
-import net.minecraft.entity.effect.StatusEffectCategory;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.HungerManager;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.consume.ApplyEffectsConsumeEffect;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodData;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.Consumable;
+import net.minecraft.world.item.component.Consumables;
+import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import org.jetbrains.annotations.Nullable;
 import squeek.appleskin.api.event.FoodValuesEvent;
 import squeek.appleskin.network.ClientSyncHandler;
@@ -18,16 +18,16 @@ public class FoodHelper
 {
 	public static boolean isFood(ItemStack itemStack)
 	{
-		return itemStack.contains(DataComponentTypes.FOOD) && itemStack.contains(DataComponentTypes.CONSUMABLE);
+		return itemStack.has(DataComponents.FOOD) && itemStack.has(DataComponents.CONSUMABLE);
 	}
 
-	public static boolean canConsume(PlayerEntity player, FoodComponent foodComponent)
+	public static boolean canConsume(Player player, FoodProperties foodComponent)
 	{
-		return player.canConsume(foodComponent.canAlwaysEat());
+		return player.canEat(foodComponent.canAlwaysEat());
 	}
 
-	public static FoodComponent EMPTY_FOOD_COMPONENT = new FoodComponent.Builder().build();
-	public static ConsumableComponent DEFAULT_CONSUMABLE_COMPONENT = ConsumableComponents.FOOD;
+	public static FoodProperties EMPTY_FOOD_COMPONENT = new FoodProperties.Builder().build();
+	public static Consumable DEFAULT_CONSUMABLE_COMPONENT = Consumables.DEFAULT_FOOD;
 
 	/**
 	 * Assumes itemStack is known to be a food, always returns a non-null ConsumableFood
@@ -35,20 +35,20 @@ public class FoodHelper
 	public static ConsumableFood getDefaultFoodValues(ItemStack itemStack)
 	{
 		return new ConsumableFood(
-			itemStack.getOrDefault(DataComponentTypes.FOOD, EMPTY_FOOD_COMPONENT),
-			itemStack.getOrDefault(DataComponentTypes.CONSUMABLE, DEFAULT_CONSUMABLE_COMPONENT)
+			itemStack.getOrDefault(DataComponents.FOOD, EMPTY_FOOD_COMPONENT),
+			itemStack.getOrDefault(DataComponents.CONSUMABLE, DEFAULT_CONSUMABLE_COMPONENT)
 		);
 	}
 
 	public static class QueriedFoodResult
 	{
-		public FoodComponent defaultFoodComponent;
-		public FoodComponent modifiedFoodComponent;
-		public ConsumableComponent consumableComponent;
+		public FoodProperties defaultFoodComponent;
+		public FoodProperties modifiedFoodComponent;
+		public Consumable consumableComponent;
 
 		public final ItemStack itemStack;
 
-		public QueriedFoodResult(FoodComponent defaultFoodComponent, FoodComponent modifiedFoodComponent, ConsumableComponent consumableComponent, ItemStack itemStack)
+		public QueriedFoodResult(FoodProperties defaultFoodComponent, FoodProperties modifiedFoodComponent, Consumable consumableComponent, ItemStack itemStack)
 		{
 			this.defaultFoodComponent = defaultFoodComponent;
 			this.modifiedFoodComponent = modifiedFoodComponent;
@@ -58,7 +58,7 @@ public class FoodHelper
 	}
 
 	@Nullable
-	public static QueriedFoodResult query(ItemStack itemStack, PlayerEntity player)
+	public static QueriedFoodResult query(ItemStack itemStack, Player player)
 	{
 		if (!isFood(itemStack)) return null;
 
@@ -70,27 +70,27 @@ public class FoodHelper
 		return new QueriedFoodResult(foodValuesEvent.defaultFoodComponent, foodValuesEvent.modifiedFoodComponent, defaultFood.consumable(), itemStack);
 	}
 
-	public static boolean isRotten(ConsumableComponent consumableComponent)
+	public static boolean isRotten(Consumable consumableComponent)
 	{
 		for (var effect : consumableComponent.onConsumeEffects())
 		{
-			if (!(effect instanceof ApplyEffectsConsumeEffect)) continue;
+			if (!(effect instanceof ApplyStatusEffectsConsumeEffect)) continue;
 
-			for (var statusEffect : ((ApplyEffectsConsumeEffect) effect).effects())
+			for (var statusEffect : ((ApplyStatusEffectsConsumeEffect) effect).effects())
 			{
-				if (statusEffect.getEffectType().value().getCategory() == StatusEffectCategory.HARMFUL)
+				if (statusEffect.getEffect().value().getCategory() == MobEffectCategory.HARMFUL)
 					return true;
 			}
 		}
 		return false;
 	}
 
-	public static float getEstimatedHealthIncrement(PlayerEntity player, ConsumableFood consumableFood)
+	public static float getEstimatedHealthIncrement(Player player, ConsumableFood consumableFood)
 	{
-		if (!player.canFoodHeal())
+		if (!player.isHurt())
 			return 0;
 
-		HungerManager stats = player.getHungerManager();
+		FoodData stats = player.getFoodData();
 
 		int foodLevel = Math.min(stats.getFoodLevel() + consumableFood.food().nutrition(), 20);
 		float healthIncrement = 0;
@@ -106,11 +106,11 @@ public class FoodHelper
 		// health for regeneration effect
 		for (var effect : consumableFood.consumable().onConsumeEffects())
 		{
-			if (!(effect instanceof ApplyEffectsConsumeEffect)) continue;
+			if (!(effect instanceof ApplyStatusEffectsConsumeEffect)) continue;
 
-			for (var statusEffect : ((ApplyEffectsConsumeEffect) effect).effects())
+			for (var statusEffect : ((ApplyStatusEffectsConsumeEffect) effect).effects())
 			{
-				if (statusEffect.getEffectType() == StatusEffects.REGENERATION)
+				if (statusEffect.getEffect() == MobEffects.REGENERATION)
 				{
 					int amplifier = statusEffect.getAmplifier();
 					int duration = statusEffect.getDuration();

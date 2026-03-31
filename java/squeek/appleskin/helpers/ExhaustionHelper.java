@@ -1,6 +1,6 @@
 package squeek.appleskin.helpers;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
 public class ExhaustionHelper
 {
@@ -11,13 +11,13 @@ public class ExhaustionHelper
 		void setExhaustion(float exhaustion);
 	}
 
-	public static float getExhaustion(PlayerEntity player)
+	public static float getExhaustion(Player player)
 	{
-		return ((ExhaustionManipulator) player.getHungerManager()).getExhaustion();
+		return ((ExhaustionManipulator) player.getFoodData()).getExhaustion();
 	}
 
-	public static void setExhaustion(PlayerEntity player, float exhaustion)
+	public static void setExhaustion(Player player, float exhaustion)
 	{
-		((ExhaustionManipulator) player.getHungerManager()).setExhaustion(exhaustion);
+		((ExhaustionManipulator) player.getFoodData()).setExhaustion(exhaustion);
 	}
 }

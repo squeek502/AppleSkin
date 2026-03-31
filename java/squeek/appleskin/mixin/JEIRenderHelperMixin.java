@@ -1,11 +1,11 @@
 package squeek.appleskin.mixin;
 
 import com.mojang.datafixers.util.Either;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipData;
-import net.minecraft.text.StringVisitable;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -25,7 +25,7 @@ public class JEIRenderHelperMixin
 	// gets our TooltipData into the list in the same spot as our OrderedText.
 
 	@Inject(at = @At("HEAD"), method = "renderTooltip", require = 0)
-	private void renderFoodPre(DrawContext guiGraphics, List<Either<StringVisitable, TooltipData>> elements, int x, int y, TextRenderer font, ItemStack stack, CallbackInfo info)
+	private void renderFoodPre(GuiGraphics guiGraphics, List<Either<FormattedText, TooltipComponent>> elements, int x, int y, Font font, ItemStack stack, CallbackInfo info)
 	{
 		for (int i = 0; i < elements.size(); i++)
 		{

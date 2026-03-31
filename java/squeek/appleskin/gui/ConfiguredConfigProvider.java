@@ -2,8 +2,8 @@ package squeek.appleskin.gui;
 
 import com.mrcrayfish.configured.api.*;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 import squeek.appleskin.ModConfig;
 
@@ -97,12 +97,12 @@ public class ConfiguredConfigProvider implements IModConfigProvider
 			}
 			catch (Exception e)
 			{
-				return ActionResult.fail(Text.of(e.getMessage()));
+				return ActionResult.fail(Component.nullToEmpty(e.getMessage()));
 			}
 		}
 
 		@Override
-		public ActionResult canPlayerEdit(@Nullable PlayerEntity player)
+		public ActionResult canPlayerEdit(@Nullable Player player)
 		{
 			return ActionResult.success();
 		}
@@ -165,7 +165,7 @@ public class ConfiguredConfigProvider implements IModConfigProvider
 		}
 
 		@Override
-		public @Nullable Text getTooltip()
+		public @Nullable Component getTooltip()
 		{
 			return null;
 		}
@@ -241,9 +241,9 @@ public class ConfiguredConfigProvider implements IModConfigProvider
 		}
 
 		@Override
-		public @Nullable Text getTooltip()
+		public @Nullable Component getTooltip()
 		{
-			return Text.translatable(this.getTranslationKey() + ".@Tooltip");
+			return Component.translatable(this.getTranslationKey() + ".@Tooltip");
 		}
 
 		@Override
@@ -311,9 +311,9 @@ public class ConfiguredConfigProvider implements IModConfigProvider
 		}
 
 		@Override
-		public @Nullable Text getComment()
+		public @Nullable Component getComment()
 		{
-			return Text.translatable(this.getTranslationKey() + ".@Tooltip");
+			return Component.translatable(this.getTranslationKey() + ".@Tooltip");
 		}
 
 		@Override
@@ -323,7 +323,7 @@ public class ConfiguredConfigProvider implements IModConfigProvider
 		}
 
 		@Override
-		public @Nullable Text getValidationHint()
+		public @Nullable Component getValidationHint()
 		{
 			return null;
 		}
@@ -383,9 +383,9 @@ public class ConfiguredConfigProvider implements IModConfigProvider
 		}
 
 		@Override
-		public @Nullable Text getValidationHint()
+		public @Nullable Component getValidationHint()
 		{
-			return Text.translatable("configured.validator.range_hint", "0.0", "1.0");
+			return Component.translatable("configured.validator.range_hint", "0.0", "1.0");
 		}
 	}
 

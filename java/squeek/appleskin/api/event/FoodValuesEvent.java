@@ -1,9 +1,9 @@
 package squeek.appleskin.api.event;
 
 import net.fabricmc.fabric.api.event.Event;
-import net.minecraft.component.type.FoodComponent;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.ItemStack;
 import squeek.appleskin.api.handler.EventHandler;
 
 /**
@@ -12,7 +12,7 @@ import squeek.appleskin.api.handler.EventHandler;
  */
 public class FoodValuesEvent
 {
-	public FoodValuesEvent(PlayerEntity player, ItemStack itemStack, FoodComponent defaultFoodValues, FoodComponent modifiedFoodComponent)
+	public FoodValuesEvent(Player player, ItemStack itemStack, FoodProperties defaultFoodValues, FoodProperties modifiedFoodComponent)
 	{
 		this.player = player;
 		this.itemStack = itemStack;
@@ -20,10 +20,10 @@ public class FoodValuesEvent
 		this.modifiedFoodComponent = modifiedFoodComponent;
 	}
 
-	public FoodComponent defaultFoodComponent;
-	public FoodComponent modifiedFoodComponent;
+	public FoodProperties defaultFoodComponent;
+	public FoodProperties modifiedFoodComponent;
 	public final ItemStack itemStack;
-	public final PlayerEntity player;
+	public final Player player;
 
 	public static Event<EventHandler<FoodValuesEvent>> EVENT = EventHandler.createArrayBacked();
 }

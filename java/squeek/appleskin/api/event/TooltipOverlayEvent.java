@@ -1,9 +1,9 @@
 package squeek.appleskin.api.event;
 
 import net.fabricmc.fabric.api.event.Event;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.component.type.FoodComponent;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.ItemStack;
 import squeek.appleskin.api.handler.EventHandler;
 
 public class TooltipOverlayEvent
@@ -13,7 +13,7 @@ public class TooltipOverlayEvent
 	 */
 	public static class Pre extends TooltipOverlayEvent
 	{
-		public Pre(ItemStack itemStack, FoodComponent defaultFood, FoodComponent modifiedFood)
+		public Pre(ItemStack itemStack, FoodProperties defaultFood, FoodProperties modifiedFood)
 		{
 			super(itemStack, defaultFood, modifiedFood);
 		}
@@ -27,7 +27,7 @@ public class TooltipOverlayEvent
 	 */
 	public static class Render extends TooltipOverlayEvent
 	{
-		public Render(ItemStack itemStack, int x, int y, DrawContext context, FoodComponent defaultFood, FoodComponent modifiedFood)
+		public Render(ItemStack itemStack, int x, int y, GuiGraphics context, FoodProperties defaultFood, FoodProperties modifiedFood)
 		{
 			super(itemStack, defaultFood, modifiedFood);
 			this.context = context;
@@ -37,20 +37,20 @@ public class TooltipOverlayEvent
 
 		public int x;
 		public int y;
-		public DrawContext context;
+		public GuiGraphics context;
 
 		public static Event<EventHandler<Render>> EVENT = EventHandler.createArrayBacked();
 	}
 
-	private TooltipOverlayEvent(ItemStack itemStack, FoodComponent defaultFood, FoodComponent modifiedFood)
+	private TooltipOverlayEvent(ItemStack itemStack, FoodProperties defaultFood, FoodProperties modifiedFood)
 	{
 		this.itemStack = itemStack;
 		this.defaultFood = defaultFood;
 		this.modifiedFood = modifiedFood;
 	}
 
-	public final FoodComponent defaultFood;
-	public final FoodComponent modifiedFood;
+	public final FoodProperties defaultFood;
+	public final FoodProperties modifiedFood;
 
 	public final ItemStack itemStack;
 

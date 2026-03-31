@@ -1,25 +1,25 @@
 package squeek.appleskin.mixin;
 
-import net.minecraft.client.gui.tooltip.TooltipComponent;
-import net.minecraft.item.tooltip.TooltipData;
-import net.minecraft.text.OrderedText;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import squeek.appleskin.client.TooltipOverlayHandler;
 
-@Mixin(TooltipComponent.class)
-public interface TooltipComponentMixin extends TooltipComponent
+@Mixin(ClientTooltipComponent.class)
+public interface ClientTooltipComponentMixin extends ClientTooltipComponent
 {
 	// This allows AppleSkin to add its tooltip as an OrderedText, which gets converted
 	// into our custom TooltipComponent implementation during TooltipComponent::of
 	@Inject(
 		at = @At("HEAD"),
-		method = "of(Lnet/minecraft/text/OrderedText;)Lnet/minecraft/client/gui/tooltip/TooltipComponent;",
+		method = "create(Lnet/minecraft/util/FormattedCharSequence;)Lnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipComponent;",
 		cancellable = true
 	)
-	private static void AppleSkin_of(OrderedText text, CallbackInfoReturnable<TooltipComponent> info)
+	private static void AppleSkin_of(FormattedCharSequence text, CallbackInfoReturnable<ClientTooltipComponent> info)
 	{
 		if (text instanceof TooltipOverlayHandler.FoodOverlayTextComponent)
 		{
@@ -31,10 +31,10 @@ public interface TooltipComponentMixin extends TooltipComponent
 	// OrderedText -> TooltipData -> TooltipComponent for REI
 	@Inject(
 		at = @At("HEAD"),
-		method = "of(Lnet/minecraft/item/tooltip/TooltipData;)Lnet/minecraft/client/gui/tooltip/TooltipComponent;",
+		method = "create(Lnet/minecraft/world/inventory/tooltip/TooltipComponent;)Lnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipComponent;",
 		cancellable = true
 	)
-	private static void AppleSkin_ofData(TooltipData data, CallbackInfoReturnable<TooltipComponent> info)
+	private static void AppleSkin_ofData(TooltipComponent data, CallbackInfoReturnable<ClientTooltipComponent> info)
 	{
 		if (data instanceof TooltipOverlayHandler.FoodOverlay)
 		{
