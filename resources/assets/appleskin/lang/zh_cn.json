@@ -1,5 +1,5 @@
 {
-  "text.autoconfig.appleskin.title": "AppleSkin",
+  "text.autoconfig.appleskin.title": "苹果皮 AppleSkin",
   "text.autoconfig.appleskin.option.showFoodValuesInTooltip": "显示食物的饥饿值和饱和度",
   "text.autoconfig.appleskin.option.showFoodValuesInTooltip.@Tooltip": "若启用，按下SHIFT后在信息提示内显示食物的饥饿值和饱和度",
   "text.autoconfig.appleskin.option.showFoodValuesInTooltipAlways": "始终显示食物的饥饿值和饱和度",
