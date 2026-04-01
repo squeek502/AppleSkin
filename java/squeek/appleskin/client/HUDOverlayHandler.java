@@ -133,8 +133,7 @@ public class HUDOverlayHandler
 			if (!super.shouldRenderOverlay(mc, player, guiGraphics, guiTicks))
 				return false;
 
-			// hide when is mounted.
-			if (player.getVehicle() instanceof LivingEntity)
+			if (isMountHealthShown(player))
 				return false;
 
 			// Offsets size is set to zero intentionally to disable rendering when health is infinite.
@@ -181,6 +180,9 @@ public class HUDOverlayHandler
 		public boolean shouldRenderOverlay(Minecraft mc, Player player, GuiGraphics guiGraphics, int guiTicks)
 		{
 			if (!super.shouldRenderOverlay(mc, player, guiGraphics, guiTicks))
+				return false;
+
+			if (isMountHealthShown(player))
 				return false;
 
 			return ModConfig.SHOW_FOOD_VALUES_OVERLAY.get();
@@ -232,6 +234,9 @@ public class HUDOverlayHandler
 			if (!super.shouldRenderOverlay(mc, player, guiGraphics, guiTicks))
 				return false;
 
+			if (isMountHealthShown(player))
+				return false;
+
 			return ModConfig.SHOW_SATURATION_OVERLAY.get();
 		}
 	}
@@ -258,12 +263,16 @@ public class HUDOverlayHandler
 			if (!super.shouldRenderOverlay(mc, player, guiGraphics, guiTicks))
 				return false;
 
-			// hide when is mounted.
-			if (player.getVehicle() instanceof LivingEntity)
+			if (isMountHealthShown(player))
 				return false;
 
 			return ModConfig.SHOW_FOOD_EXHAUSTION_UNDERLAY.get();
 		}
+	}
+
+	public static boolean isMountHealthShown(Player player)
+	{
+		return player.getVehicle() != null && player.getVehicle().showVehicleHealth();
 	}
 
 	public static void drawSaturationOverlay(float saturationGained, float saturationLevel, Player player, GuiGraphics guiGraphics, int right, int top, float alpha, int guiTicks)
