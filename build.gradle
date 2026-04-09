@@ -3,7 +3,7 @@ plugins {
 	id 'eclipse'
 	id 'idea'
 	id 'maven-publish'
-	id 'net.neoforged.gradle.userdev' version '7.0.142'
+	id 'net.neoforged.gradle.userdev' version '7.1.21'
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -24,7 +24,7 @@ runs {
 
 	server {
 		systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-		programArgument '--nogui'
+		argument '--nogui'
 	}
 
 	gameTestServer {
@@ -33,9 +33,11 @@ runs {
 }
 
 group = project.maven_group
-archivesBaseName = project.archives_base_name
 version = "mc" + project.minecraft_version + "-" + project.mod_version
 def semver_version = project.mod_version + "+mc" + project.minecraft_version
+base {
+	archivesName = project.archives_base_name
+}
 
 sourceSets.main.java.srcDirs += 'java'
 sourceSets.main.java.srcDirs += 'apis'
@@ -79,7 +81,7 @@ publishing {
 	publications {
 		mavenJava(MavenPublication) {
 			groupId = group
-			artifactId = archivesBaseName
+			artifactId = project.archives_base_name
 
 			// add all the jars that should be included when publishing to maven
 			artifact(jar)
