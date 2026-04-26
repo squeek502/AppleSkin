@@ -12,6 +12,7 @@ import net.minecraft.world.item.component.Consumables;
 import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.Nullable;
+import squeek.appleskin.api.event.FoodCheckEvent;
 import squeek.appleskin.api.event.FoodValuesEvent;
 import squeek.appleskin.network.MessageNaturalRegenerationSync;
 
@@ -19,7 +20,12 @@ public class FoodHelper
 {
 	public static boolean isFood(ItemStack itemStack, Player player)
 	{
-		return itemStack.get(DataComponents.FOOD) != null && itemStack.get(DataComponents.CONSUMABLE) != null;
+		boolean result = itemStack.get(DataComponents.FOOD) != null && itemStack.get(DataComponents.CONSUMABLE) != null;
+
+		FoodCheckEvent event = new FoodCheckEvent(player, itemStack, result);
+		NeoForge.EVENT_BUS.post(event);
+
+		return event.isFood;
 	}
 
 	public static boolean canConsume(Player player, FoodProperties foodProperties)
