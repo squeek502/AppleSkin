@@ -1,7 +1,5 @@
 package squeek.appleskin.client;
 
-// TODO: Reinstate once REI for 26.1 is released
-/*
 import me.shedaniel.rei.api.client.entry.renderer.EntryRendererRegistry;
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
@@ -49,4 +47,3 @@ public class REITooltipPlugin implements REIClientPlugin
 		});
 	}
 }
-*/

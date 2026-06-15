@@ -37,8 +37,7 @@ dependencies {
 
     implementation (shadow "blue.endless:jankson:1.2.3")
 
-    // TODO: Reinstate once REI for 26.1 is released
-    // compileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+    compileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 	compileOnly "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}"
 }
 
