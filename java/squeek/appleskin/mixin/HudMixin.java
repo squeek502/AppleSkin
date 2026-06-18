@@ -1,7 +1,7 @@
 package squeek.appleskin.mixin;
 
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import squeek.appleskin.client.HUDOverlayHandler;
 
-@Mixin(Gui.class)
-public class GuiMixin
+@Mixin(Hud.class)
+public class HudMixin
 {
 	@Inject(at = @At("HEAD"), method = "extractFood")
 	private void renderFoodPre(GuiGraphicsExtractor context, Player player, int top, int right, CallbackInfo info)

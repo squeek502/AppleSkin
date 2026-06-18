@@ -33,12 +33,12 @@ dependencies {
     compileOnly("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}") {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
-	compileOnly "curse.maven:configured-457570:7820635"
+	compileOnly "curse.maven:configured-457570:7943179"
 
     implementation (shadow "blue.endless:jankson:1.2.3")
 
     compileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
-	compileOnly "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}"
+	compileOnly "mezz.jei:jei-26.1.2-fabric:${project.jei_version}"
 }
 
 processResources {

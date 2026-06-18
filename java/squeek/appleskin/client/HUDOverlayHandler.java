@@ -85,10 +85,10 @@ public class HUDOverlayHandler
 
 		// draw saturation overlay
 		if (!saturationRenderEvent.isCanceled)
-			drawSaturationOverlay(saturationRenderEvent, mc, 0, 1F, mc.gui.getGuiTicks());
+			drawSaturationOverlay(saturationRenderEvent, mc, 0, 1F, mc.gui.hud.getGuiTicks());
 
 		// try to get the item stack in the player hand
-		FoodHelper.QueriedFoodResult result = heldFood.result(mc.gui.getGuiTicks(), player);
+		FoodHelper.QueriedFoodResult result = heldFood.result(mc.gui.hud.getGuiTicks(), player);
 		if (result == null)
 		{
 			resetFlash();
@@ -109,7 +109,7 @@ public class HUDOverlayHandler
 			float foodSaturationIncrement = result.modifiedFoodComponent.saturation();
 
 			// draw hunger overlay
-			drawHungerOverlay(hungerRenderEvent, mc, foodHunger, flashAlpha, FoodHelper.isRotten(result.consumableComponent), mc.gui.getGuiTicks());
+			drawHungerOverlay(hungerRenderEvent, mc, foodHunger, flashAlpha, FoodHelper.isRotten(result.consumableComponent), mc.gui.hud.getGuiTicks());
 
 			int newFoodValue = stats.getFoodLevel() + foodHunger;
 			float newSaturationValue = stats.getSaturationLevel() + foodSaturationIncrement;
@@ -118,7 +118,7 @@ public class HUDOverlayHandler
 			if (!saturationRenderEvent.isCanceled)
 			{
 				float saturationGained = newSaturationValue > newFoodValue ? newFoodValue - stats.getSaturationLevel() : foodSaturationIncrement;
-				drawSaturationOverlay(saturationRenderEvent, mc, saturationGained, flashAlpha, mc.gui.getGuiTicks());
+				drawSaturationOverlay(saturationRenderEvent, mc, saturationGained, flashAlpha, mc.gui.hud.getGuiTicks());
 			}
 		}
 	}
@@ -136,7 +136,7 @@ public class HUDOverlayHandler
 		assert player != null;
 
 		// try to get the item stack in the player hand
-		FoodHelper.QueriedFoodResult result = heldFood.result(mc.gui.getGuiTicks(), player);
+		FoodHelper.QueriedFoodResult result = heldFood.result(mc.gui.hud.getGuiTicks(), player);
 		if (result == null)
 		{
 			resetFlash();
@@ -144,7 +144,7 @@ public class HUDOverlayHandler
 		}
 
 		// draw health overlay if needed
-		if (shouldShowEstimatedHealth(player, mc.gui.getGuiTicks()))
+		if (shouldShowEstimatedHealth(player, mc.gui.hud.getGuiTicks()))
 		{
 			float foodHealthIncrement = FoodHelper.getEstimatedHealthIncrement(player, new ConsumableFood(result.modifiedFoodComponent, result.consumableComponent));
 			float currentHealth = player.getHealth();
@@ -160,7 +160,7 @@ public class HUDOverlayHandler
 				HUDOverlayEvent.HealthRestored.EVENT.invoker().interact(healthRenderEvent);
 
 			if (healthRenderEvent != null && !healthRenderEvent.isCanceled)
-				drawHealthOverlay(healthRenderEvent, mc, flashAlpha, mc.gui.getGuiTicks());
+				drawHealthOverlay(healthRenderEvent, mc, flashAlpha, mc.gui.hud.getGuiTicks());
 		}
 	}
 
