@@ -113,7 +113,7 @@ public class TooltipOverlayHandler
 			if (!shouldShowTooltip(itemStack, mc.player))
 				return;
 
-			Screen gui = mc.screen;
+			Screen gui = mc.gui.screen();
 			if (gui == null)
 				return;
 

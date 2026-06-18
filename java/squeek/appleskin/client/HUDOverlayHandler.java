@@ -47,12 +47,12 @@ public class HUDOverlayHandler
 		event.registerBelow(
 			VanillaGuiLayers.PLAYER_HEALTH,
 			Identifier.fromNamespaceAndPath(ModInfo.MODID, "health_offset"),
-			(guiGraphics, deltaTracker) -> healthIconsOffset = Minecraft.getInstance().gui.leftHeight
+			(guiGraphics, deltaTracker) -> healthIconsOffset = Minecraft.getInstance().gui.hud.leftHeight
 		);
 		event.registerBelow(
 			VanillaGuiLayers.FOOD_LEVEL,
 			Identifier.fromNamespaceAndPath(ModInfo.MODID, "food_offset"),
-			(guiGraphics, deltaTracker) -> foodIconsOffset = Minecraft.getInstance().gui.rightHeight
+			(guiGraphics, deltaTracker) -> foodIconsOffset = Minecraft.getInstance().gui.hud.rightHeight
 		);
 
 		// register overlays/underlays.
@@ -73,19 +73,19 @@ public class HUDOverlayHandler
 		public final void render(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker)
 		{
 			Minecraft mc = Minecraft.getInstance();
-			if (mc.player == null || !shouldRenderOverlay(mc, mc.player, guiGraphics, mc.gui.getGuiTicks()))
+			if (mc.player == null || !shouldRenderOverlay(mc, mc.player, guiGraphics, mc.gui.hud.getGuiTicks()))
 				return;
 
 			int top = guiGraphics.guiHeight();
 			int left = guiGraphics.guiWidth() / 2 - 91; // left of health bar
 			int right = guiGraphics.guiWidth() / 2 + 91; // right of food bar
 
-			render(mc, mc.player, guiGraphics, left, right, top, mc.gui.getGuiTicks());
+			render(mc, mc.player, guiGraphics, left, right, top, mc.gui.hud.getGuiTicks());
 		}
 
 		public boolean shouldRenderOverlay(Minecraft mc, Player player, GuiGraphicsExtractor guiGraphics, int guiTicks)
 		{
-			return !mc.options.hideGui && mc.gameMode != null && mc.gameMode.canHurtPlayer();
+			return !mc.gui.hud.isHidden() && mc.gameMode != null && mc.gameMode.canHurtPlayer();
 		}
 	}
 

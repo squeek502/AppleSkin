@@ -3,7 +3,7 @@ plugins {
 	id 'eclipse'
 	id 'idea'
 	id 'maven-publish'
-	id 'net.neoforged.gradle.userdev' version '7.1.21'
+	id 'net.neoforged.gradle.userdev' version '7.1.38'
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
@@ -15,6 +15,7 @@ runs {
 	configureEach {
 		systemProperty 'forge.logging.markers', 'REGISTRIES'
 		systemProperty 'forge.logging.console.level', 'debug'
+		workingDirectory project.layout.projectDirectory.dir('run').dir(name)
 		modSource project.sourceSets.main
 	}
 
