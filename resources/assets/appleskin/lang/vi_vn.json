@@ -1,0 +1,25 @@
+{
+  "appleskin.configuration.client": "AppleSkin",
+  "appleskin.configuration.showFoodValuesInTooltip": "Hiển thị giá trị thức ăn trong chú thích (tooltip)",
+  "appleskin.configuration.showFoodValuesInTooltip.tooltip": "Nếu đúng, hiển thị giá trị no (hunger) và bão hòa (saturation) trong chú thích (tooltip) khi giữ phím SHIFT",
+  "appleskin.configuration.showFoodValuesInTooltipAlways": "Luôn luôn Hiển thị giá trị thức ăn trong chú thích (tooltip)",
+  "appleskin.configuration.showFoodValuesInTooltipAlways.tooltip": "Nếu đúng, tự động hiển thị giá trị no (hunger) và bão hòa (saturation) trong chú thích (tooltip) mà không cần giữ phím SHIFT",
+  "appleskin.configuration.showFoodValuesHudOverlay": "Hiện độ no được khôi phục từ đồ ăn đang được cầm",
+  "appleskin.configuration.showFoodValuesHudOverlay.tooltip": "Nếu đúng, hiển thị độ no được khôi phục (và độ bão hòa (saturation) nếu showSaturationHudOverlay là đúng) từ đồ ăn mà bạn đang cầm",
+  "appleskin.configuration.showFoodValuesHudOverlayWhenOffhand": "Hiển thị lớp phủ cho đồ ăn ở tay phụ",
+  "appleskin.configuration.showFoodValuesHudOverlayWhenOffhand.tooltip": "Nếu đúng, bật lớp phủ độ no (hunger)/độ bão hòa (saturation)/thanh máu cho đồ ăn ở tay phụ",
+  "appleskin.configuration.showFoodHealthHudOverlay": "Hiển thị lớp phủ thanh máu",
+  "appleskin.configuration.showFoodHealthHudOverlay.tooltip": "Nếu đúng, hiển thị lượng máu trên thanh được khôi phục từ đồ ăn",
+  "appleskin.configuration.showFoodExhaustionHudUnderlay": "Hiển thị lớp lót kiệt sức",
+  "appleskin.configuration.showFoodExhaustionHudUnderlay.tooltip": "Nếu đúng, hiện thị sự kiệt sức do thiếu thức ăn (food exhaustion) như một thanh tiến trình phía sau thanh độ no (hunger bar)",
+  "appleskin.configuration.showSaturationHudOverlay": "Hiển thị độ bão hòa ở lớp phủ",
+  "appleskin.configuration.showSaturationHudOverlay.tooltip": "Nếu đúng, hiển thị độ bão hòa hiện tại của bạn phủ lên thanh độ no (hunger bar)",
+  "appleskin.configuration.showFoodStatsInDebugOverlay": "Hiển thị giá trị thức ăn trong màn hình gỡ lỗi",
+  "appleskin.configuration.showFoodStatsInDebugOverlay.tooltip":"Nếu đúng, hiển thị độ no (hunger), độ bão hòa (saturation), độ kiệt sức (exhaustion) trong màn hình gỡ lỗi",
+  "appleskin.configuration.showVanillaAnimationsOverlay": "Tạo hoạt ảnh cho biểu tượng HUD để khớp với Minecraft",
+  "appleskin.configuration.showVanillaAnimationsOverlay.tooltip": "Nếu đúng, lớp phủ thanh máu/thanh độ no (hunger) sẽ rung lăc để khớp với hoạt ảnh của Minecraft",
+  "appleskin.configuration.maxHudOverlayFlashAlpha": "Alpha tối đa cho biểu tượng HUD nhấp nháy",
+  "appleskin.configuration.maxHudOverlayFlashAlpha.tooltip": "Giá trị alpha của biểu tượng nhấp nháy tại các điểm có thể thấy được (1.0 = hoàn toàn mờ đục, 0.0 = hoàn toàn trong suốt)",
+
+  "fml.menu.mods.info.description.appleskin": "Thêm các HUD được cải thiện liên qua đến đồ ăn"
+}
