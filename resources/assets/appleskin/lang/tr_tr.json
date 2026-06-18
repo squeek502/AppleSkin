@@ -7,7 +7,6 @@
   "appleskin.configuration.showFoodHealthHudOverlay": "Tahmin edilen canı göster",
   "appleskin.configuration.showFoodExhaustionHudUnderlay": "Yorulmayı göster",
   "appleskin.configuration.showSaturationHudOverlay": "Doygunluğu göster",
-  "appleskin.configuration.showFoodStatsInDebugOverlay": "Hata ayıklama ekranında yemek değerlerini göster",
   "appleskin.configuration.showVanillaAnimationsOverlay": "HUD ikonlarını Minecraftla eşleşmesi için animasyonla",
   "appleskin.configuration.maxHudOverlayFlashAlpha": "Yanıp sönen HUD simgelerinin maksimum alfası",
 

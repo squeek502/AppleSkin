@@ -14,8 +14,6 @@
   "appleskin.configuration.showFoodExhaustionHudUnderlay.tooltip": "If true, shows your food exhaustion as a progress bar behind the hunger bar",
   "appleskin.configuration.showSaturationHudOverlay": "Show saturation overlay",
   "appleskin.configuration.showSaturationHudOverlay.tooltip": "If true, shows your current saturation level overlayed on the hunger bar",
-  "appleskin.configuration.showFoodStatsInDebugOverlay": "Show food values in Debug Screen",
-  "appleskin.configuration.showFoodStatsInDebugOverlay.tooltip":"If true, shows your hunger, saturation, and exhaustion level in Debug Screen",
   "appleskin.configuration.showVanillaAnimationsOverlay": "Animate HUD icons to match Minecraft",
   "appleskin.configuration.showVanillaAnimationsOverlay.tooltip": "If true, health/hunger overlay will shake to match Minecraft's icon animations",
   "appleskin.configuration.maxHudOverlayFlashAlpha": "Max alpha of flashing HUD icons",

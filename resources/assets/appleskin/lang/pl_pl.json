@@ -7,7 +7,6 @@
   "appleskin.configuration.showFoodHealthHudOverlay": "Pokazuj nakładkę szacowanego zdrowia",
   "appleskin.configuration.showFoodExhaustionHudUnderlay": "Pokazuj nakładkę zmęczenia",
   "appleskin.configuration.showSaturationHudOverlay": "Pokazuj nakładkę nasycenia",
-  "appleskin.configuration.showFoodStatsInDebugOverlay": "Pokazuj wartości jedzenia w ekranie debugowania",
   "appleskin.configuration.showVanillaAnimationsOverlay": "Animuj ikony inwentarza, aby pasowały do Minecrafta",
   "appleskin.configuration.maxHudOverlayFlashAlpha": "Maksymalna przezroczystość blyszczących ikon inwentarza",
 

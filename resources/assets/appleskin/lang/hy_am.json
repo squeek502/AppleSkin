@@ -7,7 +7,6 @@
   "appleskin.configuration.showFoodHealthHudOverlay": "Ցույց տալ գնահատված առողջության ծածկույթը",
   "appleskin.configuration.showFoodExhaustionHudUnderlay": "Ցույց տալ սովի գիծը",
   "appleskin.configuration.showSaturationHudOverlay": "Ցույց տալ հագեցվախության ծածկույթը",
-  "appleskin.configuration.showFoodStatsInDebugOverlay": "Ցուցադրել սննդի արժեքները վրիպազերծման էկրանում",
   "appleskin.configuration.showVanillaAnimationsOverlay": "Անիմացրեք HUD պատկերակները՝ Minecraft-ին համապատասխանելու համար",
   "appleskin.configuration.maxHudOverlayFlashAlpha": "Մաքսկիմալ անթափանցիկություն ծածկույթի թարթման ժամանակ",
 

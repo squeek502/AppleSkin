@@ -14,8 +14,6 @@
   "appleskin.configuration.showFoodExhaustionHudUnderlay.tooltip": "Se ligado, exibe uma barra de progresso atrás da barra de fome indicando o nível de exaustão da sua comida.",
   "appleskin.configuration.showSaturationHudOverlay": "Mostrar sobreposição de saturação",
   "appleskin.configuration.showSaturationHudOverlay.tooltip": "Quando ativado, mostra na barra de fome o seu nível atual de saturação.",
-  "appleskin.configuration.showFoodStatsInDebugOverlay": "Mostrar valores de comida na tela de depuração",
-  "appleskin.configuration.showFoodStatsInDebugOverlay.tooltip": "Se ligado, adiciona seus níveis de fome, saturação e exaustão na tela de depuração (F3).",
   "appleskin.configuration.showVanillaAnimationsOverlay": "Animar ícones do HUD como no Minecraft",
   "appleskin.configuration.showVanillaAnimationsOverlay.tooltip": "Quando ativado, faz as sobreposições de vida e fome tremerem igual às animações dos ícones padrões do Minecraft.",
   "appleskin.configuration.maxHudOverlayFlashAlpha": "Alfa máximo dos ícones do HUD piscantes",

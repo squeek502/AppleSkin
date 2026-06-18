@@ -14,8 +14,6 @@
   "appleskin.configuration.showFoodExhaustionHudUnderlay.tooltip": "若启用，在饥饿条后显示消耗度",
   "appleskin.configuration.showSaturationHudOverlay": "显示饱和度",
   "appleskin.configuration.showSaturationHudOverlay.tooltip": "若启用，在饥饿条上显示饱和度",
-  "appleskin.configuration.showFoodStatsInDebugOverlay": "在调试屏幕中显示饥饿信息",
-  "appleskin.configuration.showFoodStatsInDebugOverlay.tooltip":"若开启，在调试屏幕中显示你的饥饿值、饱和度和消耗度",
   "appleskin.configuration.showVanillaAnimationsOverlay": "启用匹配原版HUD图标的动画",
   "appleskin.configuration.showVanillaAnimationsOverlay.tooltip": "若开启，生命条/饥饿条将抖动以与Minecraft图标动画匹配",
   "appleskin.configuration.maxHudOverlayFlashAlpha": "设置HUD闪烁图标的透明度",

@@ -7,7 +7,6 @@
   "appleskin.configuration.showFoodHealthHudOverlay": "Montrer l'estimation de vie restaurée",
   "appleskin.configuration.showFoodExhaustionHudUnderlay": "Montrer l'épuisement",
   "appleskin.configuration.showSaturationHudOverlay": "Montrer la saturation",
-  "appleskin.configuration.showFoodStatsInDebugOverlay": "Montrer la nourriture sur l'écran de déboguage",
   "appleskin.configuration.showVanillaAnimationsOverlay": "Animer les icônes sur l'ATH",
   "appleskin.configuration.maxHudOverlayFlashAlpha": "Opacité des icônes clignotantes de l'ATH",
 

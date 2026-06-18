@@ -14,8 +14,6 @@
   "appleskin.configuration.showFoodExhaustionHudUnderlay": "顯示飽食度消耗值",
   "appleskin.configuration.showSaturationHudOverlay.tooltip": "若啟用，在飢餓條上顯示飽和度",
   "appleskin.configuration.showSaturationHudOverlay": "顯示飽食度消耗重疊",
-  "appleskin.configuration.showFoodStatsInDebugOverlay": "在除錯介面中顯示食物數值",
-  "appleskin.configuration.showFoodStatsInDebugOverlay.tooltip":"若開啟，在除錯畫面中顯示你的飢餓值、飽和度和消耗度",
   "appleskin.configuration.showVanillaAnimationsOverlay": "顯示動畫 HUD 圖示來與 Minecraft 相符",
   "appleskin.configuration.showVanillaAnimationsOverlay.tooltip": "若開啟，生命條／飢餓條將抖動以與 Minecraft 圖示動畫匹配",
   "appleskin.configuration.maxHudOverlayFlashAlpha": "最大 HUD 圖示閃爍的不透明度",

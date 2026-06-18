@@ -14,8 +14,6 @@
   "appleskin.configuration.showFoodExhaustionHudUnderlay.tooltip": "Si está activado, se mostrará su agotamiento alimentario como barra de progreso detrás de la barra de hambre",
   "appleskin.configuration.showSaturationHudOverlay": "Barra de saturación",
   "appleskin.configuration.showSaturationHudOverlay.tooltip": "Si está activado, se mostrará tu nivel de saturación actual encima de la barra de hambre",
-  "appleskin.configuration.showFoodStatsInDebugOverlay": "Valores de la comida en la pantalla de depuración",
-  "appleskin.configuration.showFoodStatsInDebugOverlay.tooltip":"Si está activado, muestra los valores de hambre, saturación y agotamiento en la pantalla de depuración",
   "appleskin.configuration.showVanillaAnimationsOverlay": "Animar los íconos del HUD para que coincidan con Minecraft",
   "appleskin.configuration.showVanillaAnimationsOverlay.tooltip": "Si está activado, la barra de salud/hambre se agitará para coincidir con las animaciones de los íconos de Minecraft",
   "appleskin.configuration.maxHudOverlayFlashAlpha": "Transparencia máxima de los íconos parpadeantes",

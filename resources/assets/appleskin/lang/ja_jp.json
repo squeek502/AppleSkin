@@ -14,8 +14,6 @@
   "appleskin.configuration.showFoodExhaustionHudUnderlay.tooltip": "有効な場合、空腹度バーの下に疲労度を進捗バーとして表示します",
   "appleskin.configuration.showSaturationHudOverlay": "満腹度オーバーレイを表示",
   "appleskin.configuration.showSaturationHudOverlay.tooltip": "有効な場合、現在の満腹度を空腹度バーに重ねて表示します",
-  "appleskin.configuration.showFoodDebugInfo": "デバッグ画面に食料値を表示",
-  "appleskin.configuration.showFoodDebugInfo.tooltip":"有効な場合、デバッグ画面で空腹度・満腹度・疲労度を表示します",
   "appleskin.configuration.showVanillaAnimationsOverlay": "HUDアイコンをバニラのアニメーションに合わせて動かす",
   "appleskin.configuration.showVanillaAnimationsOverlay.tooltip": "有効な場合、体力や空腹度のオーバーレイがMinecraftのアイコンアニメーションに合わせて揺れます",
   "appleskin.configuration.maxHudOverlayFlashAlpha": "HUDアイコンの最大フラッシュ透明度",
