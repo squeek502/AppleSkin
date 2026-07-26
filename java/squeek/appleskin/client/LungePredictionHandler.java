@@ -11,7 +11,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import squeek.appleskin.helpers.FoodHelper;
 
 /*
  * TEST SCAFFOLDING - not a real feature yet.
@@ -65,6 +67,24 @@ public class LungePredictionHandler
 			predicted = Math.max(0, predicted - 1);
 
 		predictedSaturation = predicted;
+	}
+
+	// called from ItemStackMixin right as an item finishes being consumed. Vanilla applies the
+	// actual FoodComponent restore server-only (ConsumableComponent#finishConsumption gates it
+	// behind !world.isClient()), so without this, eating never credits the shadow value at all.
+	public void onFinishedEating(ItemStack stack, World world, PlayerEntity player)
+	{
+		if (!world.isClient())
+			return;
+
+		FoodHelper.QueriedFoodResult result = FoodHelper.query(stack, player);
+		if (result == null)
+			return;
+
+		// mirrors HungerManager#addInternal: food level is clamped first, then saturation is
+		// clamped against the *new* food level, not the old one
+		int predictedFoodLevel = MathHelper.clamp(player.getHungerManager().getFoodLevel() + result.modifiedFoodComponent.nutrition(), 0, 20);
+		predictedSaturation = MathHelper.clamp(predictedSaturation + result.modifiedFoodComponent.saturation(), 0, (float) predictedFoodLevel);
 	}
 
 	private static int getLungeLevel(ItemStack stack, World world)
