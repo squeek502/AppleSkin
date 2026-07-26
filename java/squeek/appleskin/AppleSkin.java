@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import squeek.appleskin.api.AppleSkinApi;
 import squeek.appleskin.client.DebugInfoHudEntry;
 import squeek.appleskin.client.HUDOverlayHandler;
+import squeek.appleskin.client.LungePredictionHandler;
 import squeek.appleskin.client.TooltipOverlayHandler;
 import squeek.appleskin.network.ClientSyncHandler;
 
@@ -21,6 +22,7 @@ public class AppleSkin implements ClientModInitializer
 		ClientSyncHandler.init();
 		ModConfig.init();
 		HUDOverlayHandler.init();
+		LungePredictionHandler.init();
 		TooltipOverlayHandler.init();
 		FabricLoader.getInstance().getEntrypointContainers("appleskin", AppleSkinApi.class).forEach(entrypoint -> {
 			try

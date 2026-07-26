@@ -88,6 +88,14 @@ public class HUDOverlayHandler
 		if (!saturationRenderEvent.isCanceled)
 			drawSaturationOverlay(saturationRenderEvent, mc, 0, 1F, mc.inGameHud.getTicks());
 
+		// TEST SCAFFOLDING: predicted saturation bar rendered one row above the real one, for comparison.
+		// See LungePredictionHandler. Remove both once validated.
+		if (!saturationRenderEvent.isCanceled && LungePredictionHandler.INSTANCE != null)
+		{
+			float predicted = LungePredictionHandler.INSTANCE.getDisplayedSaturation(stats.getSaturationLevel());
+			drawSaturationOverlay(context, 0, predicted, mc, right, top - 10, 1F, mc.inGameHud.getTicks());
+		}
+
 		// try to get the item stack in the player hand
 		FoodHelper.QueriedFoodResult result = heldFood.result(mc.inGameHud.getTicks(), player);
 		if (result == null)
