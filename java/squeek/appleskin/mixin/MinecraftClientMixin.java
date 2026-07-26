@@ -5,6 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import squeek.appleskin.client.HUDOverlayHandler;
 import squeek.appleskin.client.LungePredictionHandler;
 
@@ -29,7 +30,7 @@ public class MinecraftClientMixin
 			target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;attackWithPiercingWeapon(Lnet/minecraft/component/type/PiercingWeaponComponent;)V"
 		)
 	)
-	void onPiercingAttack(CallbackInfo info)
+	void onPiercingAttack(CallbackInfoReturnable<Boolean> cir)
 	{
 		if (LungePredictionHandler.INSTANCE != null)
 			LungePredictionHandler.INSTANCE.onSwingAttempt();
