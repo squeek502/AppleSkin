@@ -25,11 +25,9 @@ public class LungePredictionHandler
 {
 	public static LungePredictionHandler INSTANCE;
 
-	// how long to hold the predicted snapshot before letting it mirror the real value again
-	private static final int GRACE_TICKS = 6;
-
+	// -1 so the first tick always treats the real value as a fresh sync
+	private float lastKnownRealSaturation = -1;
 	private float predictedSaturation = 0;
-	private int graceTicksRemaining = 0;
 
 	public static void init()
 	{
@@ -55,17 +53,18 @@ public class LungePredictionHandler
 			return;
 
 		HungerManager hunger = player.getHungerManager();
-		if (hunger.getFoodLevel() + hunger.getSaturationLevel() < 7)
+		if (hunger.getFoodLevel() + predictedSaturation < 7)
 			return;
 
 		// mirrors the `minecraft:apply_exhaustion` effect on Lunge: 4 exhaustion per level,
-		// and every 4 exhaustion immediately consumes 1 saturation point
-		float predicted = hunger.getSaturationLevel();
+		// and every 4 exhaustion immediately consumes 1 saturation point.
+		// Subtracts from our own tracked shadow value, not the (possibly stale) real value,
+		// so repeated lunges accumulate instead of each resetting from a stale baseline.
+		float predicted = predictedSaturation;
 		for (int i = 0; i < level; i++)
 			predicted = Math.max(0, predicted - 1);
 
 		predictedSaturation = predicted;
-		graceTicksRemaining = GRACE_TICKS;
 	}
 
 	private static int getLungeLevel(ItemStack stack, World world)
@@ -77,13 +76,22 @@ public class LungePredictionHandler
 
 	private void onClientTick()
 	{
-		if (graceTicksRemaining > 0)
-			graceTicksRemaining--;
+		PlayerEntity player = MinecraftClient.getInstance().player;
+		if (player == null)
+			return;
+
+		// only resync when the real value actually moves (e.g. a vanilla health-update packet
+		// arrived) - otherwise keep the shadow value, since "real" may just be stale
+		float real = player.getHungerManager().getSaturationLevel();
+		if (real != lastKnownRealSaturation)
+		{
+			predictedSaturation = real;
+			lastKnownRealSaturation = real;
+		}
 	}
 
-	// returns the predicted saturation while a prediction is still "fresh", otherwise the real value
-	public float getDisplayedSaturation(float realSaturation)
+	public float getDisplayedSaturation()
 	{
-		return graceTicksRemaining > 0 ? predictedSaturation : realSaturation;
+		return predictedSaturation;
 	}
 }

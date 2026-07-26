@@ -92,7 +92,7 @@ public class HUDOverlayHandler
 		// See LungePredictionHandler. Remove both once validated.
 		if (!saturationRenderEvent.isCanceled && LungePredictionHandler.INSTANCE != null)
 		{
-			float predicted = LungePredictionHandler.INSTANCE.getDisplayedSaturation(stats.getSaturationLevel());
+			float predicted = LungePredictionHandler.INSTANCE.getDisplayedSaturation();
 			drawSaturationOverlay(context, 0, predicted, mc, right, top - 10, 1F, mc.inGameHud.getTicks());
 		}
 
