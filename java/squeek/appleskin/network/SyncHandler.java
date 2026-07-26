@@ -62,6 +62,13 @@ public class SyncHandler
 
 	public static void onServerWorldTick(ServerWorld world)
 	{
+		// Driven by the server tick loop directly (rather than a mixin into ServerPlayerEntity#tick),
+		// so other mods that cancel the player's tick method (e.g. to freeze movement during a
+		// lunge attack or attribute swap) can't cause saturation/exhaustion syncing to be skipped.
+		for (ServerPlayerEntity player : world.getPlayers()) {
+			onPlayerUpdate(player);
+		}
+
 		var cur = world.getGameRules().getValue(GameRules.NATURAL_HEALTH_REGENERATION);
 		if (naturalRegeneration != cur) {
 			for (ServerPlayerEntity player : world.getPlayers()) {

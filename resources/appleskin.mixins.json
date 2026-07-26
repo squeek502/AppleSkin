@@ -3,7 +3,6 @@
   "package": "squeek.appleskin.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ServerPlayerEntityMixin",
     "PlayerManagerMixin",
     "HungerManagerMixin"
   ],
