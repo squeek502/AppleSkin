@@ -13,6 +13,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import squeek.appleskin.AppleSkin;
 import squeek.appleskin.helpers.FoodHelper;
 
 /*
@@ -62,11 +63,14 @@ public class LungePredictionHandler
 		// and every 4 exhaustion immediately consumes 1 saturation point.
 		// Subtracts from our own tracked shadow value, not the (possibly stale) real value,
 		// so repeated lunges accumulate instead of each resetting from a stale baseline.
+		float before = predictedSaturation;
 		float predicted = predictedSaturation;
 		for (int i = 0; i < level; i++)
 			predicted = Math.max(0, predicted - 1);
 
 		predictedSaturation = predicted;
+		AppleSkin.LOGGER.info("[LungeTest] swing level={} predictedSaturation {} -> {} (realSaturation={}, realFoodLevel={})",
+			level, before, predictedSaturation, hunger.getSaturationLevel(), hunger.getFoodLevel());
 	}
 
 	// called from ItemStackMixin right as an item finishes being consumed. Vanilla applies the
@@ -79,12 +83,23 @@ public class LungePredictionHandler
 
 		FoodHelper.QueriedFoodResult result = FoodHelper.query(stack, player);
 		if (result == null)
+		{
+			AppleSkin.LOGGER.info("[LungeTest] finishUsing on {} but FoodHelper.query returned null (not recognized as food)", stack.getItem());
 			return;
+		}
+
+		float before = predictedSaturation;
+		int realFoodLevel = player.getHungerManager().getFoodLevel();
+		int nutrition = result.modifiedFoodComponent.nutrition();
+		float saturationIncrement = result.modifiedFoodComponent.saturation();
 
 		// mirrors HungerManager#addInternal: food level is clamped first, then saturation is
 		// clamped against the *new* food level, not the old one
-		int predictedFoodLevel = MathHelper.clamp(player.getHungerManager().getFoodLevel() + result.modifiedFoodComponent.nutrition(), 0, 20);
-		predictedSaturation = MathHelper.clamp(predictedSaturation + result.modifiedFoodComponent.saturation(), 0, (float) predictedFoodLevel);
+		int predictedFoodLevel = MathHelper.clamp(realFoodLevel + nutrition, 0, 20);
+		predictedSaturation = MathHelper.clamp(predictedSaturation + saturationIncrement, 0, (float) predictedFoodLevel);
+
+		AppleSkin.LOGGER.info("[LungeTest] ate {} nutrition={} saturationIncrement={} realFoodLevel={} predictedFoodLevel={} predictedSaturation {} -> {} (realSaturation={})",
+			stack.getItem(), nutrition, saturationIncrement, realFoodLevel, predictedFoodLevel, before, predictedSaturation, player.getHungerManager().getSaturationLevel());
 	}
 
 	private static int getLungeLevel(ItemStack stack, World world)
@@ -105,6 +120,8 @@ public class LungePredictionHandler
 		float real = player.getHungerManager().getSaturationLevel();
 		if (real != lastKnownRealSaturation)
 		{
+			AppleSkin.LOGGER.info("[LungeTest] tick resync: real changed {} -> {}, predictedSaturation {} -> {}",
+				lastKnownRealSaturation, real, predictedSaturation, real);
 			predictedSaturation = real;
 			lastKnownRealSaturation = real;
 		}
