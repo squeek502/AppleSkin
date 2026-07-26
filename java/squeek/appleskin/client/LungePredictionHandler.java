@@ -1,20 +1,16 @@
 package squeek.appleskin.client;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
 
 /*
@@ -38,26 +34,29 @@ public class LungePredictionHandler
 	public static void init()
 	{
 		INSTANCE = new LungePredictionHandler();
-		AttackEntityCallback.EVENT.register(INSTANCE::onAttackEntity);
 		ClientTickEvents.END_CLIENT_TICK.register(client -> INSTANCE.onClientTick());
 	}
 
-	private ActionResult onAttackEntity(PlayerEntity player, World world, Hand hand, Entity target, EntityHitResult hitResult)
+	// called from MinecraftClientMixin right as a piercing weapon (spear) jab is dispatched,
+	// whether or not it hits anything
+	public void onSwingAttempt()
 	{
-		if (!world.isClient())
-			return ActionResult.PASS;
+		PlayerEntity player = MinecraftClient.getInstance().player;
+		if (player == null)
+			return;
 
-		int level = getLungeLevel(player.getStackInHand(hand), world);
+		World world = player.getEntityWorld();
+		int level = getLungeLevel(player.getMainHandStack(), world);
 		if (level <= 0)
-			return ActionResult.PASS;
+			return;
 
 		// mirrors the requirements on the vanilla `lunge` enchantment definition
 		if (player.hasVehicle() || player.isGliding() || player.isTouchingWater())
-			return ActionResult.PASS;
+			return;
 
 		HungerManager hunger = player.getHungerManager();
 		if (hunger.getFoodLevel() + hunger.getSaturationLevel() < 7)
-			return ActionResult.PASS;
+			return;
 
 		// mirrors the `minecraft:apply_exhaustion` effect on Lunge: 4 exhaustion per level,
 		// and every 4 exhaustion immediately consumes 1 saturation point
@@ -67,8 +66,6 @@ public class LungePredictionHandler
 
 		predictedSaturation = predicted;
 		graceTicksRemaining = GRACE_TICKS;
-
-		return ActionResult.PASS;
 	}
 
 	private static int getLungeLevel(ItemStack stack, World world)
