@@ -10,5 +10,5 @@
   "appleskin.configuration.showVanillaAnimationsOverlay": "Animer les icônes sur l'ATH",
   "appleskin.configuration.maxHudOverlayFlashAlpha": "Opacité des icônes clignotantes de l'ATH",
 
-  "fml.menu.mods.info.description.appleskin": "Ajoute diverses améliorations de l'ATH liées à la nourriture"
+  "neoforge.screen.mods.info.description.appleskin": "Ajoute diverses améliorations de l'ATH liées à la nourriture"
 }

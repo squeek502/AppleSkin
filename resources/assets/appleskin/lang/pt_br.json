@@ -19,5 +19,5 @@
   "appleskin.configuration.maxHudOverlayFlashAlpha": "Alfa máximo dos ícones do HUD piscantes",
   "appleskin.configuration.maxHudOverlayFlashAlpha.tooltip": "Define o quão visíveis os ícones piscantes ficam no pico (1.0 é totalmente visível, 0.0 é completamente transparente).",
 
-  "fml.menu.mods.info.description.appleskin": "Adiciona várias melhorias no HUD relacionadas a comida"
+  "neoforge.screen.mods.info.description.appleskin": "Adiciona várias melhorias no HUD relacionadas a comida"
 }

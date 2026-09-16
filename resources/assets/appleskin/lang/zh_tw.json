@@ -19,5 +19,5 @@
   "appleskin.configuration.maxHudOverlayFlashAlpha": "最大 HUD 圖示閃爍的不透明度",
   "appleskin.configuration.maxHudOverlayFlashAlpha.tooltip": "HUD 閃爍圖示在其最可見點的不透明度值（1.0=完全不透明，0.0=完全透明）",
 
-  "fml.menu.mods.info.description.appleskin": "新增多種食物顯示相關的 HUD 改進"
+  "neoforge.screen.mods.info.description.appleskin": "新增多種食物顯示相關的 HUD 改進"
 }

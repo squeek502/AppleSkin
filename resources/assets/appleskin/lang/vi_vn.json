@@ -19,5 +19,5 @@
   "appleskin.configuration.maxHudOverlayFlashAlpha": "Alpha tối đa cho biểu tượng HUD nhấp nháy",
   "appleskin.configuration.maxHudOverlayFlashAlpha.tooltip": "Giá trị alpha của biểu tượng nhấp nháy tại các điểm có thể thấy được (1.0 = hoàn toàn mờ đục, 0.0 = hoàn toàn trong suốt)",
 
-  "fml.menu.mods.info.description.appleskin": "Thêm các HUD được cải thiện liên qua đến đồ ăn"
+  "neoforge.screen.mods.info.description.appleskin": "Thêm các HUD được cải thiện liên qua đến đồ ăn"
 }

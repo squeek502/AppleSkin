@@ -10,5 +10,5 @@
   "appleskin.configuration.showVanillaAnimationsOverlay": "HUD ikonlarını Minecraftla eşleşmesi için animasyonla",
   "appleskin.configuration.maxHudOverlayFlashAlpha": "Yanıp sönen HUD simgelerinin maksimum alfası",
 
-  "fml.menu.mods.info.description.appleskin": "Adds various food-related HUD improvements"
+  "neoforge.screen.mods.info.description.appleskin": "Adds various food-related HUD improvements"
 }

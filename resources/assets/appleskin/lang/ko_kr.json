@@ -10,5 +10,5 @@
   "appleskin.configuration.showVanillaAnimationsOverlay": "허기 HUD에 애니메이션 적용",
   "appleskin.configuration.maxHudOverlayFlashAlpha": "발광 HUD의 최대 투명도 값",
 
-  "fml.menu.mods.info.description.appleskin": "음식과 관련된 HUD에 다양한 개선 사항을 추가합니다."
+  "neoforge.screen.mods.info.description.appleskin": "음식과 관련된 HUD에 다양한 개선 사항을 추가합니다."
 }

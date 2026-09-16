@@ -19,5 +19,5 @@
   "appleskin.configuration.maxHudOverlayFlashAlpha": "HUDアイコンの最大フラッシュ透明度",
   "appleskin.configuration.maxHudOverlayFlashAlpha.tooltip": "アイコンが点滅する際の最大の不透明度（1.0=不透明, 0.0=透明）",
 
-  "fml.menu.mods.info.description.appleskin": "食料関連のHUDを様々に改善します"
+  "neoforge.screen.mods.info.description.appleskin": "食料関連のHUDを様々に改善します"
 }

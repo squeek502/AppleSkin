@@ -10,5 +10,5 @@
   "appleskin.configuration.showVanillaAnimationsOverlay": "Անիմացրեք HUD պատկերակները՝ Minecraft-ին համապատասխանելու համար",
   "appleskin.configuration.maxHudOverlayFlashAlpha": "Մաքսկիմալ անթափանցիկություն ծածկույթի թարթման ժամանակ",
 
-  "fml.menu.mods.info.description.appleskin": "Ավելացնում է սննդի հետ կապված տարբեր HUD բարելավումներ"
+  "neoforge.screen.mods.info.description.appleskin": "Ավելացնում է սննդի հետ կապված տարբեր HUD բարելավումներ"
 }

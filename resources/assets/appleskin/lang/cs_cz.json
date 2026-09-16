@@ -10,5 +10,5 @@
   "appleskin.configuration.showVanillaAnimationsOverlay": "Animovat ikony hladu (HUD) tak, aby odpovídaly Minecraftu",
   "appleskin.configuration.maxHudOverlayFlashAlpha": "Neprůhlednost blikajících ikon hladu (HUD)",
 
-  "fml.menu.mods.info.description.appleskin": "Přidá různá vylepšení HUD související s jídlem"
+  "neoforge.screen.mods.info.description.appleskin": "Přidá různá vylepšení HUD související s jídlem"
 }

@@ -10,5 +10,5 @@
   "appleskin.configuration.showVanillaAnimationsOverlay": "Animuj ikony inwentarza, aby pasowały do Minecrafta",
   "appleskin.configuration.maxHudOverlayFlashAlpha": "Maksymalna przezroczystość blyszczących ikon inwentarza",
 
-  "fml.menu.mods.info.description.appleskin": "Dodaje różne ulepszenia interfejsu związane z jedzeniem"
+  "neoforge.screen.mods.info.description.appleskin": "Dodaje różne ulepszenia interfejsu związane z jedzeniem"
 }

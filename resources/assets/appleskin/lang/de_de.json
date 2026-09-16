@@ -19,5 +19,5 @@
   "appleskin.configuration.maxHudOverlayFlashAlpha": "Max Alpha von aufleuchtenden HUD icons",
   "appleskin.configuration.maxHudOverlayFlashAlpha.tooltip": "Alpha-Wert der blinkenden Icons an ihrem sichtbarsten Punkt (1.0 = vollständig opak, 0.0 = vollständig transparent).",
 
-  "fml.menu.mods.info.description.appleskin": "Fügt verschiedene HUD-Verbesserungen im Zusammenhang mit Essen hinzu"
+  "neoforge.screen.mods.info.description.appleskin": "Fügt verschiedene HUD-Verbesserungen im Zusammenhang mit Essen hinzu"
 }

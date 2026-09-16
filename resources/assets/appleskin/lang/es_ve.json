@@ -19,5 +19,5 @@
   "appleskin.configuration.maxHudOverlayFlashAlpha": "Transparencia máxima de los íconos parpadeantes",
   "appleskin.configuration.maxHudOverlayFlashAlpha.tooltip": "La transparencia máxima de los ícnonos parpadeantes (1.0 = completamente opaco; 0.0 = completamente transparente)",
 
-  "fml.menu.mods.info.description.appleskin": "Agrega varias mejoras relacionadas con los alimentos en el HUD"
+  "neoforge.screen.mods.info.description.appleskin": "Agrega varias mejoras relacionadas con los alimentos en el HUD"
 }

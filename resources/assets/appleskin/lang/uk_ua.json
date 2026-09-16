@@ -10,5 +10,5 @@
   "appleskin.configuration.showVanillaAnimationsOverlay": "Анімувати іконки згідно зі стандартними іконками Minecraft",
   "appleskin.configuration.maxHudOverlayFlashAlpha": "Максимальна непрозорість миготіння іконок",
 
-  "fml.menu.mods.info.description.appleskin": "Додає різноманітні покращення інтерфейсу, пов'язані з їжею"
+  "neoforge.screen.mods.info.description.appleskin": "Додає різноманітні покращення інтерфейсу, пов'язані з їжею"
 }
