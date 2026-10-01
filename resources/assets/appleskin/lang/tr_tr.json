@@ -11,6 +11,6 @@
   "text.autoconfig.appleskin.option.showVanillaAnimationsOverlay": "HUD ikonlarını Minecraftla eşleşmesi için animasyonla",
   "text.autoconfig.appleskin.option.maxHudOverlayFlashAlpha": "Yanıp sönen HUD simgelerinin maksimum alfası",
 
-  "modmenu.summaryTranslation.appleskin": "Adds various food-related HUD improvements",
-  "modmenu.descriptionTranslation.appleskin": "Adds various food-related HUD improvements"
+  "modmenu.summaryTranslation.appleskin": "Gıda ile ilgili çeşitli HUD iyileştirmeleri ekler",
+  "modmenu.descriptionTranslation.appleskin": "Gıda ile ilgili çeşitli HUD iyileştirmeleri ekler"
 }
