@@ -1,0 +1,14 @@
+[package]
+name = "mod-appleskin"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# The pinned SDK's API crate, fetched into .horizon/sdk/ by any `cargo horizon-mod` command (the
+# launcher builds against its own copy of the same build). Any other registry dependency must be
+# pinned with `horizon-launcher native-lock .` before building.
+horizon-mod-api = { path = ".horizon/sdk/api/crates/horizon-mod-api" }
+
+# The SDK build this mod is made for: `cargo horizon-mod update` moves it.
+[package.metadata.horizon]
+sdk = "f1bb66f353cf67f2aa4665293fc75c8d91186fc7"

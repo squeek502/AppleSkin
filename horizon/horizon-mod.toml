@@ -1,0 +1,14 @@
+id = "appleskin"
+name = "AppleSkin"
+version = "3.0.10"
+description = "Adds some useful information about food/hunger to the HUD."
+authors = ["squeek502"]
+license = "Unlicense"
+# A wasm mod: Rust in src/, built to mod.wasm by `cargo horizon-mod build --wasm` against the SDK build Cargo.toml pins, beside data/ and assets/.
+api = "0.2"
+side = "client"
+capabilities = ["registries"]
+
+[wasm]
+sha512 = "270e5bf86ec78e5ff8d398641bc9d8ae6f523ceeb1dd66c10491410d10a24ff1aade6729cacb5f4f230193c5d8b7f5790c96b1a01243840699368434c4f4aa40"
+toolchain = "1.99.1 58cf8f9c35b355199727627d07ae34a4e2846d67"
